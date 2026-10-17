@@ -30,6 +30,13 @@ from common.robot_interface import RobotInterface  # noqa: E402
 
 SCENE_PATH = config.path("sim", "scene.xml")
 
+# The same scene with the visual geoms stripped: dynamically identical, which
+# `sim/build_models.py` asserts on every build, but 25 MB of model buffer
+# instead of 322 MB. That is what lets a 16-worker batch step fit in memory --
+# the full model costs ~1.65 GB of RSS per process. Anything that RENDERS must
+# use `SCENE_PATH`; the headless scene has no visual geometry to photograph.
+SCENE_HEADLESS_PATH = config.path("sim", "scene_headless.xml")
+
 
 class UnsafeTrajectory(RuntimeError):
     """A commanded trajectory broke a `conventions.md` section 10 limit."""
@@ -44,12 +51,19 @@ class SimRobot(RobotInterface):
 
     def __init__(
         self,
-        model_path: Path | str = SCENE_PATH,
+        model_path: Path | str | None = None,
         *,
         enforce_safety: bool = True,
         record: bool = False,
+        render: bool = True,
     ):
-        model_path = Path(model_path)
+        """`render=False` loads the visual-free scene — use it for batch physics.
+
+        An explicit `model_path` wins over `render`.
+        """
+        model_path = Path(model_path) if model_path is not None else (
+            SCENE_PATH if render else SCENE_HEADLESS_PATH
+        )
         if not model_path.exists():
             raise FileNotFoundError(
                 f"{model_path} is missing — generate it with `uv run python sim/build_models.py`"

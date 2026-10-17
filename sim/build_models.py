@@ -100,6 +100,36 @@ def _robot_base_spec() -> mujoco.MjSpec:
     return spec
 
 
+def strip_visual(spec: mujoco.MjSpec) -> tuple[int, int]:
+    """Delete visual-only geoms and the meshes left unreferenced. Returns the counts.
+
+    The upstream model ships full-resolution CAD for rendering: **968,553 mesh
+    vertices** over 64 meshes, 322 MB of MuJoCo model buffer and ~1.65 GB of RSS
+    per loaded model. A batch step that never renders pays that twice per worker
+    (once for `SimRobot`, once for `IKSolver`), which at 16 workers is 46 GB and
+    gets the run OOM-killed on a 32 GB machine. Stripping leaves 17 collision
+    meshes, 64,358 vertices and 24.7 MB.
+
+    **This cannot change the physics**, and `main` asserts as much on every build:
+    visual geoms have `contype = conaffinity = 0` so they never collide, and the
+    upstream bodies carry explicit inertials so the geoms carry no mass. Verified
+    identical: `body_mass`, `body_inertia`, `body_ipos`, `dof_armature`, `nq`,
+    `nu`, `nsite` and the HOME contact set.
+    """
+    visual = [g for g in spec.geoms if g.contype == 0 and g.conaffinity == 0]
+    keep = {
+        g.meshname
+        for g in spec.geoms
+        if g.type == mujoco.mjtGeom.mjGEOM_MESH and not (g.contype == 0 and g.conaffinity == 0)
+    }
+    for geom in visual:
+        spec.delete(geom)
+    orphans = [m for m in list(spec.meshes) if m.name not in keep]
+    for mesh in orphans:
+        spec.delete(mesh)
+    return len(visual), len(orphans)
+
+
 def _compile_and_write(spec: mujoco.MjSpec, out_path: Path) -> mujoco.MjModel:
     """Compile (so errors surface here), then serialize for loading from `sim/`.
 
@@ -122,8 +152,15 @@ def _compile_and_write(spec: mujoco.MjSpec, out_path: Path) -> mujoco.MjModel:
 
 
 def build_robot_ik(out_path: Path) -> mujoco.MjModel:
-    """Robot-only IK model. No table, no free objects (conventions.md section 4)."""
-    return _compile_and_write(_robot_base_spec(), out_path)
+    """Robot-only IK model. No table, no free objects (conventions.md section 4).
+
+    Always stripped of visual geoms: section 4 gives this model to IK alone, and
+    `common/ik.py` runs pure kinematics with no collision task, so nothing here
+    can ever be rendered or collided.
+    """
+    spec = _robot_base_spec()
+    strip_visual(spec)
+    return _compile_and_write(spec, out_path)
 
 
 # --- scene ------------------------------------------------------------------
@@ -249,8 +286,13 @@ def _add_cameras(spec: mujoco.MjSpec) -> None:
     )
 
 
-def build_scene(out_path: Path) -> mujoco.MjModel:
-    """Robot + table + objects + cameras. All physics and rendering use this."""
+def build_scene(out_path: Path, headless: bool = False) -> mujoco.MjModel:
+    """Robot + table + objects + cameras. All physics and rendering use this.
+
+    `headless` drops the visual geoms (see :func:`strip_visual`). It is a
+    separate file rather than the default because `conventions.md` section 4
+    assigns rendering to this model, and plan phase 6 needs it.
+    """
     spec = _robot_base_spec()
     scene = config.skills()["scene"]
 
@@ -271,6 +313,8 @@ def build_scene(out_path: Path) -> mujoco.MjModel:
     spec.worldbody.add_light(name="key", pos=[0.4, 0.0, 1.5], dir=[0.0, 0.0, -1.0])
     spec.worldbody.add_light(name="fill", pos=[0.0, -0.8, 1.2], dir=[0.3, 0.6, -1.0])
 
+    if headless:
+        strip_visual(spec)
     return _compile_and_write(spec, out_path)
 
 
@@ -291,6 +335,17 @@ def main() -> int:
     )
     _report_scene_contacts(scene_path)
 
+    headless_path = SIM_DIR / "scene_headless.xml"
+    headless = build_scene(headless_path, headless=True)
+    print(f"wrote {headless_path.relative_to(config.REPO_ROOT)}")
+    print(
+        f"  nmesh {scene.nmesh} -> {headless.nmesh}, "
+        f"nmeshvert {scene.nmeshvert} -> {headless.nmeshvert}, "
+        f"model buffer {scene.nbuffer / 1e6:.0f} -> {headless.nbuffer / 1e6:.0f} MB"
+    )
+    _assert_same_dynamics(scene, headless)
+    _report_scene_contacts(headless_path)
+
     # Re-load from disk: proves the serialized file stands on its own, meshes included.
     check = mujoco.MjModel.from_xml_path(str(ik_path))
     data = mujoco.MjData(check)
@@ -304,6 +359,32 @@ def main() -> int:
         R = data.site_xmat[sid].reshape(3, 3)
         print(f"  HOME {names['tcp_sites'][side]:>10s}: pos={np.round(pos, 4)} approach_z={np.round(R[:, 2], 3)}")
     return 0
+
+
+def _assert_same_dynamics(full: mujoco.MjModel, headless: mujoco.MjModel) -> None:
+    """Fail the build if stripping visual geoms changed anything physical.
+
+    The whole argument for a headless model is that visual geoms are massless and
+    non-colliding, so dropping them is a no-op for physics and IK. That holds for
+    the current upstream model, but it is a property of someone else's CAD, not a
+    guarantee — so it is checked on every build rather than trusted.
+    """
+    for field in ("body_mass", "body_inertia", "body_ipos", "dof_armature", "jnt_range"):
+        a, b = getattr(full, field), getattr(headless, field)
+        if not np.array_equal(a, b):
+            worst = float(np.abs(np.asarray(a) - np.asarray(b)).max())
+            raise RuntimeError(
+                f"stripping visual geoms changed {field} (max delta {worst:.3e}) — "
+                "the upstream model's visual geoms now carry mass, so the headless "
+                "scene is NOT dynamically equivalent. Do not use it for physics."
+            )
+    for field in ("nq", "nu", "nv", "nbody", "nsite", "njnt", "ncam"):
+        if getattr(full, field) != getattr(headless, field):
+            raise RuntimeError(
+                f"stripping visual geoms changed {field}: "
+                f"{getattr(full, field)} -> {getattr(headless, field)}"
+            )
+    print("  verified: mass, inertia, ipos, armature, joint ranges and counts unchanged")
 
 
 def _report_scene_contacts(scene_path: Path) -> None:

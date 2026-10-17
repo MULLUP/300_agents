@@ -2,6 +2,20 @@
 # conventions.md section 9. Every tunable lives here, never in code.
 conventions_version: 2
 
+# Worker processes for the parallel batch steps (sim/feasibility.py step 6,
+# sim/validate_library.py step 9). Both are embarrassingly parallel over
+# independent units -- one demo, one trial -- and hold no shared state beyond a
+# per-worker SimRobot and IKSolver.
+#
+# This cannot change any result, only the runtime; it is here rather than as a
+# bare CLI default so one number covers both steps. Capped at 16 by operator
+# instruction: this box has 22 cores, and taking all of them starves the rest of
+# the machine. `--processes` overrides it per run.
+#
+# NOTE: this key is deliberately at the TOP of the file. A key appended at the
+# END lands inside `validation:`, which has silently cost two long runs before.
+n_processes: 16
+
 # --- EgoDex retargeting (data/retarget.py, handoff step 4) ---
 retarget:
   fps_out: 50.0 # conventions.md section 5: source demos resampled to 50 Hz
@@ -315,4 +329,5 @@ validation:
   n_trials: 20 # scenes per candidate
   seed: 20261017
   min_success_rate: 0.8 # entries below this are dropped from the library
-  n_processes: 8
+  # `n_processes` moved to the top of this file: it is a machine property shared
+  # with step 6, not a validation parameter, and two copies would drift.

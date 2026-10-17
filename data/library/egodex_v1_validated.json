@@ -4,699 +4,1060 @@
   "version": 1,
   "orientation": "top_down",
   "validated": true,
-  "n_candidates": 62,
-  "n_kept": 20,
+  "n_candidates": 99,
+  "n_kept": 9,
   "min_success_rate": 0.8,
   "seed": 20261017,
   "scores": [
     {
-      "id": "egodex_6",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
+      "id": "egodex_6_0",
+      "n_trials": 20,
+      "n_success": 11,
+      "success_rate": 0.55,
       "failures": {
-        "unsafe_trajectory": 1
+        "unsafe_trajectory": 2,
+        "cube_not_in_bin": 7
       }
     },
     {
-      "id": "egodex_66",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_148",
-      "n_trials": 8,
-      "n_success": 5,
-      "success_rate": 0.625,
-      "failures": {
-        "cube_not_in_bin": 1,
-        "no_feasible_yaw": 1,
-        "unsafe_trajectory": 1
-      }
-    },
-    {
-      "id": "egodex_81",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_58",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_143",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10002",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 7,
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10043",
-      "n_trials": 8,
-      "n_success": 3,
-      "success_rate": 0.375,
-      "failures": {
-        "cube_not_in_bin": 5
-      }
-    },
-    {
-      "id": "egodex_253",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10049",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_63",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
-      "failures": {
-        "cube_not_in_bin": 1,
-        "unsafe_trajectory": 1
-      }
-    },
-    {
-      "id": "egodex_171",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10073",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "no_feasible_yaw": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10047",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10087",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10071",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
-      "failures": {
-        "no_feasible_yaw": 1,
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_261",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_264",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10130",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_201",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10098",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10082",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10173",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10095",
-      "n_trials": 8,
-      "n_success": 1,
-      "success_rate": 0.125,
-      "failures": {
-        "ik_error": 1,
-        "cube_not_in_bin": 5,
-        "unsafe_trajectory": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10209",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10094",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10235",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_124",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10250",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 6,
-        "bridge_unsafe": 2
-      }
-    },
-    {
-      "id": "egodex_p2_10266",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
-      "failures": {
-        "no_feasible_yaw": 1,
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10295",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10254",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10314",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10240",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
-      "failures": {
-        "cube_not_in_bin": 1,
-        "bridge_unsafe": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10362",
-      "n_trials": 8,
-      "n_success": 1,
-      "success_rate": 0.125,
-      "failures": {
-        "cube_not_in_bin": 5,
-        "bridge_unsafe": 2
-      }
-    },
-    {
-      "id": "egodex_p2_10188",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10282",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10447",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "ik_error": 2,
-        "unsafe_trajectory": 6
-      }
-    },
-    {
-      "id": "egodex_p2_10450",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10309",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10382",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
-      "failures": {
-        "cube_not_in_bin": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10415",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10508",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "cube_not_in_bin": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10474",
-      "n_trials": 8,
-      "n_success": 5,
-      "success_rate": 0.625,
-      "failures": {
-        "cube_not_in_bin": 2,
-        "no_feasible_yaw": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10534",
-      "n_trials": 8,
-      "n_success": 5,
-      "success_rate": 0.625,
-      "failures": {
-        "cube_not_in_bin": 2,
-        "unsafe_trajectory": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10448",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 7,
-        "no_feasible_yaw": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10219",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10556",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10318",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
+      "id": "egodex_41_0",
+      "n_trials": 20,
+      "n_success": 12,
+      "success_rate": 0.6,
       "failures": {
         "cube_not_in_bin": 7,
-        "unsafe_trajectory": 1
-      }
-    },
-    {
-      "id": "egodex_p2_10573",
-      "n_trials": 8,
-      "n_success": 8,
-      "success_rate": 1.0,
-      "failures": {}
-    },
-    {
-      "id": "egodex_p2_10488",
-      "n_trials": 8,
-      "n_success": 2,
-      "success_rate": 0.25,
-      "failures": {
-        "cube_not_in_bin": 6
-      }
-    },
-    {
-      "id": "egodex_p2_10627",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10612",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
-      "failures": {
-        "unsafe_trajectory": 8
-      }
-    },
-    {
-      "id": "egodex_p2_10640",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
-      "failures": {
-        "no_feasible_yaw": 1,
         "bridge_unsafe": 1
       }
     },
     {
-      "id": "egodex_p2_10370",
-      "n_trials": 8,
-      "n_success": 4,
-      "success_rate": 0.5,
+      "id": "egodex_26_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 17,
+        "unsafe_trajectory": 3
+      }
+    },
+    {
+      "id": "egodex_14_1",
+      "n_trials": 20,
+      "n_success": 16,
+      "success_rate": 0.8,
+      "failures": {
+        "bridge_unsafe": 2,
+        "cube_not_in_bin": 2
+      }
+    },
+    {
+      "id": "egodex_65_1",
+      "n_trials": 20,
+      "n_success": 9,
+      "success_rate": 0.45,
+      "failures": {
+        "cube_not_in_bin": 9,
+        "bridge_unsafe": 2
+      }
+    },
+    {
+      "id": "egodex_66_0",
+      "n_trials": 20,
+      "n_success": 13,
+      "success_rate": 0.65,
+      "failures": {
+        "cube_not_in_bin": 7
+      }
+    },
+    {
+      "id": "egodex_58_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 17,
+        "bridge_unsafe": 2,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_81_0",
+      "n_trials": 20,
+      "n_success": 16,
+      "success_rate": 0.8,
       "failures": {
         "cube_not_in_bin": 4
       }
     },
     {
-      "id": "egodex_p2_10702",
-      "n_trials": 8,
-      "n_success": 0,
-      "success_rate": 0.0,
+      "id": "egodex_77_1",
+      "n_trials": 20,
+      "n_success": 7,
+      "success_rate": 0.35,
       "failures": {
-        "unsafe_trajectory": 8
+        "unsafe_trajectory": 10,
+        "cube_not_in_bin": 3
       }
     },
     {
-      "id": "egodex_p2_10712",
-      "n_trials": 8,
-      "n_success": 6,
-      "success_rate": 0.75,
+      "id": "egodex_155_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
       "failures": {
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_143_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 19,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_166_1",
+      "n_trials": 20,
+      "n_success": 17,
+      "success_rate": 0.85,
+      "failures": {
+        "cube_not_in_bin": 3
+      }
+    },
+    {
+      "id": "egodex_230_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "no_feasible_yaw": 12,
+        "cube_not_in_bin": 8
+      }
+    },
+    {
+      "id": "egodex_177_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 17,
+        "no_feasible_yaw": 1,
+        "bridge_unsafe": 1,
+        "unsafe_trajectory": 1
+      }
+    },
+    {
+      "id": "egodex_201_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_230_1",
+      "n_trials": 20,
+      "n_success": 6,
+      "success_rate": 0.3,
+      "failures": {
+        "unsafe_trajectory": 10,
+        "cube_not_in_bin": 4
+      }
+    },
+    {
+      "id": "egodex_237_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 19,
+        "unsafe_trajectory": 1
+      }
+    },
+    {
+      "id": "egodex_p2_1011_0",
+      "n_trials": 20,
+      "n_success": 13,
+      "success_rate": 0.65,
+      "failures": {
+        "unsafe_trajectory": 1,
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_p2_1013_16",
+      "n_trials": 20,
+      "n_success": 7,
+      "success_rate": 0.35,
+      "failures": {
+        "cube_not_in_bin": 13
+      }
+    },
+    {
+      "id": "egodex_266_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "no_feasible_yaw": 10,
+        "cube_not_in_bin": 10
+      }
+    },
+    {
+      "id": "egodex_264_0",
+      "n_trials": 20,
+      "n_success": 17,
+      "success_rate": 0.85,
+      "failures": {
+        "bridge_unsafe": 1,
         "cube_not_in_bin": 2
       }
     },
     {
-      "id": "egodex_p2_10682",
-      "n_trials": 8,
-      "n_success": 3,
-      "success_rate": 0.375,
+      "id": "egodex_252_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
       "failures": {
+        "unsafe_trajectory": 16,
+        "no_feasible_yaw": 4
+      }
+    },
+    {
+      "id": "egodex_p2_1029_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 18,
+        "unsafe_trajectory": 1,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_1063_2",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10035_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10043_0",
+      "n_trials": 20,
+      "n_success": 8,
+      "success_rate": 0.4,
+      "failures": {
+        "cube_not_in_bin": 12
+      }
+    },
+    {
+      "id": "egodex_p2_10028_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 19,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10002_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 15,
+        "cube_not_in_bin": 2,
+        "no_feasible_yaw": 3
+      }
+    },
+    {
+      "id": "egodex_p2_10047_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_p2_1013_19",
+      "n_trials": 20,
+      "n_success": 5,
+      "success_rate": 0.25,
+      "failures": {
+        "cube_not_in_bin": 9,
+        "unsafe_trajectory": 2,
+        "no_feasible_yaw": 4
+      }
+    },
+    {
+      "id": "egodex_p2_10079_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10065_1",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_1013_23",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 18,
+        "bridge_unsafe": 1,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10078_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 14,
+        "no_feasible_yaw": 5,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10082_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10087_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 3,
+        "bridge_unsafe": 1,
+        "cube_above_rim": 1,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10098_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 4,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10094_0",
+      "n_trials": 20,
+      "n_success": 16,
+      "success_rate": 0.8,
+      "failures": {
+        "bridge_unsafe": 1,
+        "cube_not_in_bin": 2,
+        "unsafe_trajectory": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10071_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 3,
+        "bridge_unsafe": 1,
+        "no_feasible_yaw": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10109_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "no_feasible_yaw": 10,
+        "cube_not_in_bin": 10
+      }
+    },
+    {
+      "id": "egodex_p2_10149_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10095_0",
+      "n_trials": 20,
+      "n_success": 1,
+      "success_rate": 0.05,
+      "failures": {
+        "cube_not_in_bin": 17,
+        "unsafe_trajectory": 1,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10142_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_p2_10152_0",
+      "n_trials": 20,
+      "n_success": 13,
+      "success_rate": 0.65,
+      "failures": {
+        "cube_not_in_bin": 5,
+        "bridge_unsafe": 1,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10164_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 19,
+        "cube_not_in_bin": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10173_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10151_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 19,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10199_2",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10188_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 4,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10199_5",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "bridge_unsafe": 2,
+        "cube_not_in_bin": 13,
+        "no_feasible_yaw": 2,
+        "unsafe_trajectory": 3
+      }
+    },
+    {
+      "id": "egodex_p2_10199_7",
+      "n_trials": 20,
+      "n_success": 7,
+      "success_rate": 0.35,
+      "failures": {
+        "cube_not_in_bin": 12,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10215_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 19,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10227_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 15,
         "no_feasible_yaw": 5
       }
     },
     {
-      "id": "egodex_p2_10537",
-      "n_trials": 8,
-      "n_success": 6,
+      "id": "egodex_p2_10235_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10219_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 18,
+        "bridge_unsafe": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10240_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 3,
+        "no_feasible_yaw": 2,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10248_1",
+      "n_trials": 20,
+      "n_success": 15,
       "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_10241_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 19,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10312_1",
+      "n_trials": 20,
+      "n_success": 13,
+      "success_rate": 0.65,
+      "failures": {
+        "cube_not_in_bin": 7
+      }
+    },
+    {
+      "id": "egodex_p2_10254_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_10244_2",
+      "n_trials": 20,
+      "n_success": 6,
+      "success_rate": 0.3,
+      "failures": {
+        "cube_not_in_bin": 13,
+        "unsafe_trajectory": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10309_0",
+      "n_trials": 20,
+      "n_success": 16,
+      "success_rate": 0.8,
+      "failures": {
+        "cube_not_in_bin": 3,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10343_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 17,
+        "bridge_unsafe": 2,
+        "cube_not_in_bin": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10362_0",
+      "n_trials": 20,
+      "n_success": 2,
+      "success_rate": 0.1,
+      "failures": {
+        "cube_not_in_bin": 9,
+        "bridge_unsafe": 7,
+        "no_feasible_yaw": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10318_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 12,
+        "unsafe_trajectory": 7,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10402_1",
+      "n_trials": 20,
+      "n_success": 11,
+      "success_rate": 0.55,
+      "failures": {
+        "cube_not_in_bin": 9
+      }
+    },
+    {
+      "id": "egodex_p2_10370_0",
+      "n_trials": 20,
+      "n_success": 6,
+      "success_rate": 0.3,
+      "failures": {
+        "cube_not_in_bin": 14
+      }
+    },
+    {
+      "id": "egodex_p2_10382_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 2,
+        "bridge_unsafe": 2,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10450_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_10447_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 18,
+        "no_feasible_yaw": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10415_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 19,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10478_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 3,
+        "no_feasible_yaw": 1,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10474_0",
+      "n_trials": 20,
+      "n_success": 8,
+      "success_rate": 0.4,
+      "failures": {
+        "no_feasible_yaw": 9,
+        "cube_not_in_bin": 3
+      }
+    },
+    {
+      "id": "egodex_p2_10448_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 18,
+        "no_feasible_yaw": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10481_1",
+      "n_trials": 20,
+      "n_success": 1,
+      "success_rate": 0.05,
+      "failures": {
+        "no_feasible_yaw": 15,
+        "cube_not_in_bin": 4
+      }
+    },
+    {
+      "id": "egodex_p2_10508_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 19,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10481_20",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 4,
+        "no_feasible_yaw": 16
+      }
+    },
+    {
+      "id": "egodex_p2_10485_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 17,
+        "unsafe_trajectory": 2,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10488_0",
+      "n_trials": 20,
+      "n_success": 2,
+      "success_rate": 0.1,
+      "failures": {
+        "cube_not_in_bin": 16,
+        "no_feasible_yaw": 1,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10543_0",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "unsafe_trajectory": 1,
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_10534_0",
+      "n_trials": 20,
+      "n_success": 9,
+      "success_rate": 0.45,
+      "failures": {
+        "cube_not_in_bin": 5,
+        "unsafe_trajectory": 5,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10539_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10573_0",
+      "n_trials": 20,
+      "n_success": 17,
+      "success_rate": 0.85,
+      "failures": {
+        "cube_not_in_bin": 2,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10556_0",
+      "n_trials": 20,
+      "n_success": 17,
+      "success_rate": 0.85,
+      "failures": {
+        "unsafe_trajectory": 1,
+        "cube_not_in_bin": 2
+      }
+    },
+    {
+      "id": "egodex_p2_10609_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10577_0",
+      "n_trials": 20,
+      "n_success": 10,
+      "success_rate": 0.5,
+      "failures": {
+        "bridge_unsafe": 5,
+        "cube_not_in_bin": 1,
+        "no_feasible_yaw": 4
+      }
+    },
+    {
+      "id": "egodex_p2_10561_0",
+      "n_trials": 20,
+      "n_success": 15,
+      "success_rate": 0.75,
+      "failures": {
+        "cube_not_in_bin": 5
+      }
+    },
+    {
+      "id": "egodex_p2_10612_0",
+      "n_trials": 20,
+      "n_success": 1,
+      "success_rate": 0.05,
+      "failures": {
+        "unsafe_trajectory": 17,
+        "cube_not_in_bin": 1,
+        "no_feasible_yaw": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10627_0",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "unsafe_trajectory": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10617_1",
+      "n_trials": 20,
+      "n_success": 18,
+      "success_rate": 0.9,
       "failures": {
         "cube_not_in_bin": 2
       }
     },
     {
-      "id": "egodex_p2_10701",
-      "n_trials": 8,
-      "n_success": 4,
+      "id": "egodex_p2_10640_0",
+      "n_trials": 20,
+      "n_success": 10,
       "success_rate": 0.5,
       "failures": {
-        "cube_above_rim": 3,
-        "cube_not_in_bin": 1
+        "bridge_unsafe": 4,
+        "cube_not_in_bin": 3,
+        "no_feasible_yaw": 3
       }
     },
     {
-      "id": "egodex_p2_10539",
-      "n_trials": 8,
+      "id": "egodex_p2_10673_1",
+      "n_trials": 20,
+      "n_success": 14,
+      "success_rate": 0.7,
+      "failures": {
+        "cube_not_in_bin": 6
+      }
+    },
+    {
+      "id": "egodex_p2_10702_0",
+      "n_trials": 20,
       "n_success": 0,
       "success_rate": 0.0,
       "failures": {
-        "unsafe_trajectory": 8
+        "unsafe_trajectory": 20
       }
     },
     {
-      "id": "egodex_p2_10561",
-      "n_trials": 8,
-      "n_success": 7,
-      "success_rate": 0.875,
+      "id": "egodex_p2_10701_0",
+      "n_trials": 20,
+      "n_success": 9,
+      "success_rate": 0.45,
       "failures": {
-        "cube_not_in_bin": 1
+        "cube_not_in_bin": 7,
+        "cube_above_rim": 4
+      }
+    },
+    {
+      "id": "egodex_p2_10682_0",
+      "n_trials": 20,
+      "n_success": 7,
+      "success_rate": 0.35,
+      "failures": {
+        "no_feasible_yaw": 10,
+        "cube_not_in_bin": 3
+      }
+    },
+    {
+      "id": "egodex_p2_10666_1",
+      "n_trials": 20,
+      "n_success": 0,
+      "success_rate": 0.0,
+      "failures": {
+        "cube_not_in_bin": 20
+      }
+    },
+    {
+      "id": "egodex_p2_10705_1",
+      "n_trials": 20,
+      "n_success": 12,
+      "success_rate": 0.6,
+      "failures": {
+        "cube_not_in_bin": 8
+      }
+    },
+    {
+      "id": "egodex_p2_10712_0",
+      "n_trials": 20,
+      "n_success": 11,
+      "success_rate": 0.55,
+      "failures": {
+        "cube_not_in_bin": 8,
+        "bridge_unsafe": 1
+      }
+    },
+    {
+      "id": "egodex_p2_10705_0",
+      "n_trials": 20,
+      "n_success": 8,
+      "success_rate": 0.4,
+      "failures": {
+        "cube_not_in_bin": 12
       }
     }
   ],
   "entries": [
     {
-      "id": "egodex_6",
+      "id": "egodex_14_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/6.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/14.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          29
+          14
         ],
         "transport": [
-          29,
-          81
+          14,
+          54
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.04730212658643723,
-            0.5922222375869751,
-            0.9928666579723359
+            -0.09987535908818246,
+            0.8249601662158966,
+            0.80935178399086
           ],
           "quat_wxyz": [
-            0.36498235457206435,
+            0.35866109734569135,
             -0.0,
             -0.0,
-            -0.9310144364353498
+            -0.933467844786731
           ]
         },
         "T_demo_release": {
           "pos": [
-            0.06057556226849557,
-            0.570871241092682,
-            0.9945645415782929
+            -0.12781123653054238,
+            0.908797129392624,
+            0.8587105906009674
           ],
           "quat_wxyz": [
-            0.366210950961664,
+            0.49486217165466134,
             -0.0,
             -0.0,
-            -0.9305318583454054
+            -0.8689714788560281
           ]
         }
       },
       "index": {
-        "dist_xy": 0.10997027236476689,
-        "dz": 0.001697883605957018
+        "dist_xy": 0.08836882732712084,
+        "dz": 0.049358806610107386
       },
-      "n_samples": 122,
-      "conf_min": 0.45941224694252014,
+      "n_samples": 77,
+      "conf_min": 0.6060992360115052,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.8,
         "seed": 20261017,
         "failures": {
-          "unsafe_trajectory": 1
+          "bridge_unsafe": 2,
+          "cube_not_in_bin": 2
         }
       }
     },
     {
-      "id": "egodex_66",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/66.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          19
-        ],
-        "transport": [
-          19,
-          52
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            0.19360927134752276,
-            0.40510836362838754,
-            1.2880554628372192
-          ],
-          "quat_wxyz": [
-            0.1930361859929439,
-            -0.0,
-            -0.0,
-            -0.981191638212076
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            0.06392135433852673,
-            0.24310183823108672,
-            1.3145934820175174
-          ],
-          "quat_wxyz": [
-            0.48616297379285256,
-            -0.0,
-            -0.0,
-            -0.8738681610591442
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.20752125213924116,
-        "dz": 0.02653801918029819
-      },
-      "n_samples": 81,
-      "conf_min": 0.3107724189758301,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_81",
+      "id": "egodex_81_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/81.hdf5",
       "arm": "right",
@@ -744,139 +1105,79 @@
         "dist_xy": 0.10493378172725056,
         "dz": 0.10228618502616871
       },
-      "n_samples": 134,
-      "conf_min": 0.67868572473526,
+      "n_samples": 121,
+      "conf_min": 0.7087685704231262,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.8,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "cube_not_in_bin": 4
         }
       }
     },
     {
-      "id": "egodex_171",
+      "id": "egodex_166_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/171.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/166.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          34
+          15
         ],
         "transport": [
-          34,
-          59
+          15,
+          66
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.03873422402888538,
-            0.436663858294487,
-            0.8097453236579895
+            -0.21824039608240128,
+            0.6080225050449372,
+            0.7998634815216065
           ],
           "quat_wxyz": [
-            0.5733565676946379,
+            0.6985194022843395,
             -0.0,
             -0.0,
-            -0.8193059540131659
+            -0.7155911155347928
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.18799235343933107,
-            0.4757693445682526,
-            0.8974306178092957
+            -0.2481185492873192,
+            0.8659145104885102,
+            0.8168177068233491
           ],
           "quat_wxyz": [
-            0.5117594757870055,
+            0.5260558574515715,
             -0.0,
             -0.0,
-            -0.8591287673813566
+            -0.8504500190139878
           ]
         }
       },
       "index": {
-        "dist_xy": 0.15429591132565057,
-        "dz": 0.08768529415130621
+        "dist_xy": 0.25961700736015825,
+        "dz": 0.01695422530174262
       },
-      "n_samples": 89,
-      "conf_min": 0.3101607859134674,
+      "n_samples": 92,
+      "conf_min": 0.3995313346385956,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.85,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "cube_not_in_bin": 3
         }
       }
     },
     {
-      "id": "egodex_201",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/201.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          68
-        ],
-        "transport": [
-          68,
-          128
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            0.07033354178071023,
-            0.3365807312726975,
-            0.8254626190662386
-          ],
-          "quat_wxyz": [
-            0.24085928017973554,
-            -0.0,
-            -0.0,
-            -0.9705600481944946
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            0.15413001000881196,
-            0.4814541083574295,
-            0.9011325907707215
-          ],
-          "quat_wxyz": [
-            0.18127221393927556,
-            -0.0,
-            -0.0,
-            -0.9834329587997106
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.1673623119923904,
-        "dz": 0.07566997170448286
-      },
-      "n_samples": 156,
-      "conf_min": 0.5965960621833801,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_264",
+      "id": "egodex_264_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/264.hdf5",
       "arm": "right",
@@ -927,194 +1228,17 @@
       "n_samples": 101,
       "conf_min": 0.6244176626205444,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
-        "seed": 20261017,
-        "failures": {}
-      }
-    },
-    {
-      "id": "egodex_p2_10047",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10047.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          58
-        ],
-        "transport": [
-          58,
-          117
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.6534229195117951,
-            0.6641238451004029,
-            0.8554392993450165
-          ],
-          "quat_wxyz": [
-            0.7359526351860104,
-            0.0,
-            0.0,
-            -0.6770330263456629
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.7665722084045411,
-            0.4633202427625657,
-            0.868906799554825
-          ],
-          "quat_wxyz": [
-            0.8589942486715256,
-            0.0,
-            0.0,
-            -0.5119852348937821
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.23048828232425686,
-        "dz": 0.01346750020980847
-      },
-      "n_samples": 144,
-      "conf_min": 0.6748544573783875,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.85,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "bridge_unsafe": 1,
+          "cube_not_in_bin": 2
         }
       }
     },
     {
-      "id": "egodex_p2_10073",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10073.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          8
-        ],
-        "transport": [
-          8,
-          34
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.08599556386470796,
-            0.6785490036010743,
-            0.8177810716629029
-          ],
-          "quat_wxyz": [
-            0.6279358302300486,
-            -0.0,
-            -0.0,
-            -0.7782651174974371
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.11914149791002274,
-            0.9162366116046907,
-            0.8120480275154114
-          ],
-          "quat_wxyz": [
-            0.3803017657844128,
-            -0.0,
-            -0.0,
-            -0.9248624583911155
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.2399876078930268,
-        "dz": -0.0057330441474915395
-      },
-      "n_samples": 54,
-      "conf_min": 0.48741480708122253,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "no_feasible_yaw": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_p2_10087",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10087.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          33
-        ],
-        "transport": [
-          33,
-          63
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            0.28781470239162443,
-            0.6185997688770295,
-            0.7877071654796601
-          ],
-          "quat_wxyz": [
-            0.13711838838628143,
-            -0.0,
-            -0.0,
-            -0.9905546666218623
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            0.1904611486196518,
-            0.6524816751480103,
-            0.8883735692501069
-          ],
-          "quat_wxyz": [
-            0.20787367006446852,
-            -0.0,
-            -0.0,
-            -0.9781556815220819
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.10308102640441592,
-        "dz": 0.10066640377044678
-      },
-      "n_samples": 87,
-      "conf_min": 0.6407768130302429,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_p2_10094",
+      "id": "egodex_p2_10094_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10094.hdf5",
       "arm": "right",
@@ -1163,252 +1287,20 @@
         "dz": 0.056156387329101554
       },
       "n_samples": 58,
-      "conf_min": 0.3909629285335541,
+      "conf_min": 0.4012219369411468,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
-        "seed": 20261017,
-        "failures": {}
-      }
-    },
-    {
-      "id": "egodex_p2_10098",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10098.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          19
-        ],
-        "transport": [
-          19,
-          68
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.04797432936728001,
-            1.1158725929260254,
-            0.8141421318054199
-          ],
-          "quat_wxyz": [
-            0.22084529927518814,
-            -0.0,
-            -0.0,
-            -0.9753088504612539
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.25864139199256897,
-            1.016975849866867,
-            0.8291911697387695
-          ],
-          "quat_wxyz": [
-            0.5452726929502693,
-            -0.0,
-            -0.0,
-            -0.8382587251694796
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.23272554020321146,
-        "dz": 0.015049037933349552
-      },
-      "n_samples": 87,
-      "conf_min": 0.4974221885204315,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.8,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "bridge_unsafe": 1,
+          "cube_not_in_bin": 2,
+          "unsafe_trajectory": 1
         }
       }
     },
     {
-      "id": "egodex_p2_10188",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10188.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          32
-        ],
-        "transport": [
-          32,
-          60
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.26245751857757565,
-            0.8801652050018309,
-            0.8059531629085541
-          ],
-          "quat_wxyz": [
-            0.5332683117921424,
-            -0.0,
-            -0.0,
-            -0.8459461611937007
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.25019826829433445,
-            1.0333974564075472,
-            0.8401647913455964
-          ],
-          "quat_wxyz": [
-            0.4414229448479344,
-            -0.0,
-            -0.0,
-            -0.897299160682644
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.1537218660060168,
-        "dz": 0.034211628437042285
-      },
-      "n_samples": 112,
-      "conf_min": 0.5265560746192932,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_p2_10254",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10254.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          24
-        ],
-        "transport": [
-          24,
-          62
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.10076795637607576,
-            0.4016289538145066,
-            0.8132330965995789
-          ],
-          "quat_wxyz": [
-            0.5592676997095624,
-            -0.0,
-            -0.0,
-            -0.8289871169454776
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.3091845846176148,
-            0.3936402541399002,
-            0.8894806599617006
-          ],
-          "quat_wxyz": [
-            0.6325274181553376,
-            -0.0,
-            -0.0,
-            -0.774537968909041
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.20856967720659428,
-        "dz": 0.07624756336212168
-      },
-      "n_samples": 97,
-      "conf_min": 0.458310067653656,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
-        "seed": 20261017,
-        "failures": {}
-      }
-    },
-    {
-      "id": "egodex_p2_10295",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10295.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          9
-        ],
-        "transport": [
-          9,
-          33
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.17222413152456287,
-            0.6946795070171357,
-            0.8214473903179168
-          ],
-          "quat_wxyz": [
-            0.6181480054363654,
-            -0.0,
-            -0.0,
-            -0.7860617300028306
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.0340048423036933,
-            0.8652899622917176,
-            0.8170595109462739
-          ],
-          "quat_wxyz": [
-            0.40331079384523305,
-            -0.0,
-            -0.0,
-            -0.9150630598859992
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.21957344867201617,
-        "dz": -0.0043878793716428666
-      },
-      "n_samples": 54,
-      "conf_min": 0.6098514795303345,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
-        "seed": 20261017,
-        "failures": {}
-      }
-    },
-    {
-      "id": "egodex_p2_10309",
+      "id": "egodex_p2_10309_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10309.hdf5",
       "arm": "right",
@@ -1457,138 +1349,19 @@
         "dz": 0.016860872507095337
       },
       "n_samples": 69,
-      "conf_min": 0.523822009563446,
+      "conf_min": 0.5247230410575867,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.8,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "cube_not_in_bin": 3,
+          "bridge_unsafe": 1
         }
       }
     },
     {
-      "id": "egodex_p2_10382",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10382.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          22
-        ],
-        "transport": [
-          22,
-          60
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.03929701417684555,
-            0.2651668667793274,
-            0.8090140807628632
-          ],
-          "quat_wxyz": [
-            0.6035735761423724,
-            -0.0,
-            -0.0,
-            -0.7973073047343212
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.18051085114479065,
-            0.42168215751647947,
-            0.8898740589618683
-          ],
-          "quat_wxyz": [
-            0.5734305332026102,
-            -0.0,
-            -0.0,
-            -0.8192541874113127
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.2108041365479924,
-        "dz": 0.08085997819900514
-      },
-      "n_samples": 85,
-      "conf_min": 0.37851279973983765,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_p2_10450",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10450.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          15
-        ],
-        "transport": [
-          15,
-          46
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.3109158754348755,
-            0.9337130427360535,
-            0.8218743348121644
-          ],
-          "quat_wxyz": [
-            0.44986246521934614,
-            -0.0,
-            -0.0,
-            -0.8930978459199039
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.17724963545799255,
-            0.8218033421039581,
-            0.8381880223751069
-          ],
-          "quat_wxyz": [
-            0.5078829256266579,
-            -0.0,
-            -0.0,
-            -0.8614261046990082
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.17432855418755375,
-        "dz": 0.01631368756294249
-      },
-      "n_samples": 76,
-      "conf_min": 0.5784027576446533,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
-        "seed": 20261017,
-        "failures": {
-          "cube_not_in_bin": 1
-        }
-      }
-    },
-    {
-      "id": "egodex_p2_10556",
+      "id": "egodex_p2_10556_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10556.hdf5",
       "arm": "right",
@@ -1636,77 +1409,20 @@
         "dist_xy": 0.2360430666328834,
         "dz": -0.00044005870819097126
       },
-      "n_samples": 109,
-      "conf_min": 0.5378120541572571,
+      "n_samples": 77,
+      "conf_min": 0.5390955448150635,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
-        "seed": 20261017,
-        "failures": {}
-      }
-    },
-    {
-      "id": "egodex_p2_10561",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10561.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          25
-        ],
-        "transport": [
-          25,
-          118
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.07131482101976871,
-            0.322024330496788,
-            0.8238026976585389
-          ],
-          "quat_wxyz": [
-            0.6122044876363867,
-            -0.0,
-            -0.0,
-            -0.7906994785111909
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            0.10058117873966688,
-            0.5442255449295044,
-            0.8886444628238679
-          ],
-          "quat_wxyz": [
-            0.2581180587148609,
-            -0.0,
-            -0.0,
-            -0.9661133824584316
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.2809299101709711,
-        "dz": 0.06484176516532902
-      },
-      "n_samples": 141,
-      "conf_min": 0.31519681215286255,
-      "sim": {
-        "n_trials": 8,
-        "success_rate": 0.875,
+        "n_trials": 20,
+        "success_rate": 0.85,
         "seed": 20261017,
         "failures": {
-          "cube_not_in_bin": 1
+          "unsafe_trajectory": 1,
+          "cube_not_in_bin": 2
         }
       }
     },
     {
-      "id": "egodex_p2_10573",
+      "id": "egodex_p2_10573_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10573.hdf5",
       "arm": "right",
@@ -1754,13 +1470,76 @@
         "dist_xy": 0.21032808224517474,
         "dz": 0.023515163660049243
       },
-      "n_samples": 87,
-      "conf_min": 0.3121696710586548,
+      "n_samples": 83,
+      "conf_min": 0.31297616958618163,
       "sim": {
-        "n_trials": 8,
-        "success_rate": 1.0,
+        "n_trials": 20,
+        "success_rate": 0.85,
         "seed": 20261017,
-        "failures": {}
+        "failures": {
+          "cube_not_in_bin": 2,
+          "no_feasible_yaw": 1
+        }
+      }
+    },
+    {
+      "id": "egodex_p2_10617_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10617.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          13
+        ],
+        "transport": [
+          13,
+          37
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.051162786036729815,
+            0.29380590021610264,
+            1.2248100876808168
+          ],
+          "quat_wxyz": [
+            0.4607527717798976,
+            -0.0,
+            -0.0,
+            -0.8875285253427868
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.05238862963393333,
+            0.40124690532684326,
+            1.2853728413581846
+          ],
+          "quat_wxyz": [
+            0.4412214892221158,
+            -0.0,
+            -0.0,
+            -0.8973982379348748
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.14921952039396405,
+        "dz": 0.06056275367736785
+      },
+      "n_samples": 63,
+      "conf_min": 0.4839039742946625,
+      "sim": {
+        "n_trials": 20,
+        "success_rate": 0.9,
+        "seed": 20261017,
+        "failures": {
+          "cube_not_in_bin": 2
+        }
       }
     }
   ]

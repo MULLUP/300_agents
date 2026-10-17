@@ -600,6 +600,14 @@ def fit_yaw_offsets(
     most 4 + 8 screens per demo instead of 32, and the approach is the cheaper
     segment to reject on.
 
+    **The winner is then re-screened at full density.** The staged search runs at
+    `PLAN_COARSE_FACTOR` to stay affordable, but execution runs at 50 Hz, so a
+    branch flip between two coarse samples passes the search and breaks at run
+    time — `unsafe_trajectory` was the largest single failure mode in step 9
+    (128 of 496 trials) and this is its known cause. The confirmation costs one
+    path, not twelve, and a candidate that fails it does not abort the search:
+    the next offset pair gets its turn.
+
     Returns `(pose_path, "")` on success, or `(None, reason)` with the last
     failure so `sim/feasibility.py` can still report a category.
     """
@@ -615,9 +623,13 @@ def fit_yaw_offsets(
         for t in TRANSPORT_YAW_OFFSETS:
             full = apply_yaw_offsets(plan, float(a), float(a + t))
             ok, why = screen_pose_path(solver, full, side, rate_hz)
+            if not ok:
+                reason = why
+                continue
+            ok, why = screen_pose_path(solver, full, side, rate_hz, stride=1)
             if ok:
                 return full, ""
-            reason = why
+            reason = f"coarse_screen_optimistic ({why})"
     return None, reason
 
 
@@ -627,6 +639,7 @@ def screen_pose_path(
     side: str,
     rate_hz: float,
     free_yaw: bool | np.ndarray = False,
+    stride: int = PLAN_COARSE_FACTOR,
 ) -> tuple[bool, str]:
     """Is a dense tcp path solvable, smooth, and clear of the table?
 
@@ -637,15 +650,22 @@ def screen_pose_path(
 
     `free_yaw` is passed through to the solver and may be a per-sample mask; see
     :func:`yaw_locked_mask`.
+
+    `stride` sub-samples the path. The default screens every 5th sample, which is
+    what makes a 12-candidate yaw search affordable; `stride=1` screens at the
+    density execution actually runs at. `PLAN_MAX_JOINT_STEP` is a *branch flip*
+    detector (~2 rad) rather than the section 10 per-cycle limit (0.05 rad), so
+    the same threshold is meaningful at either stride — it just gets stricter
+    about where a flip can hide.
     """
     min_z = float(config.skills()["library"]["min_tcp_z"])
     z = pose_path[:, 2, 3]
     if z.min() < min_z:
         return False, f"tcp_below_table (min z {z.min():.3f} < {min_z})"
 
-    coarse = pose_path[:: PLAN_COARSE_FACTOR]
+    coarse = pose_path[::stride]
     mask = np.broadcast_to(np.asarray(free_yaw, dtype=bool), (len(pose_path),))
-    coarse_mask = mask[::PLAN_COARSE_FACTOR]
+    coarse_mask = mask[::stride]
     if len(coarse) < 2:
         coarse, coarse_mask = pose_path, mask
     first = solver.solve_cold(coarse[0], side, free_yaw=bool(coarse_mask[0]))
@@ -660,7 +680,8 @@ def screen_pose_path(
 
     steps = np.abs(np.diff(q_traj[:, solver.index.arm_slots[side]], axis=0))
     if steps.size and steps.max() > PLAN_MAX_JOINT_STEP:
-        return False, f"branch_flip ({steps.max():.2f} rad over one coarse step)"
+        unit = "coarse step" if stride > 1 else "cycle"
+        return False, f"branch_flip ({steps.max():.2f} rad over one {unit})"
     return True, ""
 
 

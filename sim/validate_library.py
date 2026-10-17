@@ -56,8 +56,15 @@ def scene_draw(n_trials: int, seed: int) -> list[tuple[np.ndarray, float]]:
 
 
 def _init_worker() -> None:
-    """One robot and one solver per process — both are expensive to build."""
-    _WORKER["robot"] = SimRobot()
+    """One robot and one solver per process — both are expensive to build.
+
+    `render=False`: success is judged on the cube's true state
+    (`conventions.md` section 11), so nothing here draws a pixel, and the full
+    visual model costs ~1.65 GB of RSS per worker against ~0.26 GB for the
+    headless one. At 16 workers that is the difference between fitting in
+    memory and being OOM-killed.
+    """
+    _WORKER["robot"] = SimRobot(render=False)
     _WORKER["solver"] = IKSolver()
 
 
@@ -74,24 +81,43 @@ def _reason_key(reason: str) -> str:
     return reason.split(" ")[0].split("(")[0]
 
 
-def score_entry(entry: dict, scenes: list, side: str) -> dict:
-    """Replay one candidate over every scene and count successes."""
-    robot, solver = _WORKER["robot"], _WORKER["solver"]
-    demo = demos.load_source_demo(config.path("data", "retargeted", f"{entry['id']}.npz"))
+def _worker_demo(entry_id: str):
+    """The loaded source demo for `entry_id`, cached per process.
 
-    n_ok = 0
-    failures: Counter = Counter()
-    for xy, yaw in scenes:
-        res = run_demo(robot, demo, xy, yaw, side, solver)
-        if res:
-            n_ok += 1
-        else:
-            failures[_reason_key(res.reason)] += 1
+    Parallelising over trials means one demo is used by many tasks in the same
+    worker, and `load_source_demo` re-reads the npz and redoes the P8 flattening
+    every call.
+    """
+    cache = _WORKER.setdefault("demos", {})
+    if entry_id not in cache:
+        cache[entry_id] = demos.load_source_demo(
+            config.path("data", "retargeted", f"{entry_id}.npz")
+        )
+    return cache[entry_id]
+
+
+def score_trial(task: tuple[str, np.ndarray, float], side: str) -> tuple[str, bool, str]:
+    """Replay one candidate in one scene.
+
+    One trial, not one candidate, is the unit of work: candidate cost varies by
+    more than an order of magnitude (a demo that fails its yaw search is fast, a
+    demo that succeeds 20 times is not), so parallelising over candidates leaves
+    workers idle behind whichever one drew the slow entries.
+    """
+    entry_id, xy, yaw = task
+    res = run_demo(_WORKER["robot"], _worker_demo(entry_id), xy, yaw, side, _WORKER["solver"])
+    return entry_id, bool(res), _reason_key(res.reason)
+
+
+def tally(entry_id: str, rows: list[tuple[str, bool, str]], n_trials: int) -> dict:
+    """Collapse one candidate's per-trial outcomes into its `sim` block."""
+    n_ok = sum(ok for _, ok, _ in rows)
+    failures: Counter = Counter(reason for _, ok, reason in rows if not ok)
     return {
-        "id": entry["id"],
-        "n_trials": len(scenes),
+        "id": entry_id,
+        "n_trials": n_trials,
         "n_success": n_ok,
-        "success_rate": n_ok / max(len(scenes), 1),
+        "success_rate": n_ok / max(n_trials, 1),
         "failures": dict(failures),
     }
 
@@ -108,7 +134,7 @@ def main() -> int:
 
     vcfg = config.skills()["validation"]
     n_trials = int(vcfg["n_trials"]) if args.trials is None else args.trials
-    n_proc = int(vcfg["n_processes"]) if args.processes is None else args.processes
+    n_proc = int(config.skills()["n_processes"]) if args.processes is None else args.processes
     seed = int(vcfg["seed"])
     threshold = float(vcfg["min_success_rate"])
 
@@ -128,13 +154,26 @@ def main() -> int:
         f"on {n_proc} processes (seed {seed}, threshold {threshold})"
     )
 
-    work = partial(score_entry, scenes=scenes, side=args.side)
-    results = []
+    # One task per (candidate, scene). Every candidate still sees exactly the
+    # same scenes in the same order, so success rates stay comparable; only the
+    # order the work is *dispatched* in changes.
+    tasks = [(entry["id"], xy, yaw) for entry in entries for xy, yaw in scenes]
+    work = partial(score_trial, side=args.side)
+
+    pending: dict[str, list] = {entry["id"]: [] for entry in entries}
+    results, done = [], 0
     with Pool(processes=n_proc, initializer=_init_worker) as pool:
-        for i, row in enumerate(pool.imap_unordered(work, entries)):
+        for entry_id, ok, reason in pool.imap_unordered(work, tasks, chunksize=1):
+            rows = pending[entry_id]
+            rows.append((entry_id, ok, reason))
+            if len(rows) < n_trials:
+                continue
+            # Report a candidate once all of its trials are in.
+            row = tally(entry_id, rows, n_trials)
             results.append(row)
+            done += 1
             print(
-                f"  {i + 1:3d}/{len(entries)} {row['id']:<16s} "
+                f"  {done:3d}/{len(entries)} {row['id']:<16s} "
                 f"{row['n_success']:2d}/{row['n_trials']} "
                 f"({row['success_rate']:.2f}) {row['failures']}",
                 flush=True,

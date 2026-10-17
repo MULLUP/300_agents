@@ -6,7 +6,7 @@
   "validated": false,
   "entries": [
     {
-      "id": "egodex_6",
+      "id": "egodex_6_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/6.hdf5",
       "arm": "right",
@@ -54,12 +54,171 @@
         "dist_xy": 0.10997027236476689,
         "dz": 0.001697883605957018
       },
-      "n_samples": 122,
+      "n_samples": 107,
       "conf_min": 0.45941224694252014,
       "sim": null
     },
     {
-      "id": "egodex_58",
+      "id": "egodex_14_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/14.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          14
+        ],
+        "transport": [
+          14,
+          54
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.09987535908818246,
+            0.8249601662158966,
+            0.80935178399086
+          ],
+          "quat_wxyz": [
+            0.35866109734569135,
+            -0.0,
+            -0.0,
+            -0.933467844786731
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.12781123653054238,
+            0.908797129392624,
+            0.8587105906009674
+          ],
+          "quat_wxyz": [
+            0.49486217165466134,
+            -0.0,
+            -0.0,
+            -0.8689714788560281
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08836882732712084,
+        "dz": 0.049358806610107386
+      },
+      "n_samples": 77,
+      "conf_min": 0.6060992360115052,
+      "sim": null
+    },
+    {
+      "id": "egodex_26_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/26.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          13
+        ],
+        "transport": [
+          13,
+          32
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.08664136081933979,
+            0.38219909369945526,
+            0.8733999514579773
+          ],
+          "quat_wxyz": [
+            0.5951419009740925,
+            -0.0,
+            -0.0,
+            -0.8036206304624984
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.14407640159130097,
+            0.428128663301468,
+            0.9385827267169954
+          ],
+          "quat_wxyz": [
+            0.609817796837013,
+            -0.0,
+            -0.0,
+            -0.7925416422250957
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.07354120798778718,
+        "dz": 0.06518277525901806
+      },
+      "n_samples": 58,
+      "conf_min": 0.3587424159049988,
+      "sim": null
+    },
+    {
+      "id": "egodex_41_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/41.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          14
+        ],
+        "transport": [
+          14,
+          53
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.0029821634299878465,
+            0.47098057270050053,
+            0.8235086143016815
+          ],
+          "quat_wxyz": [
+            0.4636017621908488,
+            -0.0,
+            -0.0,
+            -0.8860436818202247
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.11910992056131363,
+            0.5338729619979858,
+            0.8223767113685609
+          ],
+          "quat_wxyz": [
+            0.41982226878028095,
+            -0.0,
+            -0.0,
+            -0.9076063368201974
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1373387403644196,
+        "dz": -0.0011319029331205988
+      },
+      "n_samples": 79,
+      "conf_min": 0.6378398418426513,
+      "sim": null
+    },
+    {
+      "id": "egodex_58_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/58.hdf5",
       "arm": "right",
@@ -108,64 +267,64 @@
         "dz": 0.06983398795127871
       },
       "n_samples": 80,
-      "conf_min": 0.4774034023284912,
+      "conf_min": 0.47863059043884276,
       "sim": null
     },
     {
-      "id": "egodex_63",
+      "id": "egodex_65_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/63.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/65.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          9
+          81
         ],
         "transport": [
-          9,
-          37
+          81,
+          222
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.2787659972906113,
-            0.7126675307750703,
-            0.8468114483356477
+            0.17834924906492233,
+            0.639524257183075,
+            0.8207774198055268
           ],
           "quat_wxyz": [
-            0.5189485055172275,
+            0.032406329073371175,
             -0.0,
             -0.0,
-            -0.8548055033874291
+            -0.9994747769883883
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.1848126542568207,
-            0.9023830497264862,
-            0.8553317964076996
+            0.016280143931508062,
+            0.5765033721923829,
+            0.8482757556438447
           ],
           "quat_wxyz": [
-            0.2517173371330689,
+            0.34562278620862386,
             -0.0,
             -0.0,
-            -0.9678007967482962
+            -0.9383735341820909
           ]
         }
       },
       "index": {
-        "dist_xy": 0.2117054765428381,
-        "dz": 0.008520348072051931
+        "dist_xy": 0.1738908473260043,
+        "dz": 0.027498335838317955
       },
-      "n_samples": 58,
-      "conf_min": 0.3817592263221741,
+      "n_samples": 248,
+      "conf_min": 0.34792956709861755,
       "sim": null
     },
     {
-      "id": "egodex_66",
+      "id": "egodex_66_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/66.hdf5",
       "arm": "right",
@@ -213,12 +372,65 @@
         "dist_xy": 0.20752125213924116,
         "dz": 0.02653801918029819
       },
-      "n_samples": 81,
-      "conf_min": 0.3107724189758301,
+      "n_samples": 78,
+      "conf_min": 0.31141273975372313,
       "sim": null
     },
     {
-      "id": "egodex_81",
+      "id": "egodex_77_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/77.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          36
+        ],
+        "transport": [
+          36,
+          112
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.1311607673764229,
+            0.6943646967411042,
+            0.7916757047176362
+          ],
+          "quat_wxyz": [
+            0.021083330035035482,
+            -0.0,
+            -0.0,
+            -0.9997777218935386
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.2382733038067818,
+            0.6026165318489075,
+            0.8448260664939881
+          ],
+          "quat_wxyz": [
+            0.025365002124781724,
+            0.0,
+            0.0,
+            0.9996782565741889
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.14103482272698004,
+        "dz": 0.053150361776351907
+      },
+      "n_samples": 138,
+      "conf_min": 0.3315182626247406,
+      "sim": null
+    },
+    {
+      "id": "egodex_81_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/81.hdf5",
       "arm": "right",
@@ -266,65 +478,12 @@
         "dist_xy": 0.10493378172725056,
         "dz": 0.10228618502616871
       },
-      "n_samples": 134,
-      "conf_min": 0.67868572473526,
+      "n_samples": 121,
+      "conf_min": 0.7087685704231262,
       "sim": null
     },
     {
-      "id": "egodex_124",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/124.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          38
-        ],
-        "transport": [
-          38,
-          146
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            0.035519295893609554,
-            0.47862485051155085,
-            0.8380232083797455
-          ],
-          "quat_wxyz": [
-            0.31781605913675137,
-            -0.0,
-            -0.0,
-            -0.9481523888884027
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.002378321380820096,
-            0.6442996835708619,
-            0.8967471611499784
-          ],
-          "quat_wxyz": [
-            0.32484521020873225,
-            -0.0,
-            -0.0,
-            -0.9457671961981154
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.16995405174431624,
-        "dz": 0.0587239527702329
-      },
-      "n_samples": 276,
-      "conf_min": 0.3955897390842438,
-      "sim": null
-    },
-    {
-      "id": "egodex_143",
+      "id": "egodex_143_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/143.hdf5",
       "arm": "right",
@@ -372,118 +531,171 @@
         "dist_xy": 0.1890349251703305,
         "dz": 0.07633676528930655
       },
-      "n_samples": 170,
-      "conf_min": 0.46052616834640503,
+      "n_samples": 169,
+      "conf_min": 0.4625262916088104,
       "sim": null
     },
     {
-      "id": "egodex_148",
+      "id": "egodex_155_0",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/148.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/155.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          19
+          13
         ],
         "transport": [
-          19,
-          77
+          13,
+          46
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.07566496238112448,
-            0.9824885129928589,
-            0.8186215817928315
+            -0.1185414083302021,
+            0.8993991553783417,
+            0.8195689785480501
           ],
           "quat_wxyz": [
-            0.4264708348806787,
+            0.5095275476998914,
             -0.0,
             -0.0,
-            -0.9045013139825596
+            -0.8604543440153782
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.2974589639902115,
-            0.932870352268219,
-            0.8980965578556059
+            -0.25647121489048,
+            0.6993202042579652,
+            0.8474717104434967
           ],
           "quat_wxyz": [
-            0.628423671340792,
-            -0.0,
-            -0.0,
-            -0.7778712549635448
+            0.7639981065836945,
+            0.0,
+            0.0,
+            -0.6452184848069138
           ]
         }
       },
       "index": {
-        "dist_xy": 0.2272763538590583,
-        "dz": 0.07947497606277443
+        "dist_xy": 0.24301485184898824,
+        "dz": 0.027902731895446564
       },
-      "n_samples": 110,
-      "conf_min": 0.3143220841884613,
+      "n_samples": 72,
+      "conf_min": 0.3907090723514557,
       "sim": null
     },
     {
-      "id": "egodex_171",
+      "id": "egodex_166_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/171.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/166.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          34
+          15
         ],
         "transport": [
-          34,
-          59
+          15,
+          66
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.03873422402888538,
-            0.436663858294487,
-            0.8097453236579895
+            -0.21824039608240128,
+            0.6080225050449372,
+            0.7998634815216065
           ],
           "quat_wxyz": [
-            0.5733565676946379,
+            0.6985194022843395,
             -0.0,
             -0.0,
-            -0.8193059540131659
+            -0.7155911155347928
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.18799235343933107,
-            0.4757693445682526,
-            0.8974306178092957
+            -0.2481185492873192,
+            0.8659145104885102,
+            0.8168177068233491
           ],
           "quat_wxyz": [
-            0.5117594757870055,
+            0.5260558574515715,
             -0.0,
             -0.0,
-            -0.8591287673813566
+            -0.8504500190139878
           ]
         }
       },
       "index": {
-        "dist_xy": 0.15429591132565057,
-        "dz": 0.08768529415130621
+        "dist_xy": 0.25961700736015825,
+        "dz": 0.01695422530174262
       },
-      "n_samples": 89,
-      "conf_min": 0.3101607859134674,
+      "n_samples": 92,
+      "conf_min": 0.3995313346385956,
       "sim": null
     },
     {
-      "id": "egodex_201",
+      "id": "egodex_177_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/177.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          6
+        ],
+        "transport": [
+          6,
+          17
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.1413270908594132,
+            0.9398863363265992,
+            0.839095666408539
+          ],
+          "quat_wxyz": [
+            0.5512644955025225,
+            -0.0,
+            -0.0,
+            -0.8343305436086763
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.06130379736423493,
+            1.0041933178901674,
+            0.8709294617176057
+          ],
+          "quat_wxyz": [
+            0.3707800342839236,
+            -0.0,
+            -0.0,
+            -0.9287207148418799
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.10266019374437464,
+        "dz": 0.031833795309066604
+      },
+      "n_samples": 43,
+      "conf_min": 0.4203457832336425,
+      "sim": null
+    },
+    {
+      "id": "egodex_201_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/201.hdf5",
       "arm": "right",
@@ -531,118 +743,224 @@
         "dist_xy": 0.1673623119923904,
         "dz": 0.07566997170448286
       },
-      "n_samples": 156,
+      "n_samples": 154,
       "conf_min": 0.5965960621833801,
       "sim": null
     },
     {
-      "id": "egodex_253",
+      "id": "egodex_230_0",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/253.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/230.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          96
+          5
         ],
         "transport": [
-          96,
-          162
+          5,
+          24
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            0.46282380223274233,
-            0.9161013817787171,
-            0.8555991780757906
+            -0.07082303178030996,
+            0.47537450134754183,
+            1.061368408203125
           ],
           "quat_wxyz": [
-            0.24842188320390912,
+            0.6315902740011438,
             -0.0,
             -0.0,
-            -0.9686519333307622
+            -0.7753023447579405
           ]
         },
         "T_demo_release": {
           "pos": [
-            0.2853629350662232,
-            0.7977126955986023,
-            0.8531401097774505
+            -0.14390955179929735,
+            0.34647205650806434,
+            1.0490405941009522
           ],
           "quat_wxyz": [
-            0.39358470764041315,
+            0.5085956504581305,
             -0.0,
             -0.0,
-            -0.919288354060689
+            -0.861005496112
           ]
         }
       },
       "index": {
-        "dist_xy": 0.21332660497684455,
-        "dz": -0.0024590682983400836
+        "dist_xy": 0.14818056449507938,
+        "dz": -0.012327814102172763
       },
-      "n_samples": 183,
-      "conf_min": 0.5349432826042175,
+      "n_samples": 50,
+      "conf_min": 0.5465614557266235,
       "sim": null
     },
     {
-      "id": "egodex_261",
+      "id": "egodex_230_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/261.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/230.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          58
+          11
         ],
         "transport": [
-          58,
-          122
+          11,
+          51
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.5435069680213929,
-            0.6511183261871338,
-            0.8702520978450776
+            -0.14969155311584476,
+            0.3521291047334671,
+            1.0256335258483886
           ],
           "quat_wxyz": [
-            0.6269332139622595,
+            0.4797444323669792,
             -0.0,
             -0.0,
-            -0.7790730037878041
+            -0.8774082741876127
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.6452656590938568,
-            0.4776302981376648,
-            0.9296843457221984
+            -0.1367842708528042,
+            0.5350762712955475,
+            1.054563159942627
           ],
           "quat_wxyz": [
-            0.8365210080933456,
-            0.0,
-            0.0,
-            -0.5479348528963026
+            0.4279072138142812,
+            -0.0,
+            -0.0,
+            -0.9038226686500507
           ]
         }
       },
       "index": {
-        "dist_xy": 0.20112913037467872,
-        "dz": 0.05943224787712076
+        "dist_xy": 0.18340191844283252,
+        "dz": 0.028929634094238432
       },
-      "n_samples": 142,
-      "conf_min": 0.6775034666061401,
+      "n_samples": 77,
+      "conf_min": 0.5465614557266235,
       "sim": null
     },
     {
-      "id": "egodex_264",
+      "id": "egodex_237_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/237.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          8
+        ],
+        "transport": [
+          8,
+          24
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.1097827635705471,
+            0.4667406070232392,
+            0.865155041217804
+          ],
+          "quat_wxyz": [
+            0.3547728703415455,
+            -0.0,
+            -0.0,
+            -0.9349525177620631
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.09880843132734299,
+            0.5657413375377656,
+            0.8741408109664917
+          ],
+          "quat_wxyz": [
+            0.2860298383525841,
+            -0.0,
+            -0.0,
+            -0.9582207113040265
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.09960713132398753,
+        "dz": 0.0089857697486877
+      },
+      "n_samples": 50,
+      "conf_min": 0.3426016390323639,
+      "sim": null
+    },
+    {
+      "id": "egodex_252_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/252.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          18
+        ],
+        "transport": [
+          18,
+          161
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.15282387316226959,
+            0.537728208899498,
+            0.8912629067897797
+          ],
+          "quat_wxyz": [
+            0.13568037401277583,
+            -0.0,
+            -0.0,
+            -0.9907526614184557
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.015748943743528837,
+            0.4002646917104722,
+            0.9315013146400454
+          ],
+          "quat_wxyz": [
+            0.514056632882392,
+            -0.0,
+            -0.0,
+            -0.8577562463716704
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.19412819175259002,
+        "dz": 0.04023840785026567
+      },
+      "n_samples": 187,
+      "conf_min": 0.4064529597759247,
+      "sim": null
+    },
+    {
+      "id": "egodex_264_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/264.hdf5",
       "arm": "right",
@@ -695,7 +1013,378 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10002",
+      "id": "egodex_266_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/266.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          5
+        ],
+        "transport": [
+          5,
+          33
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.07620189879089595,
+            0.39671828508377077,
+            0.8189036369323732
+          ],
+          "quat_wxyz": [
+            0.6364798734010303,
+            -0.0,
+            -0.0,
+            -0.7712933104567992
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.004248297639423981,
+            0.3147899657487869,
+            0.8265417098999024
+          ],
+          "quat_wxyz": [
+            0.5832114720107879,
+            -0.0,
+            -0.0,
+            -0.8123203671674188
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.10903930588425531,
+        "dz": 0.007638072967529164
+      },
+      "n_samples": 59,
+      "conf_min": 0.3666235446929932,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1011_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1011.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          18
+        ],
+        "transport": [
+          18,
+          153
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.08719168394804001,
+            0.4101430898904801,
+            0.8843553650379183
+          ],
+          "quat_wxyz": [
+            0.3228654282782475,
+            -0.0,
+            -0.0,
+            -0.9464448822951624
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.025214903987944133,
+            0.46335066080093384,
+            0.8979846048355101
+          ],
+          "quat_wxyz": [
+            0.4494859908244526,
+            -0.0,
+            -0.0,
+            -0.8932873804395537
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1243635260580895,
+        "dz": 0.013629239797591786
+      },
+      "n_samples": 179,
+      "conf_min": 0.39605356454849244,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1013_16",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1013.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          68
+        ],
+        "transport": [
+          68,
+          157
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.10891050815582275,
+            0.4482081884145737,
+            0.7565499842166901
+          ],
+          "quat_wxyz": [
+            0.15885721895245553,
+            -0.0,
+            -0.0,
+            -0.9873015668916422
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.13750730097293865,
+            0.32410766184329987,
+            0.7680384576320648
+          ],
+          "quat_wxyz": [
+            0.3950022765383585,
+            -0.0,
+            -0.0,
+            -0.9186801410335994
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.12735272770809622,
+        "dz": 0.011488473415374734
+      },
+      "n_samples": 183,
+      "conf_min": 0.49292728304862976,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1013_19",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1013.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          22
+        ],
+        "transport": [
+          22,
+          127
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.11638493239879608,
+            0.5416514432430267,
+            0.7538360059261322
+          ],
+          "quat_wxyz": [
+            0.13256198978964306,
+            -0.0,
+            -0.0,
+            -0.9911747166181201
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.05647068079561071,
+            0.3489855045080189,
+            0.7940124392509461
+          ],
+          "quat_wxyz": [
+            0.5025786919625219,
+            -0.0,
+            -0.0,
+            -0.8645314675506267
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.20176689890517616,
+        "dz": 0.04017643332481391
+      },
+      "n_samples": 153,
+      "conf_min": 0.5239331722259521,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1013_23",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1013.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          17
+        ],
+        "transport": [
+          17,
+          104
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.05903331160545347,
+            0.34472986042499554,
+            0.7562317419052124
+          ],
+          "quat_wxyz": [
+            0.27618957849833264,
+            -0.0,
+            -0.0,
+            -0.9611031769424724
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.04165144497528673,
+            0.4299253940582275,
+            0.803749269247055
+          ],
+          "quat_wxyz": [
+            0.454511122950479,
+            -0.0,
+            -0.0,
+            -0.8907410617650308
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08695060804042753,
+        "dz": 0.04751752734184267
+      },
+      "n_samples": 130,
+      "conf_min": 0.36973952651023645,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1029_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1029.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          16
+        ],
+        "transport": [
+          16,
+          97
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.11379913911223412,
+            0.476178252696991,
+            0.8271164953708647
+          ],
+          "quat_wxyz": [
+            0.46510557821455667,
+            -0.0,
+            -0.0,
+            -0.8852552180663511
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.10935952514410019,
+            0.5213485926389695,
+            0.9051813066005707
+          ],
+          "quat_wxyz": [
+            0.29259807888062833,
+            -0.0,
+            -0.0,
+            -0.956235517137575
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.2276843188345329,
+        "dz": 0.07806481122970599
+      },
+      "n_samples": 123,
+      "conf_min": 0.4978382229804993,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_1063_2",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1063.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          49
+        ],
+        "transport": [
+          49,
+          65
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.05201852276921275,
+            0.4276678717136384,
+            1.0058275699615478
+          ],
+          "quat_wxyz": [
+            0.5126871047302475,
+            -0.0,
+            -0.0,
+            -0.8585755252995023
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.01564622053410858,
+            0.30214135348796844,
+            1.0004816234111786
+          ],
+          "quat_wxyz": [
+            0.6978058433323467,
+            -0.0,
+            -0.0,
+            -0.7162869571695636
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.13068990453643012,
+        "dz": -0.0053459465503691295
+      },
+      "n_samples": 82,
+      "conf_min": 0.5322044134140015,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10002_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10002.hdf5",
       "arm": "right",
@@ -748,7 +1437,113 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10043",
+      "id": "egodex_p2_10028_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10028.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          15
+        ],
+        "transport": [
+          15,
+          32
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.14158508434891703,
+            0.5348343050479889,
+            0.8470677232742312
+          ],
+          "quat_wxyz": [
+            0.4149251939203946,
+            -0.0,
+            -0.0,
+            -0.9098555288891325
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.07061403721570969,
+            0.44766389489173886,
+            0.8839602160453798
+          ],
+          "quat_wxyz": [
+            0.6006759484392434,
+            -0.0,
+            -0.0,
+            -0.7994925921899559
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1124080510372491,
+        "dz": 0.03689249277114859
+      },
+      "n_samples": 58,
+      "conf_min": 0.4533843159675599,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10035_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10035.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          18
+        ],
+        "transport": [
+          18,
+          56
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.2115960493683815,
+            0.512140691280365,
+            1.053714096546173
+          ],
+          "quat_wxyz": [
+            0.5629823968838016,
+            -0.0,
+            -0.0,
+            -0.8264688867700767
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.08180001616477967,
+            0.46703225076198573,
+            1.0735392498970031
+          ],
+          "quat_wxyz": [
+            0.5465739879366405,
+            -0.0,
+            -0.0,
+            -0.8374108165715541
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.13741099534386128,
+        "dz": 0.019825153350830016
+      },
+      "n_samples": 82,
+      "conf_min": 0.4067443311214447,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10043_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10043.hdf5",
       "arm": "right",
@@ -797,11 +1592,11 @@
         "dz": 0.020718026161193892
       },
       "n_samples": 76,
-      "conf_min": 0.3550064265727997,
+      "conf_min": 0.3587717473506927,
       "sim": null
     },
     {
-      "id": "egodex_p2_10047",
+      "id": "egodex_p2_10047_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10047.hdf5",
       "arm": "right",
@@ -849,65 +1644,65 @@
         "dist_xy": 0.23048828232425686,
         "dz": 0.01346750020980847
       },
-      "n_samples": 144,
-      "conf_min": 0.6748544573783875,
+      "n_samples": 143,
+      "conf_min": 0.678884744644165,
       "sim": null
     },
     {
-      "id": "egodex_p2_10049",
+      "id": "egodex_p2_10065_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10049.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10065.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          21
+          16
         ],
         "transport": [
-          21,
-          44
+          16,
+          50
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.04392802858725191,
-            0.5025127065181733,
-            0.7978095889091492
+            -0.2423105570673943,
+            0.41791653096675874,
+            0.7869463360309601
           ],
           "quat_wxyz": [
-            0.42838140822950205,
+            0.607651666719309,
             -0.0,
             -0.0,
-            -0.9035980129921206
+            -0.7942036589774979
           ]
         },
         "T_demo_release": {
           "pos": [
-            0.04850156843662262,
-            0.3905806970596314,
-            0.914577615261078
+            -0.40138889551162726,
+            0.5929808974266052,
+            0.8262229382991791
           ],
           "quat_wxyz": [
-            0.41101471642147847,
+            0.5405874544509639,
             -0.0,
             -0.0,
-            -0.9116287088968686
+            -0.8412878247604842
           ]
         }
       },
       "index": {
-        "dist_xy": 0.14516199622291964,
-        "dz": 0.11676802635192873
+        "dist_xy": 0.23654481640096311,
+        "dz": 0.03927660226821905
       },
-      "n_samples": 57,
-      "conf_min": 0.5697377920150757,
+      "n_samples": 74,
+      "conf_min": 0.5242227554321289,
       "sim": null
     },
     {
-      "id": "egodex_p2_10071",
+      "id": "egodex_p2_10071_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10071.hdf5",
       "arm": "right",
@@ -960,60 +1755,113 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10073",
+      "id": "egodex_p2_10078_0",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10073.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10078.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          8
+          24
         ],
         "transport": [
-          8,
-          34
+          24,
+          71
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.08599556386470796,
-            0.6785490036010743,
-            0.8177810716629029
+            0.18285653024911883,
+            0.5388952767848969,
+            0.7563711583614351
           ],
           "quat_wxyz": [
-            0.6279358302300486,
+            0.19370858554823256,
             -0.0,
             -0.0,
-            -0.7782651174974371
+            -0.9810591133488864
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.11914149791002274,
-            0.9162366116046907,
-            0.8120480275154114
+            0.1266132874786854,
+            0.37452037334442134,
+            0.7653500223159789
           ],
           "quat_wxyz": [
-            0.3803017657844128,
+            0.5007602655180855,
             -0.0,
             -0.0,
-            -0.9248624583911155
+            -0.8655860191097454
           ]
         }
       },
       "index": {
-        "dist_xy": 0.2399876078930268,
-        "dz": -0.0057330441474915395
+        "dist_xy": 0.1737308586244815,
+        "dz": 0.008978863954543836
       },
-      "n_samples": 54,
-      "conf_min": 0.48741480708122253,
+      "n_samples": 97,
+      "conf_min": 0.49725115299224854,
       "sim": null
     },
     {
-      "id": "egodex_p2_10082",
+      "id": "egodex_p2_10079_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10079.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          50
+        ],
+        "transport": [
+          50,
+          136
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.013612422328442335,
+            0.5229259145259857,
+            0.7949033081531525
+          ],
+          "quat_wxyz": [
+            0.35627844754873333,
+            -0.0,
+            -0.0,
+            -0.9343798305893939
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.1888122770190239,
+            0.5207378882169724,
+            0.9013656198978424
+          ],
+          "quat_wxyz": [
+            0.44626025223860666,
+            -0.0,
+            -0.0,
+            -0.8949032278810571
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.17521351700919033,
+        "dz": 0.1064623117446899
+      },
+      "n_samples": 162,
+      "conf_min": 0.599618673324585,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10082_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10082.hdf5",
       "arm": "right",
@@ -1061,12 +1909,12 @@
         "dist_xy": 0.1410312423618629,
         "dz": 0.08638164758682243
       },
-      "n_samples": 177,
-      "conf_min": 0.3308770954608917,
+      "n_samples": 125,
+      "conf_min": 0.33142500519752505,
       "sim": null
     },
     {
-      "id": "egodex_p2_10087",
+      "id": "egodex_p2_10087_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10087.hdf5",
       "arm": "right",
@@ -1119,7 +1967,7 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10094",
+      "id": "egodex_p2_10094_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10094.hdf5",
       "arm": "right",
@@ -1168,11 +2016,11 @@
         "dz": 0.056156387329101554
       },
       "n_samples": 58,
-      "conf_min": 0.3909629285335541,
+      "conf_min": 0.4012219369411468,
       "sim": null
     },
     {
-      "id": "egodex_p2_10095",
+      "id": "egodex_p2_10095_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10095.hdf5",
       "arm": "right",
@@ -1221,11 +2069,11 @@
         "dz": 0.028974319696426276
       },
       "n_samples": 119,
-      "conf_min": 0.6574898958206177,
+      "conf_min": 0.6583024978637696,
       "sim": null
     },
     {
-      "id": "egodex_p2_10098",
+      "id": "egodex_p2_10098_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10098.hdf5",
       "arm": "right",
@@ -1274,64 +2122,329 @@
         "dz": 0.015049037933349552
       },
       "n_samples": 87,
-      "conf_min": 0.4974221885204315,
+      "conf_min": 0.49746384620666506,
       "sim": null
     },
     {
-      "id": "egodex_p2_10130",
+      "id": "egodex_p2_10109_0",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10130.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10109.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          34
+          5
         ],
         "transport": [
-          34,
-          57
+          5,
+          38
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.22845788955688479,
-            0.5055358862876892,
-            0.8367795205116273
+            -0.17294673770666125,
+            0.6914161443710327,
+            0.8050503301620484
           ],
           "quat_wxyz": [
-            0.3731806154465987,
+            0.6552102219392061,
             -0.0,
             -0.0,
-            -0.9277587123034188
+            -0.7554465997450623
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.12411228954792025,
-            0.4331248754262924,
-            0.9435602092742921
+            -0.08310246244072914,
+            0.8641443300247191,
+            0.8076858437061312
           ],
           "quat_wxyz": [
-            0.46208542343034936,
+            0.4103513870619274,
             -0.0,
             -0.0,
-            -0.8868354195977937
+            -0.911927485678742
           ]
         }
       },
       "index": {
-        "dist_xy": 0.12700928601956687,
-        "dz": 0.10678068876266478
+        "dist_xy": 0.19469725195100968,
+        "dz": 0.002635513544082757
       },
-      "n_samples": 122,
-      "conf_min": 0.588796854019165,
+      "n_samples": 56,
+      "conf_min": 0.42747261524200436,
       "sim": null
     },
     {
-      "id": "egodex_p2_10173",
+      "id": "egodex_p2_10142_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10142.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          119
+        ],
+        "transport": [
+          119,
+          213
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.17375335663557057,
+            0.6082251942157746,
+            0.87445720911026
+          ],
+          "quat_wxyz": [
+            0.1259721731924431,
+            -0.0,
+            -0.0,
+            -0.9920337754235856
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.021983711078064485,
+            0.7529276561737062,
+            0.9600462412834169
+          ],
+          "quat_wxyz": [
+            0.1698876998178596,
+            -0.0,
+            -0.0,
+            -0.9854634287737911
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.24341693074603252,
+        "dz": 0.08558903217315683
+      },
+      "n_samples": 239,
+      "conf_min": 0.38033260107040406,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10149_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10149.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          10
+        ],
+        "transport": [
+          10,
+          24
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.1368693344295025,
+            0.34753351211547856,
+            0.8128443968296051
+          ],
+          "quat_wxyz": [
+            0.6907953730178216,
+            -0.0,
+            -0.0,
+            -0.7230503112627563
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.23934888869524001,
+            0.32115108549594884,
+            0.8128443968296051
+          ],
+          "quat_wxyz": [
+            0.6593406627451213,
+            -0.0,
+            -0.0,
+            -0.7518443259417631
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1058210351340371,
+        "dz": 0.0
+      },
+      "n_samples": 50,
+      "conf_min": 0.4714876294136047,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10151_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10151.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          130
+        ],
+        "transport": [
+          130,
+          220
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.24265343248844146,
+            0.47648874223232274,
+            1.2750285506248473
+          ],
+          "quat_wxyz": [
+            0.5135418504028377,
+            -0.0,
+            -0.0,
+            -0.858064547621465
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.13949233144521714,
+            0.49308203458786015,
+            1.315232610702515
+          ],
+          "quat_wxyz": [
+            0.3868524036710877,
+            -0.0,
+            -0.0,
+            -0.9221416473481185
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.10448708111363182,
+        "dz": 0.040204060077667636
+      },
+      "n_samples": 246,
+      "conf_min": 0.6247052788734435,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10152_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10152.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          11
+        ],
+        "transport": [
+          11,
+          32
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.07087403945624829,
+            0.7480971574783326,
+            0.8185642933845523
+          ],
+          "quat_wxyz": [
+            0.6494996936740025,
+            -0.0,
+            -0.0,
+            -0.7603618532760419
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.19237275809049614,
+            0.8537185311317443,
+            0.8807483339309693
+          ],
+          "quat_wxyz": [
+            0.634020847590337,
+            -0.0,
+            -0.0,
+            -0.773315954071058
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.16099010280820913,
+        "dz": 0.06218404054641702
+      },
+      "n_samples": 58,
+      "conf_min": 0.3414049863815307,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10164_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10164.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          11
+        ],
+        "transport": [
+          11,
+          56
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.07314211614429952,
+            0.40743429064750675,
+            0.8056008279323579
+          ],
+          "quat_wxyz": [
+            0.5123056629127304,
+            -0.0,
+            -0.0,
+            -0.8588031833589975
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.01272704463044647,
+            0.39982426166534424,
+            0.8343136072158814
+          ],
+          "quat_wxyz": [
+            0.48179823156054286,
+            -0.0,
+            -0.0,
+            -0.8762821828983706
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08620571508472352,
+        "dz": 0.02871277928352356
+      },
+      "n_samples": 82,
+      "conf_min": 0.5255211591720581,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10173_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10173.hdf5",
       "arm": "right",
@@ -1384,7 +2497,7 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10188",
+      "id": "egodex_p2_10188_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10188.hdf5",
       "arm": "right",
@@ -1432,65 +2545,224 @@
         "dist_xy": 0.1537218660060168,
         "dz": 0.034211628437042285
       },
-      "n_samples": 112,
-      "conf_min": 0.5265560746192932,
+      "n_samples": 86,
+      "conf_min": 0.5316871285438537,
       "sim": null
     },
     {
-      "id": "egodex_p2_10209",
+      "id": "egodex_p2_10199_2",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10209.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10199.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          35
+          27
         ],
         "transport": [
-          35,
-          67
+          27,
+          65
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            0.25766698181629183,
-            0.40990027844905863,
-            0.7992681634426118
+            0.08983948022127153,
+            0.47745073318481446,
+            1.2098457455635072
           ],
           "quat_wxyz": [
-            0.119906335203739,
+            0.2727307573739928,
             -0.0,
             -0.0,
-            -0.9927852087828507
+            -0.9620903980303557
           ]
         },
         "T_demo_release": {
           "pos": [
-            0.12252769917249681,
-            0.6084804236888885,
-            0.8628963887691499
+            0.07151077285408974,
+            0.3529434680938721,
+            1.2976469302177431
           ],
           "quat_wxyz": [
-            0.19956163282565112,
-            -0.0,
-            -0.0,
-            -0.9798852762971592
+            0.8217618811057475,
+            0.0,
+            0.0,
+            -0.569831037028998
           ]
         }
       },
       "index": {
-        "dist_xy": 0.24020137342852863,
-        "dz": 0.06362822532653811
+        "dist_xy": 0.12584911828923545,
+        "dz": 0.08780118465423592
       },
-      "n_samples": 78,
-      "conf_min": 0.303316205739975,
+      "n_samples": 91,
+      "conf_min": 0.5503693342208859,
       "sim": null
     },
     {
-      "id": "egodex_p2_10219",
+      "id": "egodex_p2_10199_5",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10199.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          12
+        ],
+        "transport": [
+          12,
+          116
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.11407616242766391,
+            0.3757256585359571,
+            1.2346079134941101
+          ],
+          "quat_wxyz": [
+            0.6496913159408295,
+            -0.0,
+            -0.0,
+            -0.760198128116002
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.23284811377525227,
+            0.36974661529064135,
+            1.2468787097930911
+          ],
+          "quat_wxyz": [
+            0.1628325936248238,
+            -0.0,
+            -0.0,
+            -0.986653711518592
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1189223502334328,
+        "dz": 0.01227079629898098
+      },
+      "n_samples": 142,
+      "conf_min": 0.3706840336322785,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10199_7",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10199.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          12
+        ],
+        "transport": [
+          12,
+          105
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.15388303309679033,
+            0.26706148743629454,
+            1.2182981967926025
+          ],
+          "quat_wxyz": [
+            0.11012729754769135,
+            -0.0,
+            -0.0,
+            -0.9939174907077761
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.10225159510970094,
+            0.38150403618812584,
+            1.2395703506469726
+          ],
+          "quat_wxyz": [
+            0.12956089626382986,
+            -0.0,
+            -0.0,
+            -0.9915714669953513
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1255503976633684,
+        "dz": 0.02127215385437009
+      },
+      "n_samples": 131,
+      "conf_min": 0.538128674030304,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10215_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10215.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          49
+        ],
+        "transport": [
+          49,
+          125
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.13874488264322282,
+            0.4240013194084168,
+            0.792000206708908
+          ],
+          "quat_wxyz": [
+            0.2809791727332597,
+            -0.0,
+            -0.0,
+            -0.9597138659465816
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.10093385502696038,
+            0.5184499025344849,
+            0.848554402589798
+          ],
+          "quat_wxyz": [
+            0.4299840256618888,
+            -0.0,
+            -0.0,
+            -0.9028364955381435
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.2576168320310113,
+        "dz": 0.056554195880889946
+      },
+      "n_samples": 146,
+      "conf_min": 0.5016065835952759,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10219_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10219.hdf5",
       "arm": "right",
@@ -1538,12 +2810,65 @@
         "dist_xy": 0.20297919889687302,
         "dz": 0.0721097540855411
       },
-      "n_samples": 237,
+      "n_samples": 235,
       "conf_min": 0.4065321385860443,
       "sim": null
     },
     {
-      "id": "egodex_p2_10235",
+      "id": "egodex_p2_10227_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10227.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          15
+        ],
+        "transport": [
+          15,
+          35
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.06479390495689585,
+            0.8758746016025545,
+            0.8171406507492067
+          ],
+          "quat_wxyz": [
+            0.4163868072434202,
+            -0.0,
+            -0.0,
+            -0.9091875641217444
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.17082652121782305,
+            0.8329105818271638,
+            0.8495713508129119
+          ],
+          "quat_wxyz": [
+            0.5556987340776607,
+            -0.0,
+            -0.0,
+            -0.8313837362761467
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.11440639276892355,
+        "dz": 0.03243070006370519
+      },
+      "n_samples": 58,
+      "conf_min": 0.5181780457496643,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10235_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10235.hdf5",
       "arm": "right",
@@ -1591,12 +2916,12 @@
         "dist_xy": 0.20533551145342072,
         "dz": 0.04056535601615896
       },
-      "n_samples": 121,
+      "n_samples": 108,
       "conf_min": 0.5451957583427429,
       "sim": null
     },
     {
-      "id": "egodex_p2_10240",
+      "id": "egodex_p2_10240_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10240.hdf5",
       "arm": "right",
@@ -1644,65 +2969,171 @@
         "dist_xy": 0.20057110426718552,
         "dz": 0.07970758080482476
       },
-      "n_samples": 87,
-      "conf_min": 0.5430127382278442,
+      "n_samples": 72,
+      "conf_min": 0.603671133518219,
       "sim": null
     },
     {
-      "id": "egodex_p2_10250",
+      "id": "egodex_p2_10241_0",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10250.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10241.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          14
+          58
         ],
         "transport": [
-          14,
-          49
+          58,
+          155
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            -0.1200575087964535,
-            0.5207483667135239,
-            0.7923633313179017
+            0.0545290343463421,
+            0.5460007083415985,
+            0.7773146176338197
           ],
           "quat_wxyz": [
-            0.4180258500713443,
+            0.382430326970479,
             -0.0,
             -0.0,
-            -0.9084351317909992
+            -0.9239843315842821
           ]
         },
         "T_demo_release": {
           "pos": [
-            -0.38128177225589754,
-            0.6319022512435912,
-            0.8312694108486177
+            0.16105125099420547,
+            0.641370165348053,
+            0.8754992008209229
           ],
           "quat_wxyz": [
-            0.49837587085536494,
+            0.34676647071470806,
             -0.0,
             -0.0,
-            -0.8669610668012472
+            -0.9379514991661698
           ]
         }
       },
       "index": {
-        "dist_xy": 0.2838895945011944,
-        "dz": 0.03890607953071601
+        "dist_xy": 0.14297662735314576,
+        "dz": 0.09818458318710321
       },
-      "n_samples": 74,
-      "conf_min": 0.574776828289032,
+      "n_samples": 181,
+      "conf_min": 0.3891506314277649,
       "sim": null
     },
     {
-      "id": "egodex_p2_10254",
+      "id": "egodex_p2_10244_2",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10244.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          75
+        ],
+        "transport": [
+          75,
+          157
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.08635880276560784,
+            0.5389793634414674,
+            0.772301584482193
+          ],
+          "quat_wxyz": [
+            0.25674092634028195,
+            -0.0,
+            -0.0,
+            -0.9664802619515486
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.1919759064912796,
+            0.45721690833568573,
+            0.8548572909832002
+          ],
+          "quat_wxyz": [
+            0.5687364687924742,
+            -0.0,
+            -0.0,
+            -0.822519804664585
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.2900953454332575,
+        "dz": 0.08255570650100719
+      },
+      "n_samples": 175,
+      "conf_min": 0.33705616593360904,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10248_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10248.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          58
+        ],
+        "transport": [
+          58,
+          92
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.064764199256897,
+            0.552626326084137,
+            0.8249931502342225
+          ],
+          "quat_wxyz": [
+            0.2697746196212541,
+            -0.0,
+            -0.0,
+            -0.9629234936422559
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.027759138499386535,
+            0.5440577352046967,
+            0.9018741679191591
+          ],
+          "quat_wxyz": [
+            0.2666926605478293,
+            -0.0,
+            -0.0,
+            -0.9637816271385963
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.09291925946337792,
+        "dz": 0.0768810176849366
+      },
+      "n_samples": 118,
+      "conf_min": 0.3056221306324005,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10254_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10254.hdf5",
       "arm": "right",
@@ -1750,171 +3181,12 @@
         "dist_xy": 0.20856967720659428,
         "dz": 0.07624756336212168
       },
-      "n_samples": 97,
-      "conf_min": 0.458310067653656,
+      "n_samples": 88,
+      "conf_min": 0.4599054574966431,
       "sim": null
     },
     {
-      "id": "egodex_p2_10266",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10266.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          11
-        ],
-        "transport": [
-          11,
-          35
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            0.0052391475834883735,
-            0.821215580701828,
-            0.8062611520290376
-          ],
-          "quat_wxyz": [
-            0.2788137786718222,
-            -0.0,
-            -0.0,
-            -0.9603451862860249
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.1986552640795708,
-            0.946622258424759,
-            0.807789969444275
-          ],
-          "quat_wxyz": [
-            0.38248617015975783,
-            -0.0,
-            -0.0,
-            -0.9239612165218412
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.2393736951398965,
-        "dz": 0.0015288174152373601
-      },
-      "n_samples": 54,
-      "conf_min": 0.41377049684524536,
-      "sim": null
-    },
-    {
-      "id": "egodex_p2_10282",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10282.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          19
-        ],
-        "transport": [
-          19,
-          57
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.14476759850978851,
-            0.5200789034366609,
-            0.7861734592914582
-          ],
-          "quat_wxyz": [
-            0.4347105432411568,
-            -0.0,
-            -0.0,
-            -0.9005702324610658
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.308163977265358,
-            0.6305680656433106,
-            0.8330764627456665
-          ],
-          "quat_wxyz": [
-            0.46154437492834616,
-            -0.0,
-            -0.0,
-            -0.8871171230294239
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.19724662622098477,
-        "dz": 0.04690300345420828
-      },
-      "n_samples": 100,
-      "conf_min": 0.5058912634849548,
-      "sim": null
-    },
-    {
-      "id": "egodex_p2_10295",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10295.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          9
-        ],
-        "transport": [
-          9,
-          33
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.17222413152456287,
-            0.6946795070171357,
-            0.8214473903179168
-          ],
-          "quat_wxyz": [
-            0.6181480054363654,
-            -0.0,
-            -0.0,
-            -0.7860617300028306
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.0340048423036933,
-            0.8652899622917176,
-            0.8170595109462739
-          ],
-          "quat_wxyz": [
-            0.40331079384523305,
-            -0.0,
-            -0.0,
-            -0.9150630598859992
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.21957344867201617,
-        "dz": -0.0043878793716428666
-      },
-      "n_samples": 54,
-      "conf_min": 0.6098514795303345,
-      "sim": null
-    },
-    {
-      "id": "egodex_p2_10309",
+      "id": "egodex_p2_10309_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10309.hdf5",
       "arm": "right",
@@ -1963,64 +3235,64 @@
         "dz": 0.016860872507095337
       },
       "n_samples": 69,
-      "conf_min": 0.523822009563446,
+      "conf_min": 0.5247230410575867,
       "sim": null
     },
     {
-      "id": "egodex_p2_10314",
+      "id": "egodex_p2_10312_1",
       "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10314.hdf5",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10312.hdf5",
       "arm": "right",
       "mirrored_from": null,
       "anchor_type": "grasp_proxy",
       "segments": {
         "approach": [
           0,
-          21
+          11
         ],
         "transport": [
-          21,
-          42
+          11,
+          67
         ]
       },
       "anchors": {
         "T_demo_grasp": {
           "pos": [
-            0.21939610242843627,
-            0.46662587225437163,
-            0.8051448822021484
+            -0.05529748797416687,
+            0.5139973402023315,
+            0.8473655700683594
           ],
           "quat_wxyz": [
-            0.0462358927326185,
-            -0.0,
-            -0.0,
-            -0.9989305492491547
+            0.709226507008583,
+            0.0,
+            0.0,
+            -0.7049806818320657
           ]
         },
         "T_demo_release": {
           "pos": [
-            0.102045356631279,
-            0.5503596222400665,
-            0.8736433553695679
+            0.10172465041279793,
+            0.5711527407169342,
+            0.8887037158012391
           ],
           "quat_wxyz": [
-            0.20190047652589477,
+            0.4127710945372847,
             -0.0,
             -0.0,
-            -0.9794060432622501
+            -0.9108347948527723
           ]
         }
       },
       "index": {
-        "dist_xy": 0.14416150119160065,
-        "dz": 0.06849847316741953
+        "dist_xy": 0.16710084306070924,
+        "dz": 0.04133814573287964
       },
-      "n_samples": 70,
-      "conf_min": 0.3906640410423279,
+      "n_samples": 92,
+      "conf_min": 0.5579589605331422,
       "sim": null
     },
     {
-      "id": "egodex_p2_10318",
+      "id": "egodex_p2_10318_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10318.hdf5",
       "arm": "right",
@@ -2068,12 +3340,65 @@
         "dist_xy": 0.09742408437197266,
         "dz": 0.042113382816314826
       },
-      "n_samples": 159,
-      "conf_min": 0.34590110182762146,
+      "n_samples": 133,
+      "conf_min": 0.3459624946117401,
       "sim": null
     },
     {
-      "id": "egodex_p2_10362",
+      "id": "egodex_p2_10343_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10343.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          12
+        ],
+        "transport": [
+          12,
+          51
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.02571864539058883,
+            0.702753027677536,
+            0.8853059601783754
+          ],
+          "quat_wxyz": [
+            0.43206314625736986,
+            -0.0,
+            -0.0,
+            -0.9018433553817329
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.041535430224612466,
+            0.6074665939807894,
+            0.9191148865222929
+          ],
+          "quat_wxyz": [
+            0.4894165711044121,
+            -0.0,
+            -0.0,
+            -0.8720501246650905
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.11663024965033601,
+        "dz": 0.03380892634391752
+      },
+      "n_samples": 66,
+      "conf_min": 0.3030479073524475,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10362_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10362.hdf5",
       "arm": "right",
@@ -2121,12 +3446,12 @@
         "dist_xy": 0.10834237822958806,
         "dz": 0.009199345111846835
       },
-      "n_samples": 144,
-      "conf_min": 0.6143243312835693,
+      "n_samples": 66,
+      "conf_min": 0.6876868605613708,
       "sim": null
     },
     {
-      "id": "egodex_p2_10370",
+      "id": "egodex_p2_10370_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10370.hdf5",
       "arm": "right",
@@ -2174,12 +3499,12 @@
         "dist_xy": 0.1533470308800463,
         "dz": -0.003544648885726809
       },
-      "n_samples": 227,
-      "conf_min": 0.3463588356971741,
+      "n_samples": 78,
+      "conf_min": 0.6489090919494629,
       "sim": null
     },
     {
-      "id": "egodex_p2_10382",
+      "id": "egodex_p2_10382_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10382.hdf5",
       "arm": "right",
@@ -2232,7 +3557,60 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10415",
+      "id": "egodex_p2_10402_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10402.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          12
+        ],
+        "transport": [
+          12,
+          55
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.3489085173606873,
+            0.8585196256637574,
+            0.8199839437007905
+          ],
+          "quat_wxyz": [
+            0.6886780957098029,
+            -0.0,
+            -0.0,
+            -0.7250672248071346
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.22230298221111297,
+            1.0060135543346405,
+            0.8484899044036865
+          ],
+          "quat_wxyz": [
+            0.5790609489744809,
+            -0.0,
+            -0.0,
+            -0.8152842555653664
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.19437957846770232,
+        "dz": 0.028505960702896016
+      },
+      "n_samples": 81,
+      "conf_min": 0.502649974822998,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10415_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10415.hdf5",
       "arm": "right",
@@ -2281,11 +3659,11 @@
         "dz": 0.05291987061500536
       },
       "n_samples": 77,
-      "conf_min": 0.40197253227233887,
+      "conf_min": 0.4128674924373626,
       "sim": null
     },
     {
-      "id": "egodex_p2_10447",
+      "id": "egodex_p2_10447_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10447.hdf5",
       "arm": "right",
@@ -2333,12 +3711,12 @@
         "dist_xy": 0.1704477540530628,
         "dz": 0.06581508874893194
       },
-      "n_samples": 174,
-      "conf_min": 0.34519556164741516,
+      "n_samples": 173,
+      "conf_min": 0.34686495661735534,
       "sim": null
     },
     {
-      "id": "egodex_p2_10448",
+      "id": "egodex_p2_10448_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10448.hdf5",
       "arm": "right",
@@ -2387,11 +3765,11 @@
         "dz": 0.06448188185691828
       },
       "n_samples": 155,
-      "conf_min": 0.5637574791908264,
+      "conf_min": 0.5681162476539612,
       "sim": null
     },
     {
-      "id": "egodex_p2_10450",
+      "id": "egodex_p2_10450_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10450.hdf5",
       "arm": "right",
@@ -2439,12 +3817,12 @@
         "dist_xy": 0.17432855418755375,
         "dz": 0.01631368756294249
       },
-      "n_samples": 76,
-      "conf_min": 0.5784027576446533,
+      "n_samples": 72,
+      "conf_min": 0.5804852724075317,
       "sim": null
     },
     {
-      "id": "egodex_p2_10474",
+      "id": "egodex_p2_10474_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10474.hdf5",
       "arm": "right",
@@ -2497,7 +3875,219 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10488",
+      "id": "egodex_p2_10478_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10478.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          11
+        ],
+        "transport": [
+          11,
+          49
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.0942264661192894,
+            0.39736575782299044,
+            0.8309400320053101
+          ],
+          "quat_wxyz": [
+            0.5439450661932693,
+            -0.0,
+            -0.0,
+            -0.8391208285842985
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.25660135030746456,
+            0.5127709430456161,
+            0.830306190252304
+          ],
+          "quat_wxyz": [
+            0.496769927371984,
+            -0.0,
+            -0.0,
+            -0.867882272695343
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.19920833263543927,
+        "dz": -0.0006338417530060703
+      },
+      "n_samples": 75,
+      "conf_min": 0.6552202701568604,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10481_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10481.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          16
+        ],
+        "transport": [
+          16,
+          50
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.0809678666293621,
+            0.45149728059768673,
+            1.102891445159912
+          ],
+          "quat_wxyz": [
+            0.8369353875676039,
+            0.0,
+            0.0,
+            -0.5473017056771015
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.2065608817338944,
+            0.5211390233039856,
+            1.0873568987846374
+          ],
+          "quat_wxyz": [
+            0.21896075679728816,
+            -0.0,
+            -0.0,
+            -0.9757336660086906
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.143609114509552,
+        "dz": -0.015534546375274738
+      },
+      "n_samples": 76,
+      "conf_min": 0.570009410381317,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10481_20",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10481.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          33
+        ],
+        "transport": [
+          33,
+          87
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.26933813393115996,
+            0.44407994151115426,
+            1.0762579822540284
+          ],
+          "quat_wxyz": [
+            0.03250927441944135,
+            0.0,
+            0.0,
+            0.9994714338472718
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.0806299029290678,
+            0.43340651214122816,
+            1.0859828209877016
+          ],
+          "quat_wxyz": [
+            0.4277645533687096,
+            -0.0,
+            -0.0,
+            -0.9038901962524366
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.18900983715789446,
+        "dz": 0.009724838733673247
+      },
+      "n_samples": 113,
+      "conf_min": 0.48942056894302366,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10485_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10485.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          11
+        ],
+        "transport": [
+          11,
+          30
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.19106682032346725,
+            0.5708465909957885,
+            0.8304102718830109
+          ],
+          "quat_wxyz": [
+            0.6073578492499604,
+            -0.0,
+            -0.0,
+            -0.7944283749681039
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.13293000161647797,
+            0.6343994617462159,
+            0.8908906936645509
+          ],
+          "quat_wxyz": [
+            0.5139315495154728,
+            -0.0,
+            -0.0,
+            -0.8578311969219965
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08613278742726178,
+        "dz": 0.060480421781540006
+      },
+      "n_samples": 56,
+      "conf_min": 0.33638375997543335,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10488_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10488.hdf5",
       "arm": "right",
@@ -2545,12 +4135,12 @@
         "dist_xy": 0.09966809669020453,
         "dz": 0.11067511320114143
       },
-      "n_samples": 257,
-      "conf_min": 0.20712019503116608,
+      "n_samples": 61,
+      "conf_min": 0.6084417104721069,
       "sim": null
     },
     {
-      "id": "egodex_p2_10508",
+      "id": "egodex_p2_10508_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10508.hdf5",
       "arm": "right",
@@ -2598,12 +4188,12 @@
         "dist_xy": 0.08033394986805138,
         "dz": 0.11095842123031607
       },
-      "n_samples": 123,
-      "conf_min": 0.5455042719841003,
+      "n_samples": 88,
+      "conf_min": 0.6511732578277588,
       "sim": null
     },
     {
-      "id": "egodex_p2_10534",
+      "id": "egodex_p2_10534_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10534.hdf5",
       "arm": "right",
@@ -2652,64 +4242,11 @@
         "dz": 0.08799009323120122
       },
       "n_samples": 138,
-      "conf_min": 0.3219049870967865,
+      "conf_min": 0.3225739777088165,
       "sim": null
     },
     {
-      "id": "egodex_p2_10537",
-      "source": "egodex",
-      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10537.hdf5",
-      "arm": "right",
-      "mirrored_from": null,
-      "anchor_type": "grasp_proxy",
-      "segments": {
-        "approach": [
-          0,
-          16
-        ],
-        "transport": [
-          16,
-          88
-        ]
-      },
-      "anchors": {
-        "T_demo_grasp": {
-          "pos": [
-            -0.16123472988605503,
-            0.2087766602635384,
-            0.8708339250087739
-          ],
-          "quat_wxyz": [
-            0.6000534935011927,
-            -0.0,
-            -0.0,
-            -0.7999598770794782
-          ]
-        },
-        "T_demo_release": {
-          "pos": [
-            -0.06143600620329381,
-            0.4488371032476426,
-            0.8785236859321595
-          ],
-          "quat_wxyz": [
-            0.2863758068550086,
-            -0.0,
-            -0.0,
-            -0.9581173713320007
-          ]
-        }
-      },
-      "index": {
-        "dist_xy": 0.2599784635973381,
-        "dz": 0.00768976092338558
-      },
-      "n_samples": 121,
-      "conf_min": 0.3417013883590698,
-      "sim": null
-    },
-    {
-      "id": "egodex_p2_10539",
+      "id": "egodex_p2_10539_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10539.hdf5",
       "arm": "right",
@@ -2758,11 +4295,64 @@
         "dz": 0.04704119086265557
       },
       "n_samples": 169,
-      "conf_min": 0.6157829165458679,
+      "conf_min": 0.6159798860549927,
       "sim": null
     },
     {
-      "id": "egodex_p2_10556",
+      "id": "egodex_p2_10543_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10543.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          16
+        ],
+        "transport": [
+          16,
+          26
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.1730748036503792,
+            0.6311245715618135,
+            0.817671036720276
+          ],
+          "quat_wxyz": [
+            0.7423427763513556,
+            0.0,
+            0.0,
+            -0.6700202999902027
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.1963475912809372,
+            0.7133003544807432,
+            0.8817463696002962
+          ],
+          "quat_wxyz": [
+            0.7325260686265123,
+            0.0,
+            0.0,
+            -0.6807389799200471
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08540773935912441,
+        "dz": 0.06407533288002021
+      },
+      "n_samples": 52,
+      "conf_min": 0.3688806176185608,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10556_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10556.hdf5",
       "arm": "right",
@@ -2810,12 +4400,12 @@
         "dist_xy": 0.2360430666328834,
         "dz": -0.00044005870819097126
       },
-      "n_samples": 109,
-      "conf_min": 0.5378120541572571,
+      "n_samples": 77,
+      "conf_min": 0.5390955448150635,
       "sim": null
     },
     {
-      "id": "egodex_p2_10561",
+      "id": "egodex_p2_10561_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10561.hdf5",
       "arm": "right",
@@ -2868,7 +4458,7 @@
       "sim": null
     },
     {
-      "id": "egodex_p2_10573",
+      "id": "egodex_p2_10573_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10573.hdf5",
       "arm": "right",
@@ -2916,12 +4506,118 @@
         "dist_xy": 0.21032808224517474,
         "dz": 0.023515163660049243
       },
-      "n_samples": 87,
-      "conf_min": 0.3121696710586548,
+      "n_samples": 83,
+      "conf_min": 0.31297616958618163,
       "sim": null
     },
     {
-      "id": "egodex_p2_10612",
+      "id": "egodex_p2_10577_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10577.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          11
+        ],
+        "transport": [
+          11,
+          25
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.1449553284049034,
+            0.8507892107963564,
+            0.825884211063385
+          ],
+          "quat_wxyz": [
+            0.5318758942692886,
+            -0.0,
+            -0.0,
+            -0.8468223149488
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.15553718864917757,
+            0.9556324779987336,
+            0.9074691510200502
+          ],
+          "quat_wxyz": [
+            0.5253988872896399,
+            -0.0,
+            -0.0,
+            -0.8508560449540264
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.10537592914844651,
+        "dz": 0.08158493995666516
+      },
+      "n_samples": 51,
+      "conf_min": 0.4874109268188476,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10609_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10609.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          47
+        ],
+        "transport": [
+          47,
+          67
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.08658611550927163,
+            0.7221700429916382,
+            0.8207497894763947
+          ],
+          "quat_wxyz": [
+            0.394959291729083,
+            -0.0,
+            -0.0,
+            -0.9186986218977697
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.1844505533576012,
+            0.6635193049907684,
+            0.9171444594860076
+          ],
+          "quat_wxyz": [
+            0.4904990662413685,
+            -0.0,
+            -0.0,
+            -0.8714417169359896
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.11409363375498317,
+        "dz": 0.09639467000961299
+      },
+      "n_samples": 93,
+      "conf_min": 0.5904027462005615,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10612_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10612.hdf5",
       "arm": "right",
@@ -2970,11 +4666,64 @@
         "dz": 0.05064723253250136
       },
       "n_samples": 64,
-      "conf_min": 0.5076103210449219,
+      "conf_min": 0.510880446434021,
       "sim": null
     },
     {
-      "id": "egodex_p2_10627",
+      "id": "egodex_p2_10617_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10617.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          13
+        ],
+        "transport": [
+          13,
+          37
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.051162786036729815,
+            0.29380590021610264,
+            1.2248100876808168
+          ],
+          "quat_wxyz": [
+            0.4607527717798976,
+            -0.0,
+            -0.0,
+            -0.8875285253427868
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.05238862963393333,
+            0.40124690532684326,
+            1.2853728413581846
+          ],
+          "quat_wxyz": [
+            0.4412214892221158,
+            -0.0,
+            -0.0,
+            -0.8973982379348748
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.14921952039396405,
+        "dz": 0.06056275367736785
+      },
+      "n_samples": 63,
+      "conf_min": 0.4839039742946625,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10627_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10627.hdf5",
       "arm": "right",
@@ -3022,12 +4771,12 @@
         "dist_xy": 0.12336199147702956,
         "dz": 0.023746819496154536
       },
-      "n_samples": 122,
+      "n_samples": 102,
       "conf_min": 0.5795131921768188,
       "sim": null
     },
     {
-      "id": "egodex_p2_10640",
+      "id": "egodex_p2_10640_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10640.hdf5",
       "arm": "right",
@@ -3075,12 +4824,118 @@
         "dist_xy": 0.08403851163544279,
         "dz": 0.04479995489120492
       },
-      "n_samples": 91,
-      "conf_min": 0.36422112584114075,
+      "n_samples": 51,
+      "conf_min": 0.36495705246925353,
       "sim": null
     },
     {
-      "id": "egodex_p2_10682",
+      "id": "egodex_p2_10666_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10666.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          77
+        ],
+        "transport": [
+          77,
+          147
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            -0.11240655839443209,
+            0.6864241814613342,
+            0.8804536521434785
+          ],
+          "quat_wxyz": [
+            0.3900405805231671,
+            -0.0,
+            -0.0,
+            -0.9207976680819466
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.13381120547652245,
+            0.7683629322052002,
+            0.9196216750144958
+          ],
+          "quat_wxyz": [
+            0.3714048426064391,
+            -0.0,
+            -0.0,
+            -0.9284710242589621
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.08468835687492257,
+        "dz": 0.03916802287101728
+      },
+      "n_samples": 173,
+      "conf_min": 0.4862836003303528,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10673_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10673.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          38
+        ],
+        "transport": [
+          38,
+          107
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.07701226547360421,
+            0.4484031736850739,
+            1.0390156435966493
+          ],
+          "quat_wxyz": [
+            0.30543761956949883,
+            -0.0,
+            -0.0,
+            -0.952212088009661
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.08526552349328995,
+            0.4524876081943512,
+            1.06924955368042
+          ],
+          "quat_wxyz": [
+            0.5546832775164094,
+            -0.0,
+            -0.0,
+            -0.8320615732286006
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.1623291822108533,
+        "dz": 0.030233910083770743
+      },
+      "n_samples": 133,
+      "conf_min": 0.5888692736625671,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10682_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10682.hdf5",
       "arm": "right",
@@ -3128,12 +4983,12 @@
         "dist_xy": 0.1689890797111714,
         "dz": 0.02250374794006338
       },
-      "n_samples": 103,
-      "conf_min": 0.3670564889907837,
+      "n_samples": 76,
+      "conf_min": 0.3672851979732513,
       "sim": null
     },
     {
-      "id": "egodex_p2_10701",
+      "id": "egodex_p2_10701_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10701.hdf5",
       "arm": "right",
@@ -3181,12 +5036,12 @@
         "dist_xy": 0.11125383430786223,
         "dz": 0.06145740747451778
       },
-      "n_samples": 323,
+      "n_samples": 185,
       "conf_min": 0.41388747096061707,
       "sim": null
     },
     {
-      "id": "egodex_p2_10702",
+      "id": "egodex_p2_10702_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10702.hdf5",
       "arm": "right",
@@ -3235,11 +5090,117 @@
         "dz": 0.1124237906932829
       },
       "n_samples": 71,
-      "conf_min": 0.32100439071655273,
+      "conf_min": 0.32705276608467104,
       "sim": null
     },
     {
-      "id": "egodex_p2_10712",
+      "id": "egodex_p2_10705_0",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10705.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          14
+        ],
+        "transport": [
+          14,
+          50
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.021669451761990786,
+            0.4373878204822541,
+            0.8330715227127075
+          ],
+          "quat_wxyz": [
+            0.5773306409132072,
+            -0.0,
+            -0.0,
+            -0.8165104598611983
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            0.06104942355304957,
+            0.5862028002738953,
+            0.8540159165859224
+          ],
+          "quat_wxyz": [
+            0.45011045716799974,
+            -0.0,
+            -0.0,
+            -0.8929728866813451
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.15393726120940035,
+        "dz": 0.020944393873214895
+      },
+      "n_samples": 76,
+      "conf_min": 0.5457220673561096,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10705_1",
+      "source": "egodex",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10705.hdf5",
+      "arm": "right",
+      "mirrored_from": null,
+      "anchor_type": "grasp_proxy",
+      "segments": {
+        "approach": [
+          0,
+          26
+        ],
+        "transport": [
+          26,
+          59
+        ]
+      },
+      "anchors": {
+        "T_demo_grasp": {
+          "pos": [
+            0.047024814784526824,
+            0.6023643827438354,
+            0.815829883813858
+          ],
+          "quat_wxyz": [
+            0.43865923387656064,
+            -0.0,
+            -0.0,
+            -0.898653479676582
+          ]
+        },
+        "T_demo_release": {
+          "pos": [
+            -0.0947701705992222,
+            0.5618471825122834,
+            0.9073782825469972
+          ],
+          "quat_wxyz": [
+            0.48585399446187383,
+            -0.0,
+            -0.0,
+            -0.8740399853927975
+          ]
+        }
+      },
+      "index": {
+        "dist_xy": 0.14747020510795147,
+        "dz": 0.09154839873313914
+      },
+      "n_samples": 85,
+      "conf_min": 0.5457220673561096,
+      "sim": null
+    },
+    {
+      "id": "egodex_p2_10712_0",
       "source": "egodex",
       "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10712.hdf5",
       "arm": "right",
@@ -3288,7 +5249,7 @@
         "dz": 0.016686705350875908
       },
       "n_samples": 68,
-      "conf_min": 0.6215567588806152,
+      "conf_min": 0.6226995348930359,
       "sim": null
     }
   ]

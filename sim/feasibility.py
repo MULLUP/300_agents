@@ -6,10 +6,12 @@ is only ~25 cm across (`AGENT_HANDOFF.md` section 11a) while the kept demos span
 7-47 cm of transport. This screen measures how many survive geometry, before any
 physics runs, so step 7 only builds library candidates out of demos that can move.
 
-No simulation stepping and no rendering: it is pure IK, so it is cheap enough to
-run over every demo.
+No simulation stepping and no rendering: it is pure IK. Demos are independent, so
+the screen runs one process per core and the only per-worker state is an
+:class:`IKSolver`.
 
     uv run python sim/feasibility.py
+    uv run python sim/feasibility.py --processes 4
     uv run python sim/feasibility.py --orientation replay   # the P8 comparison
 """
 
@@ -19,6 +21,8 @@ import argparse
 import json
 import sys
 from collections import Counter
+from functools import partial
+from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
@@ -33,6 +37,20 @@ from sim.execute import (  # noqa: E402
     plan_from_demo,
     fit_yaw_offsets,
 )
+
+
+_WORKER: dict = {}
+
+
+def _init_worker() -> None:
+    """One solver per process; building it harvests the seed bank and is not cheap."""
+    _WORKER["solver"] = IKSolver()
+
+
+def _screen_task(task: tuple[int, Path], **kwargs) -> tuple[int, dict]:
+    """`screen_demo` for one path, carrying its position so order can be restored."""
+    i, path = task
+    return i, screen_demo(_WORKER["solver"], path, **kwargs)
 
 
 def nominal_cube_pose() -> np.ndarray:
@@ -71,7 +89,7 @@ def index_offset(demo_index: dict[str, float], query: dict[str, float]) -> float
 
 
 def screen_demo(
-    solver: IKSolver, path: Path, T_table_cube: np.ndarray, side: str, orientation: str
+    solver: IKSolver, path: Path, *, T_table_cube: np.ndarray, side: str, orientation: str
 ) -> dict:
     """Retarget one demo onto `T_table_cube` and report whether it is executable.
 
@@ -133,6 +151,9 @@ def main() -> int:
     )
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument(
+        "--processes", type=int, default=None, help="default: config/skills.yaml n_processes"
+    )
     args = ap.parse_args()
 
     orientation = demos.orientation_mode() if args.orientation is None else args.orientation
@@ -144,23 +165,29 @@ def main() -> int:
         return 1
 
     T_cube = nominal_cube_pose()
-    solver = IKSolver()
+    n_proc = max(1, args.processes or int(config.skills()["n_processes"]))
     print(
-        f"screening {len(paths)} {args.source} demos, orientation={orientation}, "
-        f"cube at ({T_cube[0, 3]:.3f},{T_cube[1, 3]:+.3f})"
+        f"screening {len(paths)} {args.source} demos on {n_proc} processes, "
+        f"orientation={orientation}, cube at ({T_cube[0, 3]:.3f},{T_cube[1, 3]:+.3f})"
     )
 
-    rows = []
-    for i, p in enumerate(paths):
-        row = screen_demo(solver, p, T_cube, args.side, orientation)
-        rows.append(row)
-        print(
-            f"  {i + 1:3d}/{len(paths)} {row['id']:<14s} "
-            f"dist_xy={row['index']['dist_xy']:.3f} dz={row['index']['dz']:+.3f} "
-            f"off={row['index_offset']:.3f} "
-            f"-> {'OK  ' if row['feasible'] else 'FAIL'} {row['reason'][:60]}",
-            flush=True,
-        )
+    work = partial(_screen_task, T_table_cube=T_cube, side=args.side, orientation=orientation)
+    # Unordered for throughput -- demo cost varies by an order of magnitude,
+    # since an index mismatch returns before any IK runs while a feasible demo
+    # pays for the whole yaw search. Rows are put back in path order afterwards
+    # so the output file does not depend on who finished first.
+    indexed = []
+    with Pool(processes=n_proc, initializer=_init_worker) as pool:
+        for done, (i, row) in enumerate(pool.imap_unordered(work, enumerate(paths), chunksize=1)):
+            indexed.append((i, row))
+            print(
+                f"  {done + 1:3d}/{len(paths)} {row['id']:<14s} "
+                f"dist_xy={row['index']['dist_xy']:.3f} dz={row['index']['dz']:+.3f} "
+                f"off={row['index_offset']:.3f} "
+                f"-> {'OK  ' if row['feasible'] else 'FAIL'} {row['reason'][:60]}",
+                flush=True,
+            )
+    rows = [row for _, row in sorted(indexed, key=lambda pair: pair[0])]
 
     n_ok = sum(r["feasible"] for r in rows)
     reasons = Counter(r["category"] for r in rows)
