@@ -29,7 +29,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import config, safety  # noqa: E402
 from common.ik import IKSolver  # noqa: E402
 from common.mimic import demo_anchors, heading_rotation, retarget, snap_yaw  # noqa: E402
-from common.transforms import grasp_pose, interp_poses, top_down_pose, yaw_of  # noqa: E402
+from common.transforms import (  # noqa: E402
+    grasp_pose,
+    interp_poses,
+    spin_about_approach,
+    top_down_pose,
+    yaw_of,
+)
 from sim.sim_robot import SimRobot, UnsafeTrajectory  # noqa: E402
 
 
@@ -547,6 +553,74 @@ def yaw_locked_mask(grip_path: np.ndarray) -> np.ndarray:
     return locked
 
 
+# Yaw offsets searched per segment (radians).
+#
+# The APPROACH is restricted to multiples of 90 deg because the jaws have to
+# straddle a pair of opposite cube faces: `retarget` already snapped the grasp
+# yaw to a legal one, and a 90 deg multiple keeps it legal. Jaw symmetry makes
+# 0/180 and 90/270 the same jaw line but different arm configurations, so all
+# four are kept (the same reason `CANDIDATE_YAWS` spans the full circle).
+#
+# The TRANSPORT is unrestricted: the cube is held, spinning the wrist spins the
+# cube, and `cube_in_bin` reads the cube's centre and never its orientation.
+APPROACH_YAW_OFFSETS = np.deg2rad([0.0, 90.0, 180.0, 270.0])
+TRANSPORT_YAW_OFFSETS = np.deg2rad(np.arange(0.0, 360.0, 45.0))
+
+
+def apply_yaw_offsets(plan: "DemoPlan", approach: float, transport: float) -> np.ndarray:
+    """`plan.pose_path` with a per-segment wrist spin, ramped across the bridge.
+
+    One constant offset for the approach and one for the transport, joined by a
+    linear ramp over the existing section 8 step 5 mid-bridge. Constant-per-
+    segment is what makes this **continuous by construction**, which is where the
+    per-sample free-yaw solve failed: it could pick a different null-space
+    resolution at every sample, turning 23 reachability rejects into 23 branch
+    flips.
+
+    Positions are untouched (see :func:`spin_about_approach`), so the offsets
+    cannot move the grasp off the cube or the release off the bin.
+    """
+    n = len(plan.pose_path)
+    delta = np.empty(n, dtype=np.float64)
+    i0, i1 = plan.segments.get("bridge_mid", (n, n))
+    delta[:i0] = approach
+    if i1 > i0:
+        delta[i0:i1] = np.linspace(approach, transport, i1 - i0)
+    delta[i1:] = transport
+    return spin_about_approach(plan.pose_path, delta)
+
+
+def fit_yaw_offsets(
+    solver: IKSolver, plan: "DemoPlan", side: str, rate_hz: float
+) -> tuple[np.ndarray | None, str]:
+    """Search per-segment yaw offsets for a path that is solvable and smooth.
+
+    Staged rather than exhaustive: screen the approach against its 4 offsets
+    first, then only the surviving ones against the transport's 8. That is at
+    most 4 + 8 screens per demo instead of 32, and the approach is the cheaper
+    segment to reject on.
+
+    Returns `(pose_path, "")` on success, or `(None, reason)` with the last
+    failure so `sim/feasibility.py` can still report a category.
+    """
+    i_app = plan.segments["approach"][1]
+    reason = "no_yaw_offset_fits"
+
+    for a in APPROACH_YAW_OFFSETS:
+        trial = apply_yaw_offsets(plan, float(a), float(a))
+        ok, why = screen_pose_path(solver, trial[:i_app], side, rate_hz)
+        if not ok:
+            reason = f"approach: {why}"
+            continue
+        for t in TRANSPORT_YAW_OFFSETS:
+            full = apply_yaw_offsets(plan, float(a), float(a + t))
+            ok, why = screen_pose_path(solver, full, side, rate_hz)
+            if ok:
+                return full, ""
+            reason = why
+    return None, reason
+
+
 def screen_pose_path(
     solver: IKSolver,
     pose_path: np.ndarray,
@@ -614,14 +688,17 @@ def run_demo(
 
     solver = solver if solver is not None else IKSolver()
     plan = plan_from_demo(demo, robot.body_pose("cube"), side, solver)
-    locked = yaw_locked_mask(plan.grip_path)
+
+    # Pick the per-segment wrist spin that makes the whole path executable. The
+    # offsets leave every position untouched, so this cannot change the task.
+    pose_path, why = fit_yaw_offsets(solver, plan, side, float(cfg["rate_hz"]))
+    if pose_path is None:
+        return ExecResult(False, f"no_feasible_yaw ({why})")
 
     # HOME -> the demo's first pose in JOINT space, for the reason in
     # `run_put_in_bin`: HOME is tucked and in a different IK branch.
     seed = robot.get_state()["q"]
-    ik = solver.solve_cold(
-        plan.pose_path[0], side, extra_seeds=[seed], free_yaw=not bool(locked[0])
-    )
+    ik = solver.solve_cold(pose_path[0], side, extra_seeds=[seed])
     viol = [str(v) for v in safety.check_ik_error(ik.pos_err, ik.rot_err_deg)]
     if viol:
         return ExecResult(
@@ -639,9 +716,7 @@ def run_demo(
     except UnsafeTrajectory as exc:
         return ExecResult(False, "bridge_unsafe", violations=[str(v) for v in exc.violations])
 
-    res = execute_pose_path(
-        robot, plan.pose_path, plan.grip_path, side=side, solver=solver, free_yaw=~locked
-    )
+    res = execute_pose_path(robot, pose_path, plan.grip_path, side=side, solver=solver)
     if not res:
         return res
 

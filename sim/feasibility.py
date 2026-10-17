@@ -31,8 +31,7 @@ from common.transforms import top_down_pose  # noqa: E402
 from sim.execute import (  # noqa: E402
     bin_place_target,
     plan_from_demo,
-    screen_pose_path,
-    yaw_locked_mask,
+    fit_yaw_offsets,
 )
 
 
@@ -102,11 +101,10 @@ def screen_demo(
         }
 
     plan = plan_from_demo(demo, T_table_cube, side, solver)
-    # Yaw is only constrained where the jaws close; everywhere else the solver
-    # picks it. See `sim/execute.py yaw_locked_mask`.
-    ok, why = screen_pose_path(
-        solver, plan.pose_path, side, rate_hz, free_yaw=~yaw_locked_mask(plan.grip_path)
-    )
+    # The wrist spin is a free variable away from the jaws closing, so search it
+    # per segment rather than inheriting the human's. See `fit_yaw_offsets`.
+    pose_path, why = fit_yaw_offsets(solver, plan, side, rate_hz)
+    ok = pose_path is not None
 
     z = plan.pose_path[:, 2, 3]
     return {

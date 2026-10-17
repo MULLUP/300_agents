@@ -281,6 +281,26 @@ def flatten_top_down(T: np.ndarray) -> np.ndarray:
     )
 
 
+def spin_about_approach(T: np.ndarray, delta: float | np.ndarray) -> np.ndarray:
+    """Rotate poses about their **own** +z (approach) axis by `delta` radians.
+
+    Post-multiplication, so the translation is untouched: ``T @ rot_z`` leaves
+    ``T[:3, 3]`` exactly as it was. That is the whole point — the wrist's spin
+    about its approach axis is the one gripper degree of freedom a top-down cube
+    task does not constrain (away from the jaws closing), so this changes
+    *only* that, and cannot disturb the position trajectory, the section 8
+    heading alignment or the `(dist_xy, dz)` index.
+
+    `delta` may be a scalar or one angle per pose, which is how a smooth ramp
+    between two per-segment offsets is applied.
+    """
+    T = np.asarray(T, dtype=np.float64)
+    R = rot_z(np.asarray(delta, dtype=np.float64))
+    out = T.copy()
+    out[..., :3, :3] = T[..., :3, :3] @ R
+    return out
+
+
 def pose_to_dict(T: np.ndarray) -> dict:
     """Serialize a pose as ``{"pos": [...], "quat_wxyz": [...]}`` (section 3)."""
     T = np.asarray(T, dtype=np.float64)
