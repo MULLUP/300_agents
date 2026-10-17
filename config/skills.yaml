@@ -331,29 +331,24 @@ library:
   # frames, against a median descent of 6.7 mm.
   grasp_window_s: 0.3
 
-  # Nominal scene used for the task 2.P2.3 feasibility screen: the pick-zone
+  # Nominal scene used for the optional feasibility diagnostic: the pick-zone
   # centre, cube yaw 0. One fixed scene so the number is comparable across runs.
   nominal_cube_yaw: 0.0
 
-  # Maximum distance in the `(dist_xy, dz)` index (conventions.md section 7.3)
-  # between a demo and what the nominal scene needs, metres.
-  #
-  # This is the cheap pre-screen for the geometry the IK screen then confirms.
-  # A demo whose index differs by `e` starts its transport segment `e` away from
-  # the cube, and the section 8 step 5 bridge has to cover that WHILE HOLDING the
-  # cube. Demos within: 0.05 -> 21, 0.08 -> 47, 0.10 -> 63, 0.12 -> 81 of 106.
-  # 0.12 keeps the screen's input broad; `sim/feasibility.py` is what rejects.
-  max_index_offset: 0.12
-
-# --- Library validation (sim/validate_library.py, handoff step 9) ---
-validation:
-  n_trials: 20 # scenes per candidate
-  seed: 20261017
-  min_success_rate: 0.8 # entries below this are dropped from the library
-  # `n_processes` moved to the top of this file: it is a machine property shared
-  # with step 6, not a validation parameter, and two copies would drift.
+  # REMOVED: `max_index_offset`. It rejected 32 of 179 demos on the `(dist_xy,
+  # dz)` distance between a demo and the nominal scene -- a quantity whose
+  # measured correlation with trial success is -0.048, i.e. none. It existed
+  # because each stage had to decide what to pass to the next; physics now
+  # decides, so there is nothing for it to pre-screen.
 
 # --- The deliverable: the LeRobot dataset (data/generate_dataset.py) ---
+#
+# REMOVED with the `validation` section: `min_success_rate: 0.8`. It was a
+# RUNTIME RETRIEVAL rule (conventions.md section 7.3, "runtime uses only
+# entries above...") applied as a DATA GENERATION gate, which is what turned
+# 649 usable episodes into a reported "9 entries". A generator keeps every
+# episode that succeeds; the success rate of the demo it came from is not a
+# property of the episode.
 # Read out of the installed lerobot 0.4.4 and SmolVLAConfig, NOT from
 # conventions.md section 7.4, which is wrong about the image size and silent
 # about the token and episode-length limits.
@@ -390,3 +385,12 @@ dataset:
   # are also far too large to pass between processes, which is why each worker
   # writes its own shard and the shards are merged afterwards.
   use_videos: true
+
+  # Scenes sampled per source demo. This is the MimicGen multiplication factor:
+  # one human motion re-anchored onto this many cube poses. Previously lived in
+  # a `validation` section, because the same work was being done to produce a
+  # success RATE rather than episodes.
+  trials_per_demo: 20
+
+  # Fixed, so every demo sees the same scenes and a rerun is reproducible.
+  seed: 20261017

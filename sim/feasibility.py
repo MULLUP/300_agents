@@ -93,30 +93,22 @@ def screen_demo(
 ) -> dict:
     """Retarget one demo onto `T_table_cube` and report whether it is executable.
 
-    The `(dist_xy, dz)` pre-screen runs first because it is free and explains
-    most rejections on its own; IK only runs on demos that survive it.
+    The `(dist_xy, dz)` offset is REPORTED but no longer rejects. It used to cut
+    32 of 179 demos before IK ran; its measured correlation with trial success is
+    -0.048, so every one of those rejections was a coin flip dressed as a screen.
+    Kept in the row because it is free to compute and is still worth looking at
+    next to an outcome.
     """
     demo = demos.load_source_demo(path, orientation)
     meta = demos.load_metadata(path)
-    lib = config.skills()["library"]
     rate_hz = float(config.skills()["exec"]["rate_hz"])
 
-    offset = index_offset(demo.index, scene_index(T_table_cube))
     row = {
         "id": meta["id"],
         "source_path": meta["source_path"],
         "index": demo.index,
-        "index_offset": offset,
+        "index_offset": index_offset(demo.index, scene_index(T_table_cube)),
     }
-
-    max_offset = float(lib["max_index_offset"])
-    if offset > max_offset:
-        return {
-            **row,
-            "feasible": False,
-            "reason": f"index_mismatch (offset {offset:.3f} > {max_offset})",
-            "category": "index_mismatch",
-        }
 
     plan = plan_from_demo(demo, T_table_cube, side, solver)
     # The wrist spin is a free variable away from the jaws closing, so search it

@@ -727,8 +727,12 @@ def run_demo(
     """One full attempt at `put_in_bin` by replaying a retargeted source demo.
 
     Same contract as :func:`run_put_in_bin` — reset, place the cube, go to the
-    start in joint space, stream, judge — so `sim/validate_library.py` can score
-    library entries exactly the way gate G1 scores the hand-coded baseline.
+    start in joint space, stream, judge — so `data/generate_dataset.py` scores a
+    retargeted demo exactly the way gate G1 scores the hand-coded baseline.
+
+    Records nothing itself. The caller opens an episode on the robot first (see
+    `SimRobot.start_episode`); the `reset` below does not disturb it, which is
+    what puts the HOME -> approach bridge inside the recording.
     """
     cfg = config.skills()["exec"]
     cube = config.skills()["scene"]["cube"]

@@ -1,8 +1,8 @@
 """Loading `data/retargeted/*.npz` source demos into :class:`common.mimic.SourceDemo`.
 
-One place that knows the section 7.2 npz schema, so the three consumers —
-`sim/feasibility.py` (step 6), `data/build_library.py` (step 7) and
-`sim/validate_library.py` (step 9) — cannot drift apart.
+One place that knows the section 7.2 npz schema, so its consumers —
+`data/generate_dataset.py` and the optional `sim/feasibility.py` diagnostic —
+cannot drift apart.
 
 The one non-obvious thing here is :data:`ORIENTATION_MODES`. See
 :func:`common.transforms.flatten_top_down` and

@@ -62,21 +62,37 @@ def sample_scenes(n: int, seed: int) -> list[tuple[list[float], float]]:
     ]
 
 
-def source_demo_ids(path: Path, limit: int | None = None) -> list[str]:
-    """The demos worth executing: the ones `sim/feasibility.py` found feasible.
+def source_demo_ids(limit: int | None = None, feasible_only: bool = False) -> list[str]:
+    """Every retargeted source demo, straight from `data/retargeted/`.
 
-    Driven from the feasibility file rather than `data/library/*.json` for two
-    reasons. It is CURRENT — the library on disk was built from an older 99-demo
-    screen and predates the tilt change that took feasibility to 115 — and it has
-    not been through `library.max_index_offset`, which rejects 32 demos on a
-    quantity measured to correlate with success at -0.048.
+    **Deliberately not filtered.** The pipeline used to run this same work twice
+    before here — `sim/feasibility.py` to record a boolean, `sim/validate_library.py`
+    to record a rate — and each needed a threshold to decide what to pass on.
+    Physics is the only honest judge of whether a demo works on a given cube, and
+    it is about to run anyway, so a demo that fails costs one trial and is logged
+    with its reason. A demo wrongly rejected by a screen costs all of its trials
+    and is invisible.
+
+    `feasible_only` is an opt-in speed-up for a quick run, not the default: it
+    reuses a previous feasibility screen, which is a nominal-scene approximation
+    of the question this script answers exactly.
     """
-    if not path.exists():
+    paths = sorted(config.path("data", "retargeted").glob("*.npz"))
+    if not paths:
         raise FileNotFoundError(
-            f"{path} is missing — run `uv run python sim/feasibility.py` first"
+            "data/retargeted/ has no demos — run `uv run python data/retarget.py` first"
         )
-    data = json.loads(path.read_text())
-    ids = [d["id"] for d in data["demos"] if d.get("feasible")]
+    ids = [p.stem for p in paths]
+
+    if feasible_only:
+        if not FEASIBILITY.exists():
+            raise FileNotFoundError(
+                f"{FEASIBILITY} is missing — run `uv run python sim/feasibility.py`, "
+                "or drop --feasible-only"
+            )
+        keep = {d["id"] for d in json.loads(FEASIBILITY.read_text())["demos"] if d.get("feasible")}
+        ids = [i for i in ids if i in keep]
+
     return ids[:limit] if limit else ids
 
 
@@ -208,20 +224,25 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--side", default="right")
     ap.add_argument("--no-merge", action="store_true", help="leave the shards unmerged")
+    ap.add_argument(
+        "--feasible-only",
+        action="store_true",
+        help="reuse a previous feasibility screen instead of letting physics decide",
+    )
     args = ap.parse_args()
 
     if not os.environ.get("MUJOCO_GL"):
         print("MUJOCO_GL is unset — rendering needs a GL backend. Try MUJOCO_GL=egl.")
         return 1
 
-    vcfg = config.skills()["validation"]
-    n_trials = int(vcfg["n_trials"]) if args.trials is None else args.trials
-    seed = int(vcfg["seed"]) if args.seed is None else args.seed
+    dcfg = config.skills()["dataset"]
+    n_trials = int(dcfg["trials_per_demo"]) if args.trials is None else args.trials
+    seed = int(dcfg["seed"]) if args.seed is None else args.seed
     # Rendering workers hold ~1.9 GB each; `n_processes` (16) is tuned for the
     # headless batch steps and will not fit here.
     n_proc = args.processes if args.processes is not None else 8
 
-    ids = source_demo_ids(FEASIBILITY, args.limit)
+    ids = source_demo_ids(args.limit, args.feasible_only)
     scenes = sample_scenes(n_trials, seed)
     tasks = [(i, xy, yaw) for i in ids for xy, yaw in scenes]
     half = float(config.skills()["scene"]["cube"]["size"]) / 2.0
