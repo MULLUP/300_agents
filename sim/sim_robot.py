@@ -16,6 +16,7 @@ so `SimRobot` and `RealRobot` reject exactly the same trajectories.
 from __future__ import annotations
 
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +38,22 @@ SCENE_PATH = config.path("sim", "scene.xml")
 # use `SCENE_PATH`; the headless scene has no visual geometry to photograph.
 SCENE_HEADLESS_PATH = config.path("sim", "scene_headless.xml")
 
+# Quality for the in-memory frame buffer; see `Episode`. High enough that the
+# encode is not a visible second lossy step on top of LeRobot's video encoding.
+JPEG_QUALITY = 95
+
+
+def _jpeg_encode(img: np.ndarray) -> bytes:
+    import imageio.v3 as iio
+
+    return iio.imwrite("<bytes>", img, extension=".jpg", quality=JPEG_QUALITY)
+
+
+def _jpeg_decode(buf: bytes) -> np.ndarray:
+    import imageio.v3 as iio
+
+    return iio.imread(buf, extension=".jpg")
+
 
 class UnsafeTrajectory(RuntimeError):
     """A commanded trajectory broke a `conventions.md` section 10 limit."""
@@ -44,6 +61,51 @@ class UnsafeTrajectory(RuntimeError):
     def __init__(self, violations: list[safety.Violation]):
         self.violations = violations
         super().__init__("; ".join(str(v) for v in violations[:6]))
+
+
+@dataclass
+class Episode:
+    """One recorded trajectory, already in LeRobot's frame alignment.
+
+    Frame `i` is the pair a policy is trained on: `state[i]` and `image[i]` are
+    what the robot saw *before* it was commanded, and `action[i]` is the
+    command it was then given. So `action[i]` is what a policy should output
+    having observed `state[i]` -- and `state[i + 1]` is where that command got
+    it. Recording the state *after* stepping instead would shift the whole
+    dataset by one cycle and teach the policy to predict the command it has
+    already executed.
+
+    Joint vectors are the full 16-slot canonical layout; use `JointIndex` to
+    take the 8 columns the dataset wants.
+
+    **Frames are held JPEG-encoded**, and :meth:`frames` decodes them. An
+    episode is 400-900 cycles, so raw 512-square frames cost 320-730 MB and a
+    worker peaked at 3.6 GB of RSS holding one — against a 30 GB machine that
+    caps the generator at ~7 workers, and OOM has already killed two runs in
+    this project. Measured on a real frame: q95 encode 0.69 ms, decode 1.07 ms,
+    45.7 kB against 786 kB, so buffering costs ~0.6 s per episode and saves 17x
+    the memory. The encode is the one lossy step we add; q95 is visually
+    indistinguishable here and LeRobot re-encodes to video on write anyway.
+    """
+
+    t: np.ndarray
+    state: np.ndarray
+    action: np.ndarray
+    jpegs: list[bytes] | None = None
+
+    def __len__(self) -> int:
+        return len(self.state)
+
+    def frames(self) -> np.ndarray | None:
+        """Decode every frame to an `(N, H, W, 3)` uint8 array."""
+        if self.jpegs is None:
+            return None
+        return np.asarray([_jpeg_decode(b) for b in self.jpegs], dtype=np.uint8)
+
+    @property
+    def nbytes(self) -> int:
+        n = self.t.nbytes + self.state.nbytes + self.action.nbytes
+        return n + sum(len(b) for b in self.jpegs or ())
 
 
 class SimRobot(RobotInterface):
@@ -54,7 +116,6 @@ class SimRobot(RobotInterface):
         model_path: Path | str | None = None,
         *,
         enforce_safety: bool = True,
-        record: bool = False,
         render: bool = True,
     ):
         """`render=False` loads the visual-free scene — use it for batch physics.
@@ -72,13 +133,81 @@ class SimRobot(RobotInterface):
         self.data = mujoco.MjData(self.model)
         self.index = JointIndex(self.model)
         self.enforce_safety = enforce_safety
+        self._has_visuals = model_path != SCENE_HEADLESS_PATH
 
-        # Recorded (t, q) per control cycle, for dataset export and debugging.
-        self.record = record
-        self.log_t: list[float] = []
-        self.log_q: list[np.ndarray] = []
+        # Built on first capture and reused: a Renderer owns a GL context, which
+        # is far too expensive to create per episode (~0.4 s) and leaks if
+        # churned. `None` until something actually asks for a picture, so the
+        # headless batch path never touches GL at all.
+        self._renderer: mujoco.Renderer | None = None
+        self._capture: dict | None = None
 
         self.reset()
+
+    # --- recording ----------------------------------------------------------
+
+    def renderer(self) -> mujoco.Renderer:
+        """The lazily-built offscreen renderer, sized from `dataset.image_size`."""
+        if self._renderer is None:
+            if not self._has_visuals:
+                raise RuntimeError(
+                    "this SimRobot loaded the headless scene, which has no visual "
+                    "geometry to photograph — construct it with `render=True`"
+                )
+            size = int(config.skills()["dataset"]["image_size"])
+            # Raises if `size` exceeds the model's offscreen framebuffer, which
+            # `sim/build_models.py` sets from this same config key. A mismatch
+            # means the XMLs predate the key and need regenerating.
+            self._renderer = mujoco.Renderer(self.model, height=size, width=size)
+        return self._renderer
+
+    def start_episode(self, camera: str | None = None) -> None:
+        """Begin recording; every `stream` cycle until `end_episode` is a frame.
+
+        `camera` names a camera in the scene to photograph each cycle; `None`
+        records joints only. Recording must happen *during* stepping because
+        nothing here logs object poses — the cube's motion is not reconstructible
+        afterwards, so an episode cannot be re-rendered from a joint log.
+        """
+        if camera is not None:
+            self.renderer()  # fail now, not 300 frames in
+        self._capture = {
+            "camera": camera,
+            # Captured up front so an episode that records NOTHING still has a
+            # width. A trial can fail before it streams a single cycle (an
+            # unreachable approach pose, no feasible wrist angle), and inferring
+            # the column count from an empty list is not possible -- that case
+            # reached the generator as `cannot reshape array of size 0`.
+            "n_slots": len(self.index.read_qpos(self.data.qpos)),
+            "t": [],
+            "state": [],
+            "action": [],
+            "images": [],
+        }
+
+    def end_episode(self) -> Episode:
+        """Close the recording and return it. Raises if none was started."""
+        if self._capture is None:
+            raise RuntimeError("end_episode() without a matching start_episode()")
+        cap, self._capture = self._capture, None
+        shape = (len(cap["t"]), cap["n_slots"])
+        return Episode(
+            t=np.asarray(cap["t"], dtype=np.float64),
+            state=np.asarray(cap["state"], dtype=np.float64).reshape(shape),
+            action=np.asarray(cap["action"], dtype=np.float64).reshape(shape),
+            jpegs=cap["images"] if cap["camera"] else None,
+        )
+
+    def _capture_frame(self, action: np.ndarray) -> None:
+        """Record the pre-command observation and the command about to be sent."""
+        cap = self._capture
+        cap["t"].append(float(self.data.time))
+        cap["state"].append(self.index.read_qpos(self.data.qpos))
+        cap["action"].append(np.asarray(action, dtype=np.float64).copy())
+        if cap["camera"]:
+            r = self.renderer()
+            r.update_scene(self.data, camera=cap["camera"])
+            cap["images"].append(_jpeg_encode(r.render()))
 
     # --- state --------------------------------------------------------------
 
@@ -94,8 +223,6 @@ class SimRobot(RobotInterface):
         self.index.write_qpos(q, self.data.qpos)
         self.index.write_ctrl(q, self.data.ctrl)
         mujoco.mj_forward(self.model, self.data)
-        self.log_t.clear()
-        self.log_q.clear()
 
     def get_state(self) -> dict[str, Any]:
         return {"t": float(self.data.time), "q": self.index.read_qpos(self.data.qpos)}
@@ -202,19 +329,22 @@ class SimRobot(RobotInterface):
         return steps
 
     def stream(self, q_traj: np.ndarray, rate_hz: float) -> None:
-        """Execute an `(N, 16)` trajectory, holding each sample for one cycle."""
+        """Execute an `(N, 16)` trajectory, holding each sample for one cycle.
+
+        While an episode is open (:meth:`start_episode`) each cycle contributes
+        one frame, observed *before* the command is written — see :class:`Episode`.
+        """
         traj = np.atleast_2d(np.asarray(q_traj, dtype=np.float64))
         if self.enforce_safety:
             self._check(traj, rate_hz)
 
         steps = self.steps_per_cycle(rate_hz)
         for q in traj:
+            if self._capture is not None:
+                self._capture_frame(q)
             self.index.write_ctrl(q, self.data.ctrl)
             for _ in range(steps):
                 mujoco.mj_step(self.model, self.data)
-            if self.record:
-                self.log_t.append(float(self.data.time))
-                self.log_q.append(self.index.read_qpos(self.data.qpos))
 
     def set_gripper(self, side: str, g: float) -> None:
         """Command one gripper and hold the arms still while it moves."""

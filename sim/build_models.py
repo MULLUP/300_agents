@@ -271,6 +271,64 @@ def _add_spot(spec: mujoco.MjSpec, name: str, cfg: dict) -> None:
     )
 
 
+def task_roi() -> tuple[np.ndarray, np.ndarray]:
+    """`(lo, hi)` xy bounds of everything the overhead camera must see.
+
+    The union of the pick zone, the bin's OUTER footprint (walls included) and
+    the `move_to_spot` target. Derived from `scene` rather than written down, so
+    moving the bin moves the region the camera is checked against.
+    """
+    scene = config.skills()["scene"]
+
+    pz_c = np.asarray(scene["pick_zone"]["center"], dtype=np.float64)
+    pz_h = np.asarray(scene["pick_zone"]["size"], dtype=np.float64) / 2.0
+
+    bin_c = np.asarray(scene["bin"]["center"], dtype=np.float64)
+    bin_h = np.asarray(scene["bin"]["inner_size"], dtype=np.float64) / 2.0 + float(
+        scene["bin"]["wall_thickness"]
+    )
+
+    spot_c = np.asarray(scene["spot"]["center"], dtype=np.float64)
+    spot_h = np.full(2, float(scene["spot"]["radius"]))
+
+    los = [pz_c - pz_h, bin_c - bin_h, spot_c - spot_h]
+    his = [pz_c + pz_h, bin_c + bin_h, spot_c + spot_h]
+    return np.minimum.reduce(los), np.maximum.reduce(his)
+
+
+def _assert_overhead_covers_roi(pos: np.ndarray, fovy_deg: float) -> None:
+    """Fail the build if the overhead camera cannot see the whole task.
+
+    The bin used to sit 29 mm outside the frame and nobody noticed, because
+    nothing in this repo rendered an image until long after the camera was
+    placed. A dataset whose target object is clipped is worthless, and the
+    failure is invisible in every metric except looking at a picture -- so the
+    geometry is checked on every build instead.
+
+    Assumes a square image and a straight-down camera, which is what
+    `config/calibration.yaml` specifies; the half-extent on both axes is then
+    `height * tan(fovy / 2)`.
+    """
+    lo, hi = task_roi()
+    half = float(pos[2]) * np.tan(np.radians(fovy_deg) / 2.0)
+    cam_lo, cam_hi = pos[:2] - half, pos[:2] + half
+
+    margin = np.minimum(lo - cam_lo, cam_hi - hi)
+    if np.any(margin < 0.0):
+        raise RuntimeError(
+            f"the overhead camera at {np.round(pos, 3).tolist()} with fovy {fovy_deg} "
+            f"covers x [{cam_lo[0]:.3f}, {cam_hi[0]:.3f}] y [{cam_lo[1]:.3f}, {cam_hi[1]:.3f}], "
+            f"which does NOT contain the task region x [{lo[0]:.3f}, {hi[0]:.3f}] "
+            f"y [{lo[1]:.3f}, {hi[1]:.3f}] (shortfall "
+            f"{np.round(np.minimum(margin, 0.0) * -1000, 1).tolist()} mm in x/y). "
+            "Re-aim `T_table_cam_overhead` in config/calibration.yaml, or widen its fovy."
+        )
+    print(
+        f"  overhead camera covers the task region with "
+        f"{margin[0] * 1000:.0f}/{margin[1] * 1000:.0f} mm margin in x/y"
+    )
+
+
 def _add_cameras(spec: mujoco.MjSpec) -> None:
     """Cameras at the planned real poses (conventions.md section 6).
 
@@ -282,12 +340,15 @@ def _add_cameras(spec: mujoco.MjSpec) -> None:
     calib = config.calibration()
 
     cam = calib["T_table_cam_overhead"]
+    pos = np.asarray(cam["pos"], dtype=np.float64)
+    fovy = float(cam["fovy"])
+    _assert_overhead_covers_roi(pos, fovy)
     R_cv = quat_wxyz_to_mat(np.asarray(cam["quat_wxyz"], dtype=np.float64))
     spec.worldbody.add_camera(
         name="overhead",
-        pos=np.asarray(cam["pos"], dtype=np.float64),
+        pos=pos,
         quat=mat_to_quat_wxyz(R_cv @ flip),
-        fovy=58.0,
+        fovy=fovy,
     )
 
     # The wrist camera rides on the hand, so it has no `table`-frame pose. Looks
@@ -315,6 +376,14 @@ def build_scene(out_path: Path, headless: bool = False) -> mujoco.MjModel:
     _add_bin(spec, "bin", scene["bin"])
     _add_spot(spec, "spot", scene["spot"])
     _add_cameras(spec)
+
+    # The offscreen framebuffer defaults to 640x480, and `mujoco.Renderer`
+    # raises rather than downscaling when asked for anything larger -- so
+    # without this a 512-square render fails at construction. Square, because
+    # the camera's coverage is checked as a square in `_assert_overhead_covers_roi`.
+    size = int(config.skills()["dataset"]["image_size"])
+    spec.visual.global_.offwidth = size
+    spec.visual.global_.offheight = size
 
     # The left zone exists for the two-arm stretch (plan phase 5S). It is
     # generated only when enabled, so flipping the flag and re-running this

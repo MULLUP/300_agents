@@ -35,10 +35,34 @@ T_table_robot:
 # (conventions.md section 6, plan task 1.ALL.4 — not yet answered).
 T_table_cam_overhead:
   nominal: true
-  # 0.90 m above the table, centred over the working area, looking straight down.
+  # 0.90 m above the table, looking straight down.
   # +x_cam = table +y, +y_cam = table +x, +z_cam = table -z.
-  pos: [0.40, 0.0, 0.90]
+  #
+  # RE-AIMED. The previous pose was [0.40, 0.0, 0.90] at fovy 58, which was never
+  # rendered and never checked. At 0.90 m, fovy 58 covers a half-extent of
+  # 0.90 * tan(29) = 0.499 m, i.e. x [-0.099, 0.899], y [-0.499, +0.499]. Two
+  # things were wrong with that:
+  #
+  #   * The BIN WAS CLIPPED. Its outer edge is at y = -0.528 (skills.yaml
+  #     `scene.bin`: centre -0.44, inner 0.16, walls 0.008), 29 mm beyond the
+  #     frame. The target of the task was partly outside every image.
+  #   * The task is 9% of the frame. Everything the model must see spans
+  #     x [0.112, 0.380], y [-0.528, -0.200] -- 0.268 x 0.328 m inside a
+  #     1.0 x 1.0 m view. At 512 px the 45 mm cube measured ~23 px across.
+  #
+  # Aimed at the centre of that region, (0.246, -0.364), rounded to (0.25, -0.36),
+  # and the fov tightened to a 0.22 m half-extent: fovy = 2*atan(0.22/0.90) =
+  # 27.5 deg. That covers x [0.03, 0.47], y [-0.58, -0.14] -- every task feature
+  # with >= 52 mm of margin on the tightest side -- and takes the cube to ~52 px.
+  #
+  # The margin is not a guess either: `sim/build_models.py` recomputes the task
+  # region from `scene` on every build and FAILS if this camera does not cover
+  # it. Move the bin or the pick zone and the build tells you to re-aim.
+  pos: [0.25, -0.36, 0.90]
   quat_wxyz: [0.0, 0.7071067811865476, 0.7071067811865476, 0.0]
+  # Vertical field of view, degrees. Lives here with the pose because the two are
+  # only meaningful together -- the covered extent is h * tan(fovy/2).
+  fovy: 27.5
 
 # Wrist camera: mounted on the right hand, so its pose is NOT a `table`-frame
 # constant — it is defined in sim/scene.xml relative to the hand body. Listed

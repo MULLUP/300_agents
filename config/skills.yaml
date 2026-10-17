@@ -352,3 +352,41 @@ validation:
   min_success_rate: 0.8 # entries below this are dropped from the library
   # `n_processes` moved to the top of this file: it is a machine property shared
   # with step 6, not a validation parameter, and two copies would drift.
+
+# --- The deliverable: the LeRobot dataset (data/generate_dataset.py) ---
+# Read out of the installed lerobot 0.4.4 and SmolVLAConfig, NOT from
+# conventions.md section 7.4, which is wrong about the image size and silent
+# about the token and episode-length limits.
+dataset:
+  # SmolVLA resizes every image to 512x512 with padding
+  # (`resize_imgs_with_padding`), so rendering at 512 square is the largest size
+  # that is never upscaled and never letterboxed. 224 (conventions.md 7.4) would
+  # be upscaled 2.3x and throw away detail we rendered for free.
+  #
+  # `sim/build_models.py` writes this into the model's offscreen framebuffer,
+  # which defaults to 640x480 -- mujoco.Renderer REFUSES a height above it, so a
+  # 512 render fails at construction until the model is rebuilt.
+  image_size: 512
+
+  # One camera, by decision: a second doubles render time and dataset bytes for
+  # a gain nobody has measured. `overhead` over `wrist_right` because the task is
+  # defined by where the cube is relative to the bin, which a fixed frame shows
+  # and a wrist frame does not.
+  camera: overhead
+
+  # The instruction string, fixed. SmolVLA's tokenizer_max_length is 48 tokens;
+  # this is 7. Deliberately NOT EgoDex's `llm_description`, which varies per
+  # episode and would make the instruction a source label rather than a task.
+  task: "put the red cube in the bin"
+
+  # fps is `exec.rate_hz` and is not repeated here. One control step = one frame
+  # = one action, so a second number could only ever disagree with the first.
+
+  # SmolVLA's chunk_size is 50: a training sample needs a 50-step action horizon,
+  # so a shorter episode cannot form one. At 50 Hz this is 1.0 s.
+  min_frames: 50
+
+  # Video encoding takes a raw episode from ~140 MB to a few MB. The raw frames
+  # are also far too large to pass between processes, which is why each worker
+  # writes its own shard and the shards are merged afterwards.
+  use_videos: true

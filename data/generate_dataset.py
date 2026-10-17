@@ -1,0 +1,299 @@
+"""Generate the SmolVLA training dataset: run demos in physics, keep what works.
+
+This replaces the screen-then-verdict shape of `sim/feasibility.py` (step 6) and
+`sim/validate_library.py` (step 9). Both of those did exactly this work — retarget
+a source demo onto a sampled cube, search the wrist angles, solve IK, execute —
+and then threw the trajectory away and recorded a boolean or a rate. A generator
+does the same work once and **keeps the episode whenever it succeeds**, which is
+MimicGen as actually specified: generate many, keep the successes.
+
+Because nothing downstream has to decide what to pass on, the thresholds those
+stages needed (`library.max_index_offset`, `validation.min_success_rate`, gate
+G4's "50 entries") have nothing left to gate. Every failed trial is logged with
+its **full** reason string and the cube's **final pose**, which is what makes the
+dominant failure diagnosable instead of merely countable.
+
+    uv run python data/generate_dataset.py --trials 4 --limit 8     # a taste
+    uv run python data/generate_dataset.py                          # the real run
+
+Needs a GL context: `MUJOCO_GL=egl` on this machine (`osmesa` is a fallback).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+from collections import Counter
+from multiprocessing import Pool, util
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from common import config, demos  # noqa: E402
+from common.ik import IKSolver  # noqa: E402
+from data.dataset_writer import ShardWriter, dataset_root, merge_shards  # noqa: E402
+from sim.execute import run_demo  # noqa: E402
+from sim.sim_robot import SimRobot  # noqa: E402
+
+FEASIBILITY = config.path("sim", "plots", "feasibility_egodex_top_down.json")
+
+_W: dict = {}
+
+
+def sample_scenes(n: int, seed: int) -> list[tuple[list[float], float]]:
+    """`n` (cube_xy, cube_yaw) scenes from the pick zone.
+
+    Every demo sees the same scenes, as in `sim/validate_library.py`, so a
+    difference between two demos is the demo and not the draw. Yaw spans only
+    +/- 45 deg because a cube is 90 deg-symmetric (`conventions.md` section 2).
+    """
+    scene = config.skills()["scene"]
+    centre = np.asarray(scene["pick_zone"]["center"], dtype=np.float64)
+    size = np.asarray(scene["pick_zone"]["size"], dtype=np.float64)
+    rng = np.random.default_rng(seed)
+    return [
+        ((centre + rng.uniform(-0.5, 0.5, 2) * size).tolist(), float(rng.uniform(-np.pi / 4, np.pi / 4)))
+        for _ in range(n)
+    ]
+
+
+def source_demo_ids(path: Path, limit: int | None = None) -> list[str]:
+    """The demos worth executing: the ones `sim/feasibility.py` found feasible.
+
+    Driven from the feasibility file rather than `data/library/*.json` for two
+    reasons. It is CURRENT — the library on disk was built from an older 99-demo
+    screen and predates the tilt change that took feasibility to 115 — and it has
+    not been through `library.max_index_offset`, which rejects 32 demos on a
+    quantity measured to correlate with success at -0.048.
+    """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} is missing — run `uv run python sim/feasibility.py` first"
+        )
+    data = json.loads(path.read_text())
+    ids = [d["id"] for d in data["demos"] if d.get("feasible")]
+    return ids[:limit] if limit else ids
+
+
+def _init_worker(shard_prefix: str, side: str) -> None:
+    """One robot, solver and shard per process.
+
+    `render=True` is required: the headless scene has its visual geometry
+    stripped and cannot be photographed. It costs ~1.9 GB of RSS per worker
+    against ~0.26 GB, which is what caps the worker count — see `--processes`.
+    """
+    _W["robot"] = SimRobot(render=True)
+    _W["solver"] = IKSolver()
+    _W["demos"] = {}
+    _W["side"] = side
+    _W["writer"] = ShardWriter(f"{shard_prefix}_w{os.getpid()}", side=side)
+
+    # The shard lives and dies inside this process, so the parent has no moment
+    # at which it could flush it. Without this the buffered episode metadata is
+    # never written and every shard is silently unreadable — see
+    # `ShardWriter.close`.
+    #
+    # `multiprocessing.util.Finalize`, NOT `atexit`: a pool worker ends in
+    # `BaseProcess._bootstrap`, which calls `util._exit_function` and then
+    # `os._exit()`. `os._exit` skips `atexit` entirely, so an atexit hook here
+    # runs never — the shards came out exactly as unreadable as with no hook at
+    # all. `util.Finalize` registers into the handler that _does_ run.
+    util.Finalize(_W["writer"], _W["writer"].close, exitpriority=10)
+
+
+def _demo(entry_id: str):
+    """The loaded source demo, cached per process (the npz re-read is not free)."""
+    cache = _W["demos"]
+    if entry_id not in cache:
+        cache[entry_id] = demos.load_source_demo(
+            config.path("data", "retargeted", f"{entry_id}.npz")
+        )
+    return cache[entry_id]
+
+
+def _trial(task: tuple[str, list[float], float]) -> dict:
+    """Run one (demo, scene) pair and, if it works, write the episode.
+
+    The episode never crosses the process boundary — even JPEG-buffered it is
+    tens of megabytes — so the worker writes it to its own shard and returns
+    only the log record.
+
+    `start_episode` is called *before* `run_demo`, which resets the robot as its
+    first act and does not disturb an open recording. That deliberately puts the
+    HOME -> approach bridge inside the episode: a policy at inference time starts
+    from HOME, so if the dataset began at the approach pose it would have no data
+    for how to get there.
+    """
+    entry_id, xy, yaw = task
+    robot, writer = _W["robot"], _W["writer"]
+
+    robot.start_episode(camera=writer.camera)
+    t0 = time.perf_counter()
+    try:
+        res = run_demo(robot, _demo(entry_id), np.asarray(xy), float(yaw), _W["side"], _W["solver"])
+    finally:
+        # Always close the recording, or a raising trial leaks its frames into
+        # the next one and silently corrupts that episode.
+        episode = robot.end_episode()
+    elapsed = time.perf_counter() - t0
+
+    rec = {
+        "id": entry_id,
+        "cube_xy": list(xy),
+        "cube_yaw": float(yaw),
+        "success": bool(res),
+        # The FULL string, not a collapsed key. `_reason_key` in
+        # validate_library.py folded "cube at (0.31,-0.22) outside the bin
+        # footprint" down to "cube_not_in_bin" before anything was saved, which
+        # is why the dominant failure mode was never diagnosable.
+        "reason": res.reason,
+        "cube_final": None if res.cube_pose is None else res.cube_pose[:3, 3].tolist(),
+        "n_frames": len(episode),
+        "seconds": round(elapsed, 2),
+        "written": False,
+        # Which shard this episode went to. Reported by the worker rather than
+        # discovered by globbing `data/`: a glob for "*_w*" also matched
+        # `data/egodex_raw_wipe_screen`, and the merge then tried to resolve
+        # that as a HuggingFace repo.
+        "shard": writer.name,
+    }
+    if res:
+        rec["written"] = writer.write(episode, robot.index)
+        if not rec["written"]:
+            rec["reason"] = f"too_short ({len(episode)} frames)"
+    return rec
+
+
+def written_shards(rows: list[dict]) -> list[str]:
+    """Shards that actually received an episode.
+
+    A worker whose every trial failed never creates its dataset — `ShardWriter`
+    builds it lazily — so including it in the merge would point
+    `aggregate_datasets` at a directory with no metadata.
+    """
+    return sorted({r["shard"] for r in rows if r["written"]})
+
+
+def classify(rec: dict, half: float) -> str:
+    """A countable bucket for one trial — derived from the log, never stored in it.
+
+    The distinction the handoff asks for: a cube at *exactly* its spawn pose was
+    never gripped, which is a different bug from one that travelled and fell
+    short. Collapsing these two into `cube_not_in_bin` is what hid the problem.
+    """
+    if rec["success"]:
+        return "success" if rec["written"] else "success_but_too_short"
+    if rec["cube_final"] is None:
+        return "no_execution: " + rec["reason"].split(" ")[0].split("(")[0]
+    moved = float(np.linalg.norm(np.asarray(rec["cube_final"][:2]) - np.asarray(rec["cube_xy"])))
+    lifted = rec["cube_final"][2] > half + 0.01
+    if moved < 0.02 and not lifted:
+        return "never_gripped (cube did not move)"
+    if moved < 0.08:
+        return "slipped (<8 cm)"
+    return "carried but missed (>8 cm)"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--name", default="egodex_pick_place", help="dataset name under data/lerobot/")
+    ap.add_argument("--trials", type=int, default=None, help="scenes per demo")
+    ap.add_argument("--limit", type=int, default=None, help="use only the first N demos")
+    ap.add_argument("--processes", type=int, default=None)
+    ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--side", default="right")
+    ap.add_argument("--no-merge", action="store_true", help="leave the shards unmerged")
+    args = ap.parse_args()
+
+    if not os.environ.get("MUJOCO_GL"):
+        print("MUJOCO_GL is unset — rendering needs a GL backend. Try MUJOCO_GL=egl.")
+        return 1
+
+    vcfg = config.skills()["validation"]
+    n_trials = int(vcfg["n_trials"]) if args.trials is None else args.trials
+    seed = int(vcfg["seed"]) if args.seed is None else args.seed
+    # Rendering workers hold ~1.9 GB each; `n_processes` (16) is tuned for the
+    # headless batch steps and will not fit here.
+    n_proc = args.processes if args.processes is not None else 8
+
+    ids = source_demo_ids(FEASIBILITY, args.limit)
+    scenes = sample_scenes(n_trials, seed)
+    tasks = [(i, xy, yaw) for i in ids for xy, yaw in scenes]
+    half = float(config.skills()["scene"]["cube"]["size"]) / 2.0
+
+    print(
+        f"generating from {len(ids)} demos x {n_trials} scenes = {len(tasks)} trials "
+        f"on {n_proc} processes (seed {seed})"
+    )
+
+    rows, t0 = [], time.perf_counter()
+    with Pool(processes=n_proc, initializer=_init_worker, initargs=(args.name, args.side)) as pool:
+        for i, rec in enumerate(pool.imap_unordered(_trial, tasks, chunksize=1), start=1):
+            rows.append(rec)
+            if i % 10 == 0 or i == len(tasks):
+                n_ok = sum(r["written"] for r in rows)
+                rate = i / (time.perf_counter() - t0)
+                print(
+                    f"  {i:5d}/{len(tasks)}  kept {n_ok:4d}  "
+                    f"{rate * 3600:.0f} trials/h",
+                    flush=True,
+                )
+        # Shut the workers down GRACEFULLY, before the `with` block's exit calls
+        # `terminate()`. Each worker flushes its shard from an `atexit` hook, and
+        # `atexit` does not run on the SIGTERM that `terminate()` sends — so
+        # letting the context manager clean up would discard every shard's
+        # metadata and leave the merge reading half-written datasets.
+        print("  finalising shards", flush=True)
+        pool.close()
+        pool.join()
+
+    elapsed = time.perf_counter() - t0
+    kept = [r for r in rows if r["written"]]
+    frames = sum(r["n_frames"] for r in kept)
+
+    buckets = Counter(classify(r, half) for r in rows)
+    print(f"\n=== {len(kept)}/{len(rows)} trials kept in {elapsed / 60:.1f} min ===")
+    if kept:
+        print(
+            f"  {frames} frames, median episode {int(np.median([r['n_frames'] for r in kept]))} "
+            f"frames ({np.median([r['n_frames'] for r in kept]) / 50.0:.1f} s)"
+        )
+        print(f"  {len(kept) / elapsed * 3600:.0f} episodes/hour at {n_proc} processes")
+    print("  outcomes:")
+    for name, count in buckets.most_common():
+        print(f"    {name:<40s} {count:5d}  ({count / len(rows):.1%})")
+
+    log = config.path("data", "lerobot", f"{args.name}_trials.json")
+    log.parent.mkdir(parents=True, exist_ok=True)
+    log.write_text(
+        json.dumps(
+            {
+                "conventions_version": config.CONVENTIONS_VERSION,
+                "seed": seed,
+                "n_demos": len(ids),
+                "n_trials_per_demo": n_trials,
+                "n_kept": len(kept),
+                "elapsed_s": round(elapsed, 1),
+                "trials": rows,
+            },
+            indent=2,
+        )
+    )
+    print(f"wrote {log.relative_to(config.REPO_ROOT)}")
+
+    shards = written_shards(rows)
+    if shards and not args.no_merge:
+        print(f"merging {len(shards)} shards -> {args.name}")
+        out = merge_shards(shards, args.name)
+        print(f"wrote {out.relative_to(config.REPO_ROOT)}")
+
+    return 0 if kept else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
