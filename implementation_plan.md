@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Version** | **V2 (draft)** |
-| **Timestamp** | **2026-10-17T12:55:23Z** |
+| **Version** | **V2.1 (draft)** |
+| **Timestamp** | **2026-10-17T13:01:09Z** |
 | **Status** | Working plan. **Expect changes.** Always check the version and timestamp before acting on it. |
-| **Supersedes** | V1 (2026-10-17T12:11:17Z) |
+| **Supersedes** | V2 (2026-10-17T12:55:23Z) |
 | **Companion file** | `conventions.md`. **Read it first.** V2 requires a conventions update (task 1.ALL.2). |
 
 ---
@@ -62,12 +62,13 @@ library ─► MimicGen plans thousands of random scenes ─► MuJoCo executes 
 - Two source tracks (EgoDex, teleop), one shared MimicGen generator, three SmolVLA LoRA adapters.
 - Simulation-first development (H0–8), hardware from H8 (needed for teleop).
 - Runtime with verification, one retry, run logging, a UI and a results comparison.
+- **Stretch:** a two-arm demo, `dual_put_in_bin`. Each arm independently puts its own cube in its own bin, at the same time, **retrieval only**, with no coordination between arms. Attempted only after gate G5b; cut if not solid by the H21 code freeze.
 
 ### Out of scope
 - Eidon and wiping; other EgoDex tasks.
 - The pose-based MLP policy (replaced by SmolVLA in V2).
 - Pi0 and other large VLAs; Isaac Lab; the official MimicGen framework; installing Phantom.
-- Bimanual skills, deformables, robot 2.
+- Coordinated bimanual skills (DexMimicGen-style), two-arm SmolVLA, deformables, robot 2.
 
 ---
 
@@ -117,6 +118,7 @@ library ─► MimicGen plans thousands of random scenes ─► MuJoCo executes 
 | `data/download_egodex.py`, `data/retarget.py` | Track A source demos | P2 |
 | `data/convert_teleop.py` | Track B: recorded teleop → source demos (and real LeRobot episodes in our schema) | P2 |
 | `data/build_library.py` | Segments, anchors, index → `data/library/{source}_v{n}.json` | P2 |
+| `data/mirror_library.py` | *(Stretch)* Mirror a right-arm library into a left-arm library | P2 |
 | `data/export_lerobot.py` | Generated episodes → LeRobot datasets A, B, C | P2 |
 | `policy/train_lora.sh`, `config/policy.yaml` | SmolVLA LoRA training runs | P2 |
 | `policy/infer_smolvla.py` | Closed-loop SmolVLA executor on the robot interface | P2 + P3 |
@@ -188,6 +190,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 | 3 | Hardware bring-up, calibration, teleop recording | H8–13 | P1 + P3 | G3 |
 | 4 | Source libraries: validate tracks A and B | H8–14 | P2 | G4 |
 | 5 | Layer 1: retrieval, sim then real, with UI | H10–18 | P3 + P1 | G5 |
+| 5S | *Stretch:* two-arm demo (`dual_put_in_bin`), retrieval only | H18–21 | P1 + P3 (+P2) | GS |
 | 6 | MimicGen data generation with rendering → LeRobot datasets | H14–17 | P2 (+P1) | G6 |
 | 7 | SmolVLA LoRA training (A, B, C) + simulation evaluation | H17–21 | P2 | G7 |
 | 8 | SmolVLA on hardware + full evaluation | H21–25 | All | — |
@@ -212,7 +215,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 **P1**
 - [ ] **1.P1.0** *(30 min)* Connect to the real arms and read joint angles only.
 - [ ] **1.P1.1** Load `v1/openarm_bimanual.xml`; write `config/joint_names.yaml`; add position actuators if missing; add `tcp_left` and `tcp_right` sites.
-- [ ] **1.P1.2** `sim/scene.xml`: world = `table` frame, robot at nominal `T_table_robot`, table, free cube, bin, spot, and cameras at the planned real poses.
+- [ ] **1.P1.2** `sim/scene.xml`: world = `table` frame, robot at nominal `T_table_robot`, table, free cube, bin, spot, and cameras at the planned real poses. Also define a **left zone**: a second cube (different color) and a second bin on the robot's left side, disabled by default. It's cheap to add now and needed for the stretch.
 - [ ] **1.P1.3** `common/ik.py`, `sim/sim_robot.py`, `sim/execute.py`.
 - [ ] **1.P1.4** Hand-coded pick-and-place. *Done:* 10/10 with random cube positions.
 
@@ -243,7 +246,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 ### Phase 3: Hardware bring-up, calibration, teleop recording (H8–13, P1 + P3)
 
 - [ ] **3.P1.1** Bring up both arms with `OpenArmFollower` (`max_relative_target = 3.0`). Test disconnect behavior **with the arm supported**. Real HOME into `config/home.yaml`.
-- [ ] **3.P1.2** Joint check at 5 poses → `config/joint_map_real.yaml`; verify the gripper mapping. Implement `runtime/real_robot.py`.
+- [ ] **3.P1.2** Joint check at 5 poses **for both arms** → `config/joint_map_real.yaml`; verify both gripper mappings. Implement `runtime/real_robot.py`.
 - [ ] **3.P3.1** Mount the cameras (they never move again); intrinsics into `config/camera.yaml`; ChArUco → `T_table_cam`; pixel → table within 1 cm at 5 points.
 - [ ] **3.J.1** Robot base calibration from 3 touched board corners (**measured** joints) → `T_table_robot`. **Write the real camera and base poses back into `sim/scene.xml`.**
 - [ ] **3.P1.3** Set up teleop: the organizers' VR rig, or leader arms if available. Practice for 10 minutes.
@@ -270,6 +273,10 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
   - Object anchor = the **measured** cube pose (no guessing, unlike track A).
   - Write source demos in the same schema as track A, plus a LeRobot copy of the 20 real episodes in the V2 dataset schema.
 - [ ] **4.P2.4** Track B library: validate → `data/library/teleop_v1.json`.
+- [ ] **4.P2.5** *(Stretch, only if G4 is met before H14; otherwise do it in phase 5S)* `data/mirror_library.py`:
+  - mirror the best right-arm library across the robot's left–right plane: position `p' = M p`, rotation `R' = M R M`, with `M = diag(1, −1, 1)` in the `table` frame;
+  - validate the result for the left arm (`tcp_left`, left zone);
+  - output `data/library/{source}_left_v1.json`, keeping entries with success ≥ 0.8.
 
 **Gate G4 (H14):** EgoDex library ≥ 50 entries (minimum 20); teleop library ≥ 15 entries.
 **If it fails:** inspect failures (grasp slips → P1 tunes gripper friction or close value; unreachable → tighten the pick zone).
@@ -299,6 +306,29 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 
 **Gate G5b (H18):** real retrieval `put_in_bin` ≥ 7/10.
 **If it fails:** shrink the pick zone, use a bigger cube; last resort is fixed-spot mode.
+
+---
+
+### Phase 5S (Stretch): Two-arm demo, retrieval only (H18–21, P1 + P3, P2 for the mirrored library)
+
+**Start only if G5b has passed.** Each arm runs its own independent single-arm skill; there's no coordination between them.
+
+- [ ] **5S.P2.1** Left-arm library ready (task 4.P2.5, if not already done).
+- [ ] **5S.J.1** Real setup: tape separate left and right zones so neither arm's pick zone or bin is reachable by the other arm's trajectories. Place the second cube and bin; measure the left bin position into `config/calibration.yaml`.
+- [ ] **5S.P3.1** `runtime/skills.py` → `dual_put_in_bin`:
+  1. detect both cubes;
+  2. retrieve independently from the right and left libraries;
+  3. transform and run IK per arm;
+  4. **merge into one 16-value joint stream**, aligned to a common start;
+  5. **simulate both arms together first**; reject the run on any arm-to-arm or arm-to-object collision that isn't the intended grasp;
+  6. execute;
+  7. verify both bins, retrying only the arm that failed;
+  8. log one run with two results.
+- [ ] **5S.P3.2** UI: a "Two skills at once" card showing combined and per-arm success rates.
+- [ ] **5S.P1.1** Real bring-up order: left-arm air runs → left arm alone with its cube → both arms together at `time_scale = 0.25`, e-stop in hand.
+
+**Gate GS (H21):** `dual_put_in_bin` succeeds on **both** arms in at least 4/5 real runs.
+**If it fails:** cut the stretch completely (UI card hidden). Single-arm retrieval remains the demo.
 
 ---
 
@@ -348,6 +378,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 
 - [ ] **8.P1.1** *(If G7 passed)* Best adapter on the real robot: air runs, then 5 cube runs at reduced speed with the e-stop in hand. If it's safe and working, 20 trials with that adapter; if time allows, 10 trials each for the others.
 - [ ] **8.ALL.1** Real retrieval: 20 trials of `put_in_bin` from the UI, with random positions.
+- [ ] **8.ALL.1S** *(If GS passed)* 10 real trials of `dual_put_in_bin`; report the both-arms success rate and the per-arm success rates.
 - [ ] **8.ALL.2** Results table:
 
   | mode | source | sim success | real success | N source demos | N generated episodes | real images in training |
@@ -356,6 +387,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
   | SmolVLA A | EgoDex | | | | 1,000 | 0 |
   | SmolVLA B | teleop | | | 20 | 1,000 | 0 |
   | SmolVLA C | both + real | | | | 1,000 | 20 |
+  | retrieval, two arms (stretch) | mirrored library | | | | — | — |
 
 - [ ] **8.ALL.3** Videos: successful real runs per mode, plus one failure with its retry.
 
@@ -369,7 +401,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
   3. the results table and chart;
   4. the honest framing;
   5. the roadmap: one LoRA adapter per skill as the skill-store format, robot-collected real data, more EgoDex tasks, other robots via URDF.
-- [ ] **9.P3.2** Live demo: the UI library → a judge runs `put_in_bin` (retrieval) → SmolVLA mode if deployed → the side-by-side video.
+- [ ] **9.P3.2** Live demo: the UI library → a judge runs `put_in_bin` (retrieval) → `dual_put_in_bin` if GS passed (both arms at once) → SmolVLA mode if deployed → the side-by-side video.
 - [ ] **9.ALL.1** Backup videos for every demo path; three full rehearsals.
 
 ---
@@ -378,6 +410,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 
 - E-stop within reach during **every** real run, including teleop.
 - No one inside the arm's reach during autonomous runs.
+- Two-arm runs: both arms' workspaces must be clear of people; the trajectory must have passed the combined two-arm simulation check in the same session.
 - Retrieval trajectories run in the calibrated simulation first. SmolVLA starts at reduced speed with the workspace box and per-step cap enforced.
 - All limits in `conventions.md` section 10 are enforced in the robot interface, never bypassed.
 
@@ -395,6 +428,8 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 | Only one GPU | Not all three adapters get trained | Priority C → A → B |
 | SmolVLA inference latency | Jerky control | GPU machine, async inference, action chunks |
 | EgoDex is non-commercial | Not shippable | State it; product needs licensed data |
+| Mirrored motions may not suit the left arm | Two-arm stretch fails | Simulation validation of the mirrored library; cut at GS |
+| Arm-to-arm collision in the two-arm demo | Hardware damage | Separate taped zones; combined simulation check before every two-arm run |
 
 ---
 
@@ -410,6 +445,7 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 | D13 | **Two source tracks (EgoDex, teleop)** feeding one generator | Directly answers the challenge's data-efficiency question; teleop de-risks the human-video track |
 | D14 | Hardware bring-up moved to H8 | Needed for teleop recording and calibrated cameras before generation |
 | D15 | One adapter per data source (A, B, C) | Makes the comparison clean; mirrors one-adapter-per-skill |
+| D16 | Two-arm demo as **independent** skills, retrieval only, stretch | Strong visual for little effort; no DexMimicGen-style coordination needed; SmolVLA stays single-arm |
 
 ---
 
@@ -420,3 +456,4 @@ On the GPU training machine, install the SmolVLA extras per the LeRobot docs. `.
 | V0 | 2026-10-17T11:38:21Z | Initial plan |
 | V1 | 2026-10-17T12:11:17Z | MimicGen framing, pose-based policy layer, sim-to-real section |
 | V2 | 2026-10-17T12:55:23Z | Two source tracks (EgoDex vs teleop). MimicGen generation with rendering → LeRobot datasets → SmolVLA LoRA adapters A/B/C replaces the pose MLP. Hardware bring-up and teleop moved to H8–13. New dataset schema (conventions v2 required). Phases and gates renumbered; code freeze moved to H21. |
+| V2.1 | 2026-10-17T13:01:09Z | Added the stretch phase 5S: two-arm demo `dual_put_in_bin` (independent arms, retrieval only, mirrored library, combined collision check, gate GS). Left zone added to the simulated scene, joint check for both arms, evaluation, demo script, safety, risks and decision D16 updated. |
