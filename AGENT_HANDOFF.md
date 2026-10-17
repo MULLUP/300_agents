@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| **Handoff version** | **H3** |
-| **Timestamp** | 2026-10-17T18:05:00Z |
-| **Supersedes** | H2 (2026-10-17T16:20:00Z), H1 (2026-10-17T13:03:15Z) |
+| **Handoff version** | **H4** |
+| **Timestamp** | 2026-10-17T21:40:00Z |
+| **Supersedes** | H3 (2026-10-17T18:05:00Z), H2 (2026-10-17T16:20:00Z), H1 (2026-10-17T13:03:15Z) |
 | **Plan reference** | `implementation_plan.md` **V2.1** (2026-10-17T13:01:09Z) |
 | **Conventions reference** | `conventions.md` **v2** (2026-10-17T13:09:39Z) |
 | **Mode** | **Simulation only.** No real-robot code, no hardware access. |
@@ -13,48 +13,53 @@
 
 ---
 
-## 0. START HERE — three things are not what they look like
+## 0. START HERE — the two open numbers
 
-The H2 agent got steps 5 and 8 working but **stopped mid-verification**. Before
-you trust anything below, know these three:
+H3's section 0 items are all resolved: the stale FK assertion is fixed, P7 is
+verified, and everything through step 6 is committed (`b89aec5`). The test suite
+is **138 passing, 0 failing**. Two numbers are open, and neither is a mystery —
+both have a diagnosis and a proposed next action.
 
-### 0a. One test in the tree FAILS right now
+### 0a. Gate G1 is 9/10, and the last one is a pick-zone edge pose
 
 ```
-tests/test_ik.py::test_fk_matches_the_model_at_home
-  ACTUAL:  [0.675, -3.1e-06, 0.737]
-  DESIRED: [1.0, 0.0, 0.0]
+trial 6: cube=(0.261,-0.209) yaw=-32.9 -> FAIL unsafe_trajectory
+         tcp_speed 0.251 -> 0.274 m/s against the 0.25 limit
 ```
 
-**The test is stale, not the code.** `config/home.yaml` was deliberately changed
-to a tucked HOME (joint4 = 2.40) because the upstream keyframe HOME put the tcp
-only 0.08 m above the table and drove the **left** hand into the bin — caught by
-the contact check in `sim/build_models.py`. The test still asserts the old
-forward-pointing approach axis. **Fix the assertion, do not revert the config.**
-Reasoning and the resulting tcp poses are in `config/home.yaml`'s own comments.
+P7's grasp tilt **did** fix the other failure, `(0.311, -0.240)`. This one is
+different and the `tcp_speed` message is a symptom, not the cause:
 
-### 0b. Gate G1 is at 8/10, NOT done
+`plan_put_in_bin` searches (tilt, grasp yaw, release yaw) for a plan that is
+smooth under `_plan_ok`. For this cube pose **nothing in the search passes**, and
+the function then returns its `fallback` — a plan it has already established
+fails. Execution inherits a branch flip, `_fit_rate_limits` stretches the
+trajectory 27x trying to respect the rate limits (hence sample 13556), and the
+tcp still swings too fast through the flip. Stretching time cannot fix a
+discontinuous joint path.
 
-`uv run python sim/execute.py --trials 10` last measured **8/10**. The two
-failures were cube poses `(0.311, -0.240)` and `(0.261, -0.209)`, both because no
-*strictly vertical* grasp exists there.
+The pose is at **y = -0.2086**, right at the pick zone's upper y edge
+(`[-0.34, -0.20]`). `config/skills.yaml` already records that `y >= -0.20` has
+cube yaws with no legal reachable grasp. **Proposed:** narrow `pick_zone.size` to
+`[0.12, 0.12]` so the zone becomes x `[0.20, 0.32]`, y `[-0.33, -0.21]`, then
+re-run. This is a scene-design choice, not a fudge — the arm demonstrably cannot
+do reliable top-down picks above y = -0.21 — but **it has not been measured yet**,
+so measure the smooth-plan rate across the boundary before committing to it.
 
-### 0c. The fix for those two is implemented but UNVERIFIED
+Honest alternative: accept 9/10 and record it. Do not let this block step 7.
 
-Proposal **P7** (grasp tilt tolerance, user-approved) is fully wired in:
-`common/transforms.py` `rot_y` / `grasp_pose`, the planner search in
-`sim/execute.py`, and `exec.grasp_tilt_deg` in `config/skills.yaml`. The geometry
-is unit-tested and exact. **But the 10-trial run was interrupted, so there is no
-success count for it.** 10/10 is plausible and unproven — re-run it first:
+### 0b. Step 6 yields 13/106 feasible, 6/13 under physics
 
-```bash
-MUJOCO_GL=egl uv run python -u sim/execute.py --trials 10   # do NOT pipe to tail
-```
+Below gate G4's minimum of 20 library entries. This is the real risk and
+§10 is the whole story. Three bugs were found and fixed getting from 1 to 13
+(see `b89aec5` and P8/P9/P10); the remaining rejects are **mostly genuine
+geometry**, not obviously more bugs. Read §10 before trying to raise it.
 
-### 0d. Nothing since `e576d3d` is committed
+### 0c. P8 and P9 need a human decision
 
-All of step 5 and step 8 is uncommitted working tree. Commit after you have
-confirmed 0a–0c.
+Both deviate from `conventions.md` §8 and are implemented config-gated behind
+`library.orientation` and `library.grasp_window_s`. Neither is a tuning knob —
+without them the feasible count is zero. See §8.
 
 ---
 
@@ -69,14 +74,14 @@ Steps 6, 7, 9 are untouched.
 | 2 Loader + joint ID | ✅ done, committed | **thumb MCP = `rightThumbIntermediateBase`** (evidence in `data/README.md`) |
 | 3 Transforms | ✅ done, committed | 21 tests pass |
 | 4 Retarget + filters | ✅ **done, gate G2 CLEARED** | **106 / 1077 kept (9.8%)**; see §5 |
-| 5 Scene, IK, harness | ⚠️ **done, gate G1 at 8/10** | uncommitted; see §0 and §10 |
-| 6 Feasibility | ❌ not started | **read §10 first** — usable workspace is ~25 cm across |
-| 7 Library candidates | ❌ not started | — |
-| 8 MimicGen core | ✅ **done** | `common/mimic.py`, 36 tests; uncommitted |
-| 9 Validation | ❌ not started | — |
+| 5 Scene, IK, harness | ⚠️ **done, gate G1 at 9/10** | committed; see §0a |
+| 6 Feasibility | ⚠️ **done, 13/106** | 6/13 succeed under physics; **read §10** |
+| 7 Library candidates | ❌ not started | `data/build_library.py` — next up, see §4 |
+| 8 MimicGen core | ✅ **done** | `common/mimic.py`, 36 tests |
+| 9 Validation | ❌ not started | `sim/validate_library.py` |
 
-**Commits:** `996999b` (1.P2.2), `e576d3d` (2.P2.1/2.P2.2, step 4). Everything
-else is uncommitted.
+**Commits:** `996999b` (1.P2.2), `e576d3d` (2.P2.1/2.P2.2, step 4), `b89aec5`
+(steps 5, 6, 8). The working tree is clean.
 
 ---
 
@@ -151,50 +156,36 @@ the wiping pipeline** — but §4 step 5 (sim foundations) is unaffected, so sta
 
 ## 4. Your tasks, in priority order
 
-### Step 5 is the critical path — start here (plan 1.P1.1–1.P1.4)
+### Step 7 is the critical path — start here (plan 4.P2.2)
 
-Nothing downstream works without it, and it is **independent of all the step 4
-trouble**. Everything H1 §5 step 5 says still applies. Facts already established
-so you don't have to rediscover them:
+`data/build_library.py`: turn the feasible demos into
+`data/library/egodex_v1.json` per `conventions.md` §7.3, then
+`sim/validate_library.py` (step 9) scores each entry over
+`validation.n_trials` random scenes and keeps `success_rate >= 0.8`.
 
-**Robot model** (`third_party/openarm_mujoco/v1/openarm_bimanual.xml`, commit
-`36d4a443533478a6a1b6e1d6e0d29b35583afc50`, pinned in `sim/README.md`):
+**Almost everything you need already exists.** Do not rebuild it:
 
-| Fact | Value |
+| You need | Use |
 |---|---|
-| `njnt` / `nu` / `nq` | 18 / 16 / 18 |
-| Joint names | `openarm_{left,right}_joint1..7`, `openarm_{left,right}_finger_joint1..2` |
-| Right-arm qpos indices | joints 9–15, fingers 16–17 |
-| Finger coupling | `neq=2`, joint-equality `finger_joint2 = finger_joint1` — **one actuator per gripper** |
-| Finger range | 0 → 0.044 m each; body gap 0.010 → 0.098 m |
-| Position actuators | **already present**: `{left,right}_joint{1..7}_ctrl`, `{left,right}_finger1_ctrl` (kp 230/190/30, finger kp 5664) |
-| Existing TCP | body `openarm_right_hand_tcp`, 0.09 m along the hand's +z. **Use this for the `tcp_right` site.** |
-| Hand local +z | the approach direction (matches `conventions.md` §2) |
-| `arm_origin` site | z = 0.697 — the robot base sits high; account for it in `T_table_robot` |
-| HOME keyframe | `key_qpos[0]`, joint4 = 1.571, fingers 0.044 (open) |
-| Model defaults | `timestep=0.001`, `cone=pyramidal`, `impratio=1` → **override to 0.002 / elliptic / 10 in `sim/scene.xml`** |
+| demo npz -> `SourceDemo` | `common.demos.load_source_demo` (applies P8 flattening, trim and P9 anchor z) |
+| provenance for the §7.3 entry | `common.demos.load_metadata` |
+| the `(dist_xy, dz)` index | `SourceDemo.index` |
+| anchors for the §7.3 entry | `common.mimic.demo_anchors` |
+| demo + cube pose -> streamable path | `sim.execute.plan_from_demo` |
+| cheap geometry screen | `sim.execute.screen_pose_path` |
+| full physics attempt, scored | `sim.execute.run_demo` (same contract as `run_put_in_bin`) |
+| which demos are worth trying | `sim/plots/feasibility_egodex_top_down.json` |
 
-`config/skills.yaml` already holds nominal pick-zone, bin, spot and left-zone
-values **but they are guesses** — the reachability sweep (H1 step 5) must confirm
-and overwrite them. `config/joint_names.yaml`, `config/home.yaml`,
-`config/calibration.yaml` **do not exist yet — create them.** `common/config.py`
-already has the loaders (`joint_names()`, `home_q()`, `calibration()`).
+So step 9 is mostly a loop over `run_demo` with a different cube pose per trial,
+plus `validation.n_processes` parallelism. Sampling the cube pose is the one piece
+not written: `sim/execute.py main()` shows the pattern.
 
-### Then step 8 (MimicGen core), also independent of demo yield
+### Then the two open numbers in §0
 
-`common/mimic.py` + `tests/test_mimic.py` per H1 §5 step 8 and `conventions.md`
-§8. `common/transforms.py` already provides everything you need: `pos_yaw_pose`,
-`yaw_of`, `rot_z_T`, `interp_poses`, `slerp`, `resample_poses`, `inv_T`,
-`mirror_lr`.
-
-### Then steps 6, 7, 9 on whatever `put_in_bin` demos exist
-
-Unchanged from H1. Note step 6 needs a minimal version of the step 8 transform —
-just use `common/mimic.py` once it exists.
+§0a (gate G1 9/10) and §0b (feasible count) in whichever order. §0a is a
+~30-minute measurement; §0b is open-ended, so timebox it.
 
 ### Finally, `wipe_surface` — only after a human answers proposal P4
-
----
 
 ## 5. Step 4 re-run on the full pool — DONE, gate G2 cleared
 
@@ -315,12 +306,95 @@ be collected at shutdown raises a harmless `EGLError`.
 
 ---
 
-## 10. Step 5 findings — read before step 6
+## 10. Step 6 findings — read before trying to raise the feasible count
+
+`uv run python sim/feasibility.py` -> **13 / 106 feasible**, and 6 of those 13
+put the cube in the bin under physics. Full per-demo detail, including the
+rejection reason and the index offset, is in
+`sim/plots/feasibility_egodex_top_down.json`.
+
+### 10a. What "feasible" means here
+
+Pure kinematics, no physics: the demo is retargeted onto **one fixed scene** (cube
+at the pick-zone centre, yaw 0), and the resulting path must clear the table by
+`library.min_tcp_z`, solve from a cold IK start, converge at every sample, and
+contain no branch flip. Plus a free pre-screen on the `(dist_xy, dz)` index. The
+cube is not even simulated. Step 9 is what answers "does it work".
+
+### 10b. The reject buckets, and which are real
+
+| Reason | Count | Real, or worth another look? |
+|---|---|---|
+| `ik_diverged` | 28 | **Mostly real.** Median 29% of samples bad, median worst error 74 mm — not marginal. Only 1 of 28 is within 15 mm of passing. |
+| `start_unreachable` | 23 | **Mixed.** Errors run 6-138 mm; the low end is worth a look, the high end is not. |
+| `index_mismatch` | 18 | **Real and structural.** See §10c. |
+| `tcp_below_table` | 18 | **Real, and localized.** Every one is in the *transport* segment; the approach is clean by construction after P9. See §10d. |
+| `branch_flip` | 6 | Real. |
+
+**Do not read a low count as a bug without evidence.** Three real bugs were found
+and fixed getting from 1/106 to 13/106, so the instinct was right once — but the
+way they were found was `tests/test_demo_plan.py`, which runs the pipeline on a
+**synthetic demo built to match the scene exactly**. If that file's 24 tests pass,
+the transform is sound and what is left is geometry. Extend those tests rather
+than staring at real-data failures.
+
+### 10c. The `dz` mismatch is the structural limit
+
+The scene's cube -> place-target motion, which is the retrieval query, against
+what the demos supply:
+
+| | scene needs | demos (median) | |
+|---|---|---|---|
+| `dist_xy` | 0.180 m | 0.182 m | **matches well** |
+| `dz` | 0.093 m | 0.041 m | **~5 cm short** |
+
+Humans lift an object a few centimetres to drop it in a bin; our bin rim is 8 cm
+up. A demo whose index is off by `e` starts its transport segment `e` away from
+the cube, and the §8 step 5 bridge has to cover that **while holding the cube**,
+inside a workspace ~25 cm across.
+
+`exec.place_clearance` was lowered 0.06 -> 0.035 for exactly this reason, which is
+most of the way to the floor: 0.025 leaves the cube only 2.5 mm above the rim.
+Measured demos within 0.10 m of the scene index, by `place_clearance`:
+0.060 -> 53, 0.045 -> 62, 0.035 -> 63, 0.025 -> 67. **This lever is nearly spent.**
+
+The remaining lever is the **bin rim height** (`scene.bin.height`, 0.08). Lowering
+it moves `need_dz` down one-for-one and is by far the highest-leverage single
+change available — but it is a change to a physical prop, so it is a human
+decision. Raise it if the feasible count has to go up.
+
+### 10d. `tcp_below_table` is all in the transport, by design
+
+P9 corrects the *approach* anchor's z so the lowest point of the descent lands on
+the cube centre; the approach now clears the table by construction (verified: min
+z equals the cube centre z exactly). The release anchor is deliberately left as
+§8 specifies, because it is a *commanded* height rather than an observation —
+the reasoning is in P9. The price is these 18 demos, where the human's carry
+dipped below their own release height.
+
+If that trade looks wrong, the symmetric fix is one line in
+`common/demos.with_grasp_anchor_z`'s sibling — but note it shrinks `dz`, which
+§10c says is already the binding constraint. **Measure before assuming it helps.**
+
+### 10e. Physics failures look different from screen failures
+
+Of the 13 feasible demos run through `run_demo` at the nominal pose: 6 succeed,
+3 leave the cube **exactly at its spawn pose** (the gripper never gripped it),
+1 nudges it a few mm, 3 are `unsafe_trajectory`.
+
+"Cube at its spawn pose" was the signal that found the P9 window bug, and it is
+worth watching for: it means the commanded grasp was not where the cube was. The
+screen cannot see this at all, because the screen has no cube.
+
+---
+
+## 11. Step 5 findings — still all valid
 
 Everything here was **measured**, and every number contradicts something that was
 guessed before. Full write-up of the IK items: `docs/conventions_proposals.md` P6.
+Step 6 confirmed every number here.
 
-### 11a. The usable top-down workspace is small — this is the step 6 risk
+### 11a. The usable top-down workspace is small
 
 At the chosen mount height, the region where the right arm can reach the table
 top-down at the grasp height is
@@ -404,7 +478,7 @@ uv run python sim/reachability.py     # seed bank + reachability map
 
 ---
 
-## 11. Next handoff (not yours)
+## 12. Next handoff (not yours)
 
 MimicGen data generation with rendering → LeRobot datasets → SmolVLA LoRA (plan
 phases 6–7). The dataset schema is in `conventions.md` v2 §7.4. Still needed

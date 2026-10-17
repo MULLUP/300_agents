@@ -183,6 +183,27 @@ ik:
   # outright. At 0.01 the same 7 converge to 0.37-1.15 mm.
   # docs/conventions_proposals.md P6.
   posture_weight: 0.01
+
+  # Posture cost used only when the yaw is left free (common/ik.py).
+  #
+  # Freeing the wrist's rotation about its approach axis leaves a 2-dof null
+  # space, and the posture task is what picks within it. `solve_path` sets the
+  # posture target to the previous solution, so this value is really a
+  # CONTINUITY weight: too low and adjacent samples resolve into different IK
+  # branches. Measured on the 106 demos, freeing the yaw moved `ik_diverged`
+  # 29 -> 13 but `branch_flip` 6 -> 21 at the default 0.01.
+  #
+  # MEASURED over 34 screenable demos: 0.0 -> 4 feasible, 0.01 -> 6, 0.02 -> 6,
+  # 0.05 -> 2, 0.1 -> 0, 0.5 -> 0. So raising it does NOT buy continuity — above
+  # ~0.02 the posture task starts fighting the position task during iteration
+  # (`start_unreachable` 3 -> 7 -> 41) rather than acting purely in the null
+  # space, which is the same trade P6 measured for `posture_weight`.
+  #
+  # The optimum coincides with `posture_weight`, so this knob currently earns
+  # its keep only as the record of that measurement. `branch_flip` stays at 7/34
+  # at every setting, so trajectory continuity under a free yaw needs a
+  # different mechanism (a velocity limit or a path-level solve), not a weight.
+  free_yaw_posture_weight: 0.01
   position_cost: 1.0
   orientation_cost: 1.0
   lm_damping: 1.0e-4 # Levenberg-Marquardt damping inside the frame task

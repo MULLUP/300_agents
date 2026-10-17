@@ -246,14 +246,19 @@ def execute_pose_path(
     side: str = "right",
     rate_hz: float | None = None,
     solver: IKSolver | None = None,
+    free_yaw: bool | np.ndarray = False,
 ) -> ExecResult:
-    """Solve IK along `pose_path` and stream it. Rejects per conventions section 10."""
+    """Solve IK along `pose_path` and stream it. Rejects per conventions section 10.
+
+    `free_yaw` leaves the wrist's rotation about its approach axis to the solver;
+    it may be a per-sample mask (see :func:`yaw_locked_mask`).
+    """
     cfg = config.skills()["exec"]
     rate_hz = float(cfg["rate_hz"]) if rate_hz is None else float(rate_hz)
     solver = solver if solver is not None else IKSolver()
 
     q_seed = robot.get_state()["q"]
-    q_traj, results = solver.solve_path(pose_path, side, q_seed=q_seed)
+    q_traj, results = solver.solve_path(pose_path, side, q_seed=q_seed, free_yaw=free_yaw)
 
     # Carry the commanded gripper channel into the joint trajectory.
     q_traj = q_traj.copy()
@@ -514,8 +519,40 @@ def plan_from_demo(
     )
 
 
+def yaw_locked_mask(grip_path: np.ndarray) -> np.ndarray:
+    """Which samples must hold the commanded yaw. True = locked, False = free.
+
+    The wrist's rotation about its own approach axis is only constrained where
+    the jaws close on the cube: there the yaw must put them across a pair of
+    opposite faces. Once the cube is held, spinning the wrist spins the cube, and
+    nothing downstream cares — `cube_in_bin` tests the cube's *centre* and never
+    its orientation. Before the grasp the gripper is in free space.
+
+    So the lock covers the closing edge plus the dwell that follows it, and
+    nothing else. Freeing the rest is what makes the demos solvable at all:
+    0 of 548 failing samples were recoverable at their commanded orientation,
+    against 120/120 once the yaw was free.
+
+    Locked slightly *before* the edge too, so the gripper arrives already
+    aligned instead of having to swing the wrist in the last cycle, which would
+    show up as a joint-step violation.
+    """
+    grip = np.asarray(grip_path, dtype=np.float64)
+    locked = np.zeros(len(grip), dtype=bool)
+    lead = max(int(round(float(config.skills()["exec"]["grip_settle_s"]) * 50.0)), 1)
+    for e in np.flatnonzero(np.diff(grip) < 0.0):  # closing edges only
+        lo = max(int(e) - lead, 0)
+        hi = min(int(e) + 2 * lead, len(grip))
+        locked[lo:hi] = True
+    return locked
+
+
 def screen_pose_path(
-    solver: IKSolver, pose_path: np.ndarray, side: str, rate_hz: float
+    solver: IKSolver,
+    pose_path: np.ndarray,
+    side: str,
+    rate_hz: float,
+    free_yaw: bool | np.ndarray = False,
 ) -> tuple[bool, str]:
     """Is a dense tcp path solvable, smooth, and clear of the table?
 
@@ -523,6 +560,9 @@ def screen_pose_path(
     pose path directly: a retargeted demo has no waypoints. Returns a reason
     string so `sim/feasibility.py` can report *why* a demo is infeasible rather
     than just how many were.
+
+    `free_yaw` is passed through to the solver and may be a per-sample mask; see
+    :func:`yaw_locked_mask`.
     """
     min_z = float(config.skills()["library"]["min_tcp_z"])
     z = pose_path[:, 2, 3]
@@ -530,13 +570,15 @@ def screen_pose_path(
         return False, f"tcp_below_table (min z {z.min():.3f} < {min_z})"
 
     coarse = pose_path[:: PLAN_COARSE_FACTOR]
+    mask = np.broadcast_to(np.asarray(free_yaw, dtype=bool), (len(pose_path),))
+    coarse_mask = mask[::PLAN_COARSE_FACTOR]
     if len(coarse) < 2:
-        coarse = pose_path
-    first = solver.solve_cold(coarse[0], side)
+        coarse, coarse_mask = pose_path, mask
+    first = solver.solve_cold(coarse[0], side, free_yaw=bool(coarse_mask[0]))
     if not first.converged:
         return False, f"start_unreachable ({first.pos_err * 1000:.0f} mm)"
 
-    q_traj, results = solver.solve_path(coarse, side, q_seed=first.q)
+    q_traj, results = solver.solve_path(coarse, side, q_seed=first.q, free_yaw=coarse_mask)
     worst = max(results, key=lambda r: r.pos_err)
     if not all(r.converged for r in results):
         n_bad = sum(not r.converged for r in results)
@@ -572,11 +614,14 @@ def run_demo(
 
     solver = solver if solver is not None else IKSolver()
     plan = plan_from_demo(demo, robot.body_pose("cube"), side, solver)
+    locked = yaw_locked_mask(plan.grip_path)
 
     # HOME -> the demo's first pose in JOINT space, for the reason in
     # `run_put_in_bin`: HOME is tucked and in a different IK branch.
     seed = robot.get_state()["q"]
-    ik = solver.solve_cold(plan.pose_path[0], side, extra_seeds=[seed])
+    ik = solver.solve_cold(
+        plan.pose_path[0], side, extra_seeds=[seed], free_yaw=not bool(locked[0])
+    )
     viol = [str(v) for v in safety.check_ik_error(ik.pos_err, ik.rot_err_deg)]
     if viol:
         return ExecResult(
@@ -594,7 +639,9 @@ def run_demo(
     except UnsafeTrajectory as exc:
         return ExecResult(False, "bridge_unsafe", violations=[str(v) for v in exc.violations])
 
-    res = execute_pose_path(robot, plan.pose_path, plan.grip_path, side=side, solver=solver)
+    res = execute_pose_path(
+        robot, plan.pose_path, plan.grip_path, side=side, solver=solver, free_yaw=~locked
+    )
     if not res:
         return res
 

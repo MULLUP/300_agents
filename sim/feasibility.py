@@ -28,7 +28,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import config, demos  # noqa: E402
 from common.ik import IKSolver  # noqa: E402
 from common.transforms import top_down_pose  # noqa: E402
-from sim.execute import bin_place_target, plan_from_demo, screen_pose_path  # noqa: E402
+from sim.execute import (  # noqa: E402
+    bin_place_target,
+    plan_from_demo,
+    screen_pose_path,
+    yaw_locked_mask,
+)
 
 
 def nominal_cube_pose() -> np.ndarray:
@@ -97,7 +102,11 @@ def screen_demo(
         }
 
     plan = plan_from_demo(demo, T_table_cube, side, solver)
-    ok, why = screen_pose_path(solver, plan.pose_path, side, rate_hz)
+    # Yaw is only constrained where the jaws close; everywhere else the solver
+    # picks it. See `sim/execute.py yaw_locked_mask`.
+    ok, why = screen_pose_path(
+        solver, plan.pose_path, side, rate_hz, free_yaw=~yaw_locked_mask(plan.grip_path)
+    )
 
     z = plan.pose_path[:, 2, 3]
     return {

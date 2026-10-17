@@ -151,7 +151,55 @@ class IKSolver:
             )
             for side in self.index.tcp_sites
         }
+        # Free-yaw variant: position only, plus an axis-alignment task that pins
+        # the approach direction and leaves the spin about it unconstrained.
+        #
+        # A top-down cube grasp does not constrain the wrist's rotation about its
+        # own approach axis except at the moment the jaws close, yet a FrameTask
+        # constrains all three rotational dof. Measured consequence: of 548
+        # trajectory samples that failed IK, 0 were recoverable at the commanded
+        # orientation but **120/120** sampled were reachable once the yaw was
+        # free, needing a median of 8 deg and at most 44 deg of yaw change (which
+        # is no accident — 45 deg is the cube's yaw symmetry half-period).
+        #
+        # `AxisAlignTask` is rank two by construction, so this is a genuine
+        # relaxation of the constraint rather than a reweighting of it.
+        self._pos_task = {
+            side: mink.FrameTask(
+                frame_name=self.index.tcp_sites[side],
+                frame_type="site",
+                position_cost=float(self.cfg["position_cost"]),
+                orientation_cost=0.0,
+                lm_damping=float(self.cfg.get("lm_damping", 1e-4)),
+            )
+            for side in self.index.tcp_sites
+        }
+        self._axis_task = {
+            side: mink.AxisAlignTask(
+                frame_name=self.index.tcp_sites[side],
+                frame_type="site",
+                axis=(0.0, 0.0, 1.0),  # tcp +z is the approach axis (section 2)
+                cost=float(self.cfg["orientation_cost"]),
+                lm_damping=float(self.cfg.get("lm_damping", 1e-4)),
+            )
+            for side in self.index.tcp_sites
+        }
         self._posture_task = mink.PostureTask(self.model, cost=float(self.cfg["posture_weight"]))
+
+        # A second, stronger posture task used only for free-yaw solves.
+        #
+        # Freeing the yaw leaves a 2-dof null space (7 joints - 3 position - 2
+        # axis), and *something* has to choose within it. At the normal
+        # `posture_weight` of 0.01 the choice is essentially arbitrary, so
+        # adjacent trajectory samples get resolved into different IK branches:
+        # measured, freeing the yaw cut `ik_diverged` from 29 to 13 demos but
+        # pushed `branch_flip` from 6 to 21. Since `solve_path` sets the posture
+        # target to the *previous solution*, a stronger posture cost is exactly a
+        # continuity preference, and it costs nothing in accuracy because it acts
+        # only inside the null space rather than against the position task.
+        self._free_posture_task = mink.PostureTask(
+            self.model, cost=float(self.cfg.get("free_yaw_posture_weight", 0.5))
+        )
         self._limits = [mink.ConfigurationLimit(self.model)]
 
     # --- forward kinematics -------------------------------------------------
@@ -169,8 +217,20 @@ class IKSolver:
 
     # --- inverse kinematics -------------------------------------------------
 
-    def solve(self, T_table_tcp: np.ndarray, side: str, q_seed: np.ndarray) -> IKResult:
-        """Solve one arm for `T_table_tcp`, seeded at `q_seed` (a 16-vector)."""
+    def solve(
+        self, T_table_tcp: np.ndarray, side: str, q_seed: np.ndarray, free_yaw: bool = False
+    ) -> IKResult:
+        """Solve one arm for `T_table_tcp`, seeded at `q_seed` (a 16-vector).
+
+        With `free_yaw`, only the position and the **approach axis** of the target
+        are constrained; rotation about that axis is left to the solver. The
+        target's own yaw is then merely a hint, and `rot_err_deg` reports the
+        approach-axis misalignment rather than the full rotation error — which is
+        the right error to report, because the yaw was never commanded.
+
+        Use it for every part of a trajectory except where the jaws have to
+        straddle an object's faces. See the comment on `_axis_task`.
+        """
         if side not in self._frame_task:
             raise ValueError(f"side must be one of {sorted(self._frame_task)}, got {side!r}")
 
@@ -180,11 +240,20 @@ class IKSolver:
 
         self._configuration.update(qpos)
         self._posture_task.set_target(qpos)
+        self._free_posture_task.set_target(qpos)
 
-        target = mink.SE3.from_matrix(np.asarray(T_table_tcp, dtype=np.float64))
-        task = self._frame_task[side]
-        task.set_target(target)
-        tasks = [task, self._posture_task]
+        T_target = np.asarray(T_table_tcp, dtype=np.float64)
+        target = mink.SE3.from_matrix(T_target)
+        if free_yaw:
+            pos_task = self._pos_task[side]
+            pos_task.set_target(target)
+            axis_task = self._axis_task[side]
+            axis_task.set_target(T_target[:3, 2])
+            tasks = [pos_task, axis_task, self._free_posture_task]
+        else:
+            task = self._frame_task[side]
+            task.set_target(target)
+            tasks = [task, self._posture_task]
 
         # Iterate to a *tighter* target than the acceptance threshold. Stopping
         # the instant the error qualifies leaves solutions sitting right on the
@@ -197,7 +266,7 @@ class IKSolver:
                 self._configuration, tasks, self.dt, solver="daqp", damping=1e-12, limits=self._limits
             )
             self._configuration.integrate_inplace(vel, self.dt)
-            if self._within_tol(side, T_table_tcp, polish):
+            if self._within_tol(side, T_target, polish, free_yaw):
                 break
 
         # Only the target arm is allowed to move: the other arm and both grippers
@@ -208,7 +277,7 @@ class IKSolver:
         for slot in self.index.arm_slots[side]:
             q_out[slot] = q_solved[slot]
 
-        pos_err, rot_err_deg = self.pose_error(q_out, side, T_table_tcp)
+        pos_err, rot_err_deg = self.pose_error(q_out, side, T_target, free_yaw)
         return IKResult(
             q=q_out,
             converged=bool(pos_err <= self.pos_tol and rot_err_deg <= self.rot_tol_deg),
@@ -225,6 +294,7 @@ class IKSolver:
         n_restarts: int = 0,
         rng: np.random.Generator | None = None,
         prefer_q: np.ndarray | None = None,
+        free_yaw: bool = False,
     ) -> IKResult:
         """Try several seeds, return the first converged result, else the best.
 
@@ -255,7 +325,7 @@ class IKSolver:
         best: IKResult | None = None
         hits: list[IKResult] = []
         for seed in seeds:
-            res = self.solve(T_table_tcp, side, seed)
+            res = self.solve(T_table_tcp, side, seed, free_yaw)
             if res.converged:
                 if prefer_q is None:
                     return res
@@ -273,7 +343,7 @@ class IKSolver:
                     seed = min(hits, key=closeness).q.copy()
                 scale = 0.25 * (hi - lo)
                 seed[slots] = np.clip(seed[slots] + rng.normal(0.0, scale), lo, hi)
-                res = self.solve(T_table_tcp, side, seed)
+                res = self.solve(T_table_tcp, side, seed, free_yaw)
                 if res.converged:
                     if prefer_q is None:
                         return res
@@ -294,6 +364,7 @@ class IKSolver:
         extra_seeds: Sequence[np.ndarray] = (),
         rng: np.random.Generator | None = None,
         prefer_q: np.ndarray | None = None,
+        free_yaw: bool = False,
     ) -> IKResult:
         """Solve with no useful prior, using the on-disk seed bank.
 
@@ -307,7 +378,8 @@ class IKSolver:
         bank = self._bank(side)
         seeds = list(extra_seeds) + bank.nearest(np.asarray(T_table_tcp)[:3, 3], k, self.index)
         return self.solve_multi(
-            T_table_tcp, side, seeds, n_restarts=n_restarts, rng=rng, prefer_q=prefer_q
+            T_table_tcp, side, seeds, n_restarts=n_restarts, rng=rng, prefer_q=prefer_q,
+            free_yaw=free_yaw,
         )
 
     def solve_path(
@@ -316,6 +388,7 @@ class IKSolver:
         side: str,
         q_seed: np.ndarray | None = None,
         cold_k: int | None = None,
+        free_yaw: bool | np.ndarray = False,
     ) -> tuple[np.ndarray, list[IKResult]]:
         """Solve an `(N, 4, 4)` pose path, warm-starting each step from the last.
 
@@ -328,21 +401,26 @@ class IKSolver:
         are included; the caller decides, since section 10 says reject.
         """
         T_path = np.asarray(T_path, dtype=np.float64).reshape(-1, 4, 4)
+        # `free_yaw` may be per-sample: the jaws are only constrained where they
+        # close on the object, so yaw is locked there and free everywhere else.
+        mask = np.broadcast_to(np.asarray(free_yaw, dtype=bool), (len(T_path),))
         results: list[IKResult] = []
         q_traj = np.empty((len(T_path), 16), dtype=np.float64)
 
         current = None if q_seed is None else np.asarray(q_seed, dtype=np.float64)
         for k, T in enumerate(T_path):
+            fy = bool(mask[k])
             if current is None:
-                res = self.solve_cold(T, side, k=cold_k)
+                res = self.solve_cold(T, side, k=cold_k, free_yaw=fy)
             else:
-                res = self.solve(T, side, current)
+                res = self.solve(T, side, current, free_yaw=fy)
                 if not res.converged:
                     # Warm start stalled: fall back to the bank, but ask for the
                     # solution nearest the previous one so the joint path does
                     # not jump to a different branch.
                     res = self.solve_cold(
-                        T, side, k=cold_k, extra_seeds=[current], prefer_q=current
+                        T, side, k=cold_k, extra_seeds=[current], prefer_q=current,
+                        free_yaw=fy,
                     )
             results.append(res)
             q_traj[k] = res.q
@@ -356,14 +434,30 @@ class IKSolver:
             self._banks[side] = SeedBank.load(side)
         return self._banks[side]
 
-    def pose_error(self, q: np.ndarray, side: str, T_target: np.ndarray) -> tuple[float, float]:
-        """(position error in m, orientation error in degrees) of `q` against `T_target`."""
+    @staticmethod
+    def _axis_error_deg(R: np.ndarray, R_target: np.ndarray) -> float:
+        """Angle between two frames' +z axes, in degrees — the free-yaw error."""
+        c = float(np.clip(np.dot(R[:3, 2], np.asarray(R_target)[:3, 2]), -1.0, 1.0))
+        return float(np.degrees(np.arccos(c)))
+
+    def pose_error(
+        self, q: np.ndarray, side: str, T_target: np.ndarray, free_yaw: bool = False
+    ) -> tuple[float, float]:
+        """(position error in m, orientation error in degrees) of `q` against `T_target`.
+
+        With `free_yaw` the orientation error is the approach-axis misalignment
+        only, since the rotation about that axis was deliberately not commanded.
+        """
         T = self.fk(q, side)
         pos_err = float(np.linalg.norm(T[:3, 3] - np.asarray(T_target)[:3, 3]))
+        if free_yaw:
+            return pos_err, self._axis_error_deg(T[:3, :3], np.asarray(T_target)[:3, :3])
         rot_err = float(np.degrees(rot_angle(T[:3, :3], np.asarray(T_target)[:3, :3])))
         return pos_err, rot_err
 
-    def _within_tol(self, side: str, T_target: np.ndarray, scale: float = 1.0) -> bool:
+    def _within_tol(
+        self, side: str, T_target: np.ndarray, scale: float = 1.0, free_yaw: bool = False
+    ) -> bool:
         """Tolerance check on the solver's own configuration, without a round trip."""
         T = self._configuration.get_transform_frame_to_world(
             self.index.tcp_sites[side], "site"
@@ -371,5 +465,8 @@ class IKSolver:
         pos_err = float(np.linalg.norm(T[:3, 3] - np.asarray(T_target)[:3, 3]))
         if pos_err > self.pos_tol * scale:
             return False
-        rot_err = float(np.degrees(rot_angle(T[:3, :3], np.asarray(T_target)[:3, :3])))
-        return rot_err <= self.rot_tol_deg * scale
+        if free_yaw:
+            err = self._axis_error_deg(T[:3, :3], np.asarray(T_target)[:3, :3])
+        else:
+            err = float(np.degrees(rot_angle(T[:3, :3], np.asarray(T_target)[:3, :3])))
+        return err <= self.rot_tol_deg * scale
