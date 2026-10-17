@@ -4,3 +4,6 @@ data/egodex_raw/
 
 __pycache__/
 *.py[cod]
+data/generated/
+data/lerobot/
+data/retargeted/*.npz

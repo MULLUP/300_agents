@@ -11,6 +11,7 @@ dependencies = [
     "mujoco>=3.16.0",
     "numpy>=2.5.4",
     "opencv-contrib-python>=5.0.0.93",
+    "pytest>=9.1.1",
     "pyyaml>=6.0.3",
     "qpsolvers[daqp]>=4.13.0",
     "remotezip>=0.12.6",
