@@ -1,0 +1,6 @@
+.venv/
+third_party/
+data/egodex_raw/
+
+__pycache__/
+*.py[cod]
