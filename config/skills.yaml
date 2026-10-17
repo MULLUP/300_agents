@@ -1,0 +1,98 @@
+# Skill parameters, scene layout and data-processing thresholds.
+# conventions.md section 9. Every tunable lives here, never in code.
+conventions_version: 2
+
+# --- EgoDex retargeting (data/retarget.py, handoff step 4) ---
+retarget:
+  fps_out: 50.0 # conventions.md section 5: source demos resampled to 50 Hz
+  smooth_window: 5 # frames, moving average on positions and aperture (at 30 Hz)
+
+  grasp:
+    # Aperture threshold is relative to each episode's own open/closed range,
+    # because hand size and object size vary between episodes.
+    open_percentile: 90
+    min_percentile: 10
+    thr_fraction: 0.4 # thr = a_min + thr_fraction * (a_open - a_min)
+    hold_frames: 8 # frames at 50 Hz the aperture must stay past thr
+
+    # Loosened from the handoff's 0.15 m/s: the aperture-crossing frame falls
+    # during the descent onto the object, not at rest, so speed at the grasp has
+    # median 0.211 m/s and 0.15 rejects 58% of segmentable demos. The robot caps
+    # at 0.25 m/s (conventions.md section 10) so replay is time-scaled anyway.
+    # docs/conventions_proposals.md P2.
+    max_speed: 0.35 # m/s; the hand must be roughly settled at the grasp
+
+  filters:
+    edge_margin_s: 0.2 # grasp/release must be this far from both ends
+    max_frame_jump: 0.05 # m, per-frame tcp position jump (tracking glitch)
+
+    # Loosened from the handoff defaults under the gate G2 fallback
+    # ("loosen thresholds (logged)"). Rationale and measurements:
+    # docs/conventions_proposals.md P2. Handoff values were 0.10 and 0.5.
+    min_transport_xy: 0.07 # m, horizontal grasp -> release distance
+    min_confidence: 0.3 # over the five joints the tcp construction uses
+    conf_tail_s: 0.5 # judge confidence over [0, release + this], not the whole episode
+
+# --- Scene layout in the `table` frame (sim nominal; measured on hardware) ---
+# Chosen inside the right arm's reachable region; see sim/reachability.py and
+# sim/plots/reachability_right.png.
+scene:
+  table_height: 0.0 # the `table` frame origin is the table surface
+
+  cube:
+    size: 0.045 # m, full edge length
+    mass: 0.05 # kg
+    friction: 1.0
+
+  # 20 x 20 cm pick zone, cube spawns uniformly inside it.
+  pick_zone:
+    center: [0.40, -0.18]
+    size: [0.20, 0.20]
+
+  bin:
+    center: [0.40, 0.10]
+    inner_size: [0.18, 0.18]
+    height: 0.08 # rim height above the table
+    wall_thickness: 0.008
+
+  spot:
+    center: [0.52, -0.30]
+    radius: 0.04
+
+  # Disabled by default; enabled only for the two-arm stretch (plan phase 5S).
+  left_zone:
+    enabled: false
+    pick_zone:
+      center: [0.40, 0.18]
+      size: [0.20, 0.20]
+    bin:
+      center: [0.40, -0.10]
+
+# --- Skill execution ---
+exec:
+  rate_hz: 50.0 # conventions.md section 5, retrieval streaming rate
+  time_scale: 1.0 # 1.0 in sim; 0.25 -> 0.5 on hardware
+  place_clearance: 0.06 # m above the bin rim where the gripper releases
+  approach_height: 0.10 # m above the cube for the hand-coded pick-and-place
+  lift_height: 0.10 # m straight up after closing
+  settle_s: 1.0 # s after release before judging success
+  grip_close: 0.0 # normalized gripper command, fully closed
+  grip_open: 1.0
+  retries: 1
+
+# --- IK (common/ik.py); tolerances are the conventions.md section 10 limits ---
+ik:
+  pos_tol: 0.005 # m
+  rot_tol_deg: 3.0
+  max_iters: 40
+  dt: 0.02 # s, mink integration step per iteration
+  posture_weight: 0.05 # low, per handoff step 5
+  position_cost: 1.0
+  orientation_cost: 1.0
+
+# --- Library validation (sim/validate_library.py, handoff step 9) ---
+validation:
+  n_trials: 20 # scenes per candidate
+  seed: 20261017
+  min_success_rate: 0.8 # entries below this are dropped from the library
+  n_processes: 8

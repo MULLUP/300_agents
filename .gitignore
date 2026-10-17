@@ -1,9 +1,11 @@
 .venv/
 third_party/
 data/egodex_raw/
+data/egodex_raw_*/
 
 __pycache__/
 *.py[cod]
 data/generated/
 data/lerobot/
 data/retargeted/*.npz
+data/egodex_zips/

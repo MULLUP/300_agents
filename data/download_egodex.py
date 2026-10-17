@@ -37,7 +37,19 @@ def matching_members(zf: RemoteZip, task: str, suffix: str) -> list[str]:
     )
 
 
-def extract(url: str, task: str, suffix: str, output_dir: Path, list_only: bool) -> int:
+# The handoff caps any single download at 5 GB; refuse rather than blow past it.
+MAX_BYTES = 5e9
+
+
+def extract(
+    url: str,
+    task: str,
+    suffix: str,
+    output_dir: Path,
+    list_only: bool,
+    limit: int | None = None,
+    prefix: str = "",
+) -> int:
     with RemoteZip(url) as zf:
         members = matching_members(zf, task, suffix)
         if not members:
@@ -51,10 +63,25 @@ def extract(url: str, task: str, suffix: str, output_dir: Path, list_only: bool)
                 print(f"  {name}")
             return 0
 
+        if limit is not None:
+            members = members[:limit]
+            total = sum(zf.getinfo(name).file_size for name in members)
+            print(f"limited to {len(members)} member(s), {total / 1e9:.2f} GB")
+
+        if total > MAX_BYTES:
+            print(
+                f"refusing: {total / 1e9:.2f} GB exceeds the {MAX_BYTES / 1e9:.0f} GB cap; "
+                f"narrow the selection with --limit",
+                file=sys.stderr,
+            )
+            return 1
+
         output_dir.mkdir(parents=True, exist_ok=True)
         for i, name in enumerate(members, 1):
-            # Flatten <...>/basic_pick_place/<episode>.hdf5 to <episode>.hdf5.
-            destination = output_dir / Path(name).name
+            # Flatten <...>/basic_pick_place/<episode>.hdf5 to <prefix><episode>.hdf5.
+            # `prefix` keeps episodes from different part zips from colliding:
+            # every part numbers its episodes from 0.
+            destination = output_dir / f"{prefix}{Path(name).name}"
             if destination.exists():
                 print(f"[{i}/{len(members)}] skip {destination.name} (exists)")
                 continue
@@ -76,6 +103,10 @@ def main() -> int:
     parser.add_argument(
         "--list", action="store_true", help="print matching members without downloading"
     )
+    parser.add_argument("--limit", type=int, default=None, help="take only the first N members")
+    parser.add_argument(
+        "--prefix", default="", help="filename prefix, to keep part zips from colliding"
+    )
     args = parser.parse_args()
 
     if not args.url:
@@ -83,7 +114,9 @@ def main() -> int:
             "no zip URL: set EGODEX_ZIP_URL in this file or pass --url <https://...>"
         )
 
-    return extract(args.url, args.task, args.suffix, args.output_dir, args.list)
+    return extract(
+        args.url, args.task, args.suffix, args.output_dir, args.list, args.limit, args.prefix
+    )
 
 
 if __name__ == "__main__":

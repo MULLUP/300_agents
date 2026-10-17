@@ -118,14 +118,24 @@ def tcp_inputs(episode: dict) -> dict[str, np.ndarray]:
     }
 
 
-def tcp_conf_min(episode: dict) -> float:
-    """Lowest confidence over the joints the tcp construction uses, or ``nan``."""
+def tcp_conf_track(episode: dict) -> np.ndarray | None:
+    """``(N,)`` per-frame minimum confidence over the five tcp joints, or ``None``.
+
+    Per-frame rather than a single scalar, so callers can judge confidence over
+    only the frames they keep (see `common/segment.py`).
+    """
     conf = episode["confidences"]
     if conf is None:
-        return float("nan")
+        return None
     side = episode["arm"]
     used = [conf[f"{side}{suffix}"] for suffix in TCP_JOINT_ROLES.values()]
-    return float(np.min(np.stack(used)))
+    return np.min(np.stack(used), axis=0)
+
+
+def tcp_conf_min(episode: dict) -> float:
+    """Lowest confidence over the tcp joints across the whole episode, or ``nan``."""
+    track = tcp_conf_track(episode)
+    return float("nan") if track is None else float(np.min(track))
 
 
 def episode_paths(raw_dir: str | Path) -> list[Path]:
