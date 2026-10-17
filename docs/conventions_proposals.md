@@ -433,3 +433,140 @@ adjacent samples. A stronger posture task does not help (0.01 -> 6 feasible,
 **Proposal:** amend §8 step 4 so the place target's yaw, and the wrist spin along
 each segment, are explicitly free variables chosen for reachability, with the jaw
 constraint applying only at the grasp. Needs conventions v3.
+
+---
+
+## P12 — One episode holds several demos, and the grasp-speed filter tested the wrong thing (DONE: fixed, measured)
+
+Both halves of `AGENT_HANDOFF.md` H5 §4a and §4b. Step 4 went from **106 to 179
+kept demos** out of 1077 episodes. Neither change loosens a threshold; one of
+them *tightens* one.
+
+### 12a. The one-demo-per-episode rule rejected 572 of 1077 episodes
+
+`not_one_grasp_release_pair` rejected any episode whose finger aperture closed
+more than once. That is wrong in principle: a human who re-grips, or picks up
+three objects in a row, has given us **more** usable pick-and-place motions, not
+zero. `common/segment.py` already found every closure (`flanked_runs`) and then
+discarded all but the single-pair case.
+
+**Measured** over all 1077 episodes — closures per episode:
+
+| closures | 0 | 1 | 2 | 3 | 4 | 6 | 8 | 12 | 17 | 23 | 26 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| episodes | 343 | 505 | 172 | 43 | 8 | 1 | 1 | 1 | 1 | 1 | 1 |
+
+So 343 episodes are genuinely unsegmentable and **229 have two or more**. The
+old reject reason conflated those two groups; it is now split into
+`no_grasp_release_pair` (0 closures, an episode-level reject) and per-candidate
+rejects for everything else.
+
+**Fix applied.** `segment_all` returns one `Segmentation` per closure, and
+`data/retarget.py` writes one npz each. Each candidate owns the slice
+`[previous release, its own release + conf_tail_s]`, so:
+
+* every filter keeps its original meaning — "the ends" are the demo's own ends;
+* `max_frame_jump` and `min_confidence` are judged per candidate, so a glitch or
+  a tracking collapse in one closure no longer rejects the others
+  (`low_confidence` was rejecting whole episodes on frames another demo owns);
+* each npz satisfies §7.2 standalone: `t` starts at 0 and the indices address
+  its own arrays.
+
+### 12b. The grasp-speed filter measured 3D speed at the aperture crossing
+
+It rejected **149** episodes for the hand moving faster than `max_speed` "at the
+grasp", but P9 had already established that `grasp_idx` is the aperture-crossing
+frame, which is **mid-descent**. The filter's purpose is to reject a
+*pass-through* — a hand sweeping across the table without stopping to pick
+anything up — and a pass-through is **horizontal** motion. The descent is
+vertical and legitimate.
+
+**Measured** over 1102 candidates (m/s, and the fraction each threshold keeps):
+
+| variant | p25 | p50 | p75 | p90 | 0.15 | 0.25 | 0.35 |
+|---|---|---|---|---|---|---|---|
+| 3D at the crossing (was) | 0.064 | 0.204 | 0.434 | 0.652 | 42.0% | 56.5% | 67.2% |
+| 3D at the descent bottom | 0.034 | 0.108 | 0.302 | 0.505 | 58.1% | 70.1% | 79.8% |
+| **horizontal at the bottom** | 0.025 | 0.068 | 0.172 | 0.330 | **71.1%** | 83.3% | 91.0% |
+
+Moving to the descent bottom is not sufficient on its own: the residual vertical
+speed there still **exceeds** the horizontal in 39.2% of candidates, so a 3D
+speed at the bottom is partly the descent too. A centred difference measures the
+same as a backward one (median 0.108 either way), so the choice of difference
+does not matter — the choice of *components* does.
+
+**Fix applied:** horizontal speed at the bottom of the descent, and `max_speed`
+back to **0.15 m/s — the handoff's original value**. P2 loosened it to 0.35 only
+to compensate for the wrong frame, so fixing the frame is what pays for
+restoring it. 0.15 on the right metric keeps **more** candidates (71.1%) than
+0.35 on the wrong one did (67.2%), so this is strictly a correctness fix.
+
+The descent-bottom frame is now computed once, by
+`segment.descent_window_end` / `descent_bottom`, and shared with
+`common/demos.with_grasp_anchor_z` — the speed filter and P9's anchor height
+cannot disagree about where the grasp is.
+
+### 12c. Result, and what the remaining rejects are
+
+| | before | after |
+|---|---|---|
+| kept demos | 106 | **179** |
+| episodes contributing | 106 | 156 |
+| candidates evaluated | 1077 (one per episode) | 1102 |
+
+| Reject reason | Count |
+|---|---|
+| `transport_too_short` | 368 |
+| `no_grasp_release_pair` (0 closures) | 343 |
+| `grasp_speed_too_high` | 318 |
+| **kept** | **179** |
+| `event_too_close_to_end` | 146 |
+| `low_confidence` | 91 |
+
+Index spread: `dist_xy` 7.1–47.2 cm (median 15.4), `dz` −14.6 to +18.0 cm
+(median +2.8), duration 0.9–11.9 s (median 2.6).
+
+### 12d. Near-duplicates are not a problem (FYI — H5 §4a expected them)
+
+H5 §4a warned that several closures from one episode may be near-identical and
+suggested the `(dist_xy, dz)` index as a dedup key. **Measured: no dedup is
+needed.** Index distances between demos from the *same* episode are no tighter
+than between demos from *different* episodes:
+
+| pairs | n | median | closer than 2 cm |
+|---|---|---|---|
+| within-episode | 57 | 8.0 cm | 2 |
+| cross-episode | 15696 | 10.8 cm | 2.6% |
+
+A person doing several picks in one episode varies them as much as two different
+people do. The largest contributor (episode `p2_1013`, 7 kept demos) spans
+`dist_xy` 7.1–24.4 cm.
+
+### 12e. A known, priced, unpulled lever (FYI)
+
+`event_too_close_to_end` rose from 57 to 146, because slicing makes the 0.2 s
+lead-in requirement real for closures after the first rather than a formality
+about the episode's edge. Breakdown of the 146: **55** are a later closure
+failing on the *start* margin, and **44 of those 55** would survive if later
+closures only needed the 2 samples `trim_approach` actually requires.
+
+**Deliberately not taken.** It buys yield by loosening a threshold, which is
+what H5's rules say step 4 is not the place for, and a 2-frame approach has no
+descent for a policy to imitate — §8 step 5's bridge would synthesize a straight
+line in its place. Recorded so it is not re-derived: if step 9 comes up short of
+gate G4's target of 50, this is +44 candidates at a known cost.
+
+### 12f. What needs a human
+
+1. **§7.2's file pattern** is `data/retargeted/{source}_{idx}.npz`. Files are now
+   `{source}_{episode}_{closure}.npz`, e.g. `egodex_p2_1013_12.npz`. Under the
+   natural reading — `{idx}` identifies the *demo* — this is not a deviation at
+   all, and note the committed code already put non-numeric values (`p2_1013`)
+   in that slot. **Confirm the reading;** nothing is blocked on it.
+2. **§7.2's key table** gains `candidate`, `n_candidates` and `episode_span`
+   (provenance: which closure of which episode this is, and where it came from).
+   Proposal: add them as optional.
+3. **`conf_min` changed meaning** — it is now the minimum over the demo's own
+   frames, not the whole episode's. For a single-closure episode this is the
+   `conf_tail_s` window P2 already introduced for the *filter*; the npz field now
+   agrees with it instead of reporting a stricter number nothing used.

@@ -1,8 +1,14 @@
 """EgoDex episodes -> source demos in the `demo` frame (plan tasks 2.P2.1, 2.P2.2).
 
 Per episode: load -> `arkit` to `demo` -> HumanEgo hand-to-`tcp` -> smooth ->
-resample to 50 Hz -> detect the grasp/release pair -> apply the quality filters
--> write `data/retargeted/egodex_<idx>.npz` (conventions.md section 7.2).
+resample to 50 Hz -> find every grasp/release pair -> apply the quality filters
+to each -> write `data/retargeted/egodex_<idx>_<k>.npz` (conventions.md section
+7.2, extended by proposal P12).
+
+**One episode can yield several demos.** A human who re-grips, or picks up three
+objects in a row, closes the hand more than once and has given us more usable
+motions, not fewer. Each closure becomes its own self-contained npz, holding the
+slice of the episode from the previous release to just past its own.
 
     uv run python data/retarget.py                 # all episodes
     uv run python data/retarget.py --n-plots 5     # with evidence plots
@@ -21,7 +27,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from common import config  # noqa: E402
-from common.segment import Segmentation, segment, smooth_positions  # noqa: E402
+from common.segment import Segmentation, segment_all, smooth_positions  # noqa: E402
 from common.transforms import (  # noqa: E402
     arkit_to_demo,
     gripper_frame,
@@ -42,10 +48,12 @@ OUT_DIR = config.path("data", "retargeted")
 
 
 def retarget_episode(path: Path, cfg: dict, side: str = "right") -> dict:
-    """One episode -> the `demo`-frame trajectory plus its segmentation.
+    """One episode -> the `demo`-frame trajectory plus every candidate demo in it.
 
     Returns a dict with the resampled ``t``, ``T_demo_tcp``, ``aperture``, the
-    :class:`Segmentation`, and provenance. Does not write anything.
+    list of :class:`Segmentation` candidates under ``segs``, and provenance.
+    Does not write anything, and does not slice — use :func:`demo_from_candidate`
+    for that.
     """
     ep = load_episode(path, side)
 
@@ -79,14 +87,20 @@ def retarget_episode(path: Path, cfg: dict, side: str = "right") -> dict:
     conf_track = tcp_conf_track(ep)
     conf_out = float("nan") if conf_track is None else np.interp(t_out, t_src, conf_track)
 
-    seg = segment(T_out, aperture_out, t_out, cfg, conf_out)
+    # `library.grasp_window_s` is the descent duration P9 measured; the speed
+    # filter needs the same frame as the anchor height, so it is passed through
+    # rather than duplicated under `retarget`.
+    segs = segment_all(
+        T_out, aperture_out, t_out, cfg, conf_out,
+        descent_window_s=float(config.skills()["library"]["grasp_window_s"]),
+    )
 
     return {
         "idx": episode_index(path),
         "t": t_out,
         "T_demo_tcp": T_out,
         "aperture": aperture_out,
-        "seg": seg,
+        "segs": segs,
         "conf_min": tcp_conf_min(ep),
         "llm_description": ep["llm_description"],
         "source_path": str(path),
@@ -95,11 +109,37 @@ def retarget_episode(path: Path, cfg: dict, side: str = "right") -> dict:
     }
 
 
+def demo_from_candidate(ep: dict, seg: Segmentation) -> dict:
+    """One kept candidate as a self-contained source demo.
+
+    The npz the library consumes has to satisfy section 7.2 on its own — ``t``
+    starts at zero and ``grasp_idx``/``release_idx`` index its own arrays — so
+    the candidate's span is sliced out of the episode here. ``conf_min`` becomes
+    the minimum over *this* demo's frames rather than the whole episode's, which
+    is both more useful and what the filter already judged.
+    """
+    s, e = seg.span
+    t = ep["t"][s:e]
+    conf_min = seg.metrics["conf_min_used"]
+    return {
+        "id": f"{ep['idx']}_{seg.candidate}",
+        "idx": ep["idx"],
+        "t": t - t[0],
+        "T_demo_tcp": ep["T_demo_tcp"][s:e],
+        "aperture": ep["aperture"][s:e],
+        "seg": seg,
+        "conf_min": float("nan") if conf_min is None else float(conf_min),
+        "llm_description": ep["llm_description"],
+        "source_path": ep["source_path"],
+        "arm": ep["arm"],
+    }
+
+
 def save_demo(demo: dict, out_dir: Path) -> Path:
-    """Write one kept demo as `data/retargeted/egodex_<idx>.npz` (section 7.2)."""
+    """Write one kept demo as `data/retargeted/egodex_<idx>_<k>.npz` (section 7.2)."""
     seg: Segmentation = demo["seg"]
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"egodex_{demo['idx']}.npz"
+    out_path = out_dir / f"egodex_{demo['id']}.npz"
     np.savez_compressed(
         out_path,
         t=demo["t"],
@@ -113,6 +153,10 @@ def save_demo(demo: dict, out_dir: Path) -> Path:
         source_path=demo["source_path"],
         arm=demo["arm"],
         llm_description=demo["llm_description"],
+        # Which closure of the source episode this is, and how many it had.
+        candidate=seg.candidate,
+        n_candidates=seg.n_candidates,
+        episode_span=np.asarray(seg.span, dtype=np.int64),
         conventions_version=config.CONVENTIONS_VERSION,
     )
     return out_path
@@ -140,7 +184,10 @@ def plot_demo(demo: dict, out_dir: Path) -> Path:
     ax.axvspan(t[seg.grasp_idx], t[seg.release_idx], color="tab:green", alpha=0.08)
     ax.set_xlabel("t [s]")
     ax.set_ylabel("aperture [cm]")
-    ax.set_title(f"episode {demo['idx']}: grip closed between the markers")
+    ax.set_title(
+        f"episode {demo['idx']}, closure {seg.candidate + 1}/{seg.n_candidates}: "
+        "grip closed between the markers"
+    )
     ax.legend(fontsize=7, loc="best")
     ax.grid(alpha=0.3)
 
@@ -165,7 +212,7 @@ def plot_demo(demo: dict, out_dir: Path) -> Path:
     fig.tight_layout()
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"egodex_{demo['idx']}.png"
+    out_path = out_dir / f"egodex_{demo['id']}.png"
     fig.savefig(out_path, dpi=120, bbox_inches="tight")
     plt.close(fig)
     return out_path
@@ -195,51 +242,68 @@ def main() -> int:
         print(f"no episodes in {args.raw_dir}", file=sys.stderr)
         return 1
 
-    reasons: Counter[str] = Counter()
-    kept, errors, missing_conf, plotted = [], [], 0, 0
+    reasons: Counter[str] = Counter()  # per candidate, not per episode
+    per_episode: Counter[int] = Counter()  # demos yielded -> episodes
+    kept, errors, missing_conf, plotted, n_candidates = [], [], 0, 0, 0
 
     for path in paths:
         try:
-            demo = retarget_episode(path, cfg, args.side)
+            ep = retarget_episode(path, cfg, args.side)
         except Exception as exc:  # a malformed episode must not stop the batch
             errors.append({"source_path": str(path), "error": f"{type(exc).__name__}: {exc}"})
             reasons["load_error"] += 1
             continue
 
-        if np.isnan(demo["conf_min"]):
+        if np.isnan(ep["conf_min"]):
             missing_conf += 1
 
-        seg: Segmentation = demo["seg"]
-        if not seg.kept:
-            reasons[seg.reject] += 1
-            continue
+        segs: list[Segmentation] = ep["segs"]
+        n_candidates += sum(s.span is not None for s in segs)
+        n_from_episode = 0
 
-        reasons["kept"] += 1
-        save_demo(demo, args.out_dir)
-        kept.append(
-            {
-                "idx": demo["idx"],
-                "source_path": demo["source_path"],
-                "grasp_idx": seg.grasp_idx,
-                "release_idx": seg.release_idx,
-                "n_frames": len(demo["t"]),
-                "conf_min": None if np.isnan(demo["conf_min"]) else demo["conf_min"],
-                "llm_description": demo["llm_description"],
-                **seg.metrics,
-            }
-        )
-        if plotted < args.n_plots:
-            plot_demo(demo, args.out_dir / "plots")
-            plotted += 1
+        for seg in segs:
+            if not seg.kept:
+                reasons[seg.reject] += 1
+                continue
+
+            reasons["kept"] += 1
+            n_from_episode += 1
+            demo = demo_from_candidate(ep, seg)
+            save_demo(demo, args.out_dir)
+            kept.append(
+                {
+                    "id": demo["id"],
+                    "idx": demo["idx"],
+                    "source_path": demo["source_path"],
+                    "candidate": seg.candidate,
+                    "n_candidates": seg.n_candidates,
+                    "episode_span": list(seg.span),
+                    "grasp_idx": seg.grasp_idx,
+                    "release_idx": seg.release_idx,
+                    "n_frames": len(demo["t"]),
+                    "conf_min": None if np.isnan(demo["conf_min"]) else demo["conf_min"],
+                    "llm_description": demo["llm_description"],
+                    **seg.metrics,
+                }
+            )
+            if plotted < args.n_plots:
+                plot_demo(demo, args.out_dir / "plots")
+                plotted += 1
+
+        per_episode[n_from_episode] += 1
 
     n_kept = len(kept)
+    n_eps_used = len(paths) - per_episode[0]
     summary = {
         "conventions_version": config.CONVENTIONS_VERSION,
         "source": "egodex",
         "arm": args.side,
         "raw_dir": str(args.raw_dir),
         "n_episodes": len(paths),
+        "n_candidates": n_candidates,
         "n_kept": n_kept,
+        "n_episodes_yielding": n_eps_used,
+        "demos_per_episode": {str(k): v for k, v in sorted(per_episode.items())},
         "keep_rate": n_kept / len(paths),
         "reasons": dict(reasons.most_common()),
         "n_missing_confidences": missing_conf,
@@ -250,9 +314,13 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
 
-    print(f"\n=== retargeting: {n_kept}/{len(paths)} kept ({n_kept / len(paths):.1%}) ===")
+    print(f"\n=== retargeting: {n_kept} demos from {len(paths)} episodes ===")
+    print(f"  {n_candidates} grasp/release candidates, {n_eps_used} episodes yielded at least one")
     for reason, count in reasons.most_common():
         print(f"  {reason:<32} {count:4d}")
+    print("\n  demos per episode:")
+    for k, v in sorted(per_episode.items()):
+        print(f"    {k:3d} -> {v:4d} episodes")
     print(f"  (episodes missing confidences: {missing_conf})")
     if kept:
         dist = np.array([k["dist_xy"] for k in kept])

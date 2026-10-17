@@ -15,12 +15,31 @@ retarget:
     thr_fraction: 0.4 # thr = a_min + thr_fraction * (a_open - a_min)
     hold_frames: 8 # frames at 50 Hz the aperture must stay past thr
 
-    # Loosened from the handoff's 0.15 m/s: the aperture-crossing frame falls
-    # during the descent onto the object, not at rest, so speed at the grasp has
-    # median 0.211 m/s and 0.15 rejects 58% of segmentable demos. The robot caps
-    # at 0.25 m/s (conventions.md section 10) so replay is time-scaled anyway.
-    # docs/conventions_proposals.md P2.
-    max_speed: 0.35 # m/s; the hand must be roughly settled at the grasp
+    # Rejects a PASS-THROUGH: a hand that sweeps across the table without
+    # stopping to pick anything up. So it tests the HORIZONTAL speed at the
+    # BOTTOM of the descent, and both halves of that were wrong before.
+    #
+    # Measured over 1102 candidates (p25/p50/p75/p90, m/s), and the fraction of
+    # candidates each threshold keeps:
+    #
+    #   variant                    p25   p50   p75   p90    0.15    0.25   0.35
+    #   3D at the crossing (was) 0.064 0.204 0.434 0.652   42.0%   56.5%  67.2%
+    #   3D at the bottom         0.034 0.108 0.302 0.505   58.1%   70.1%  79.8%
+    #   horizontal at the bottom 0.025 0.068 0.172 0.330   71.1%   83.3%  91.0%
+    #
+    # The crossing is mid-descent (P9), so the hand is still falling there: the
+    # filter was testing a frame we had already concluded is not the grasp. And
+    # at the bottom the residual vertical speed still exceeds the horizontal in
+    # 39% of candidates, so a 3D speed there is partly the descent as well --
+    # which P9 established is normal and not disqualifying.
+    #
+    # Back to 0.15, the handoff's ORIGINAL value. P2 loosened it to 0.35 purely
+    # to compensate for the wrong frame, so fixing the frame is what pays for
+    # restoring it: 0.15 on the right metric keeps 71.1% of candidates, MORE
+    # than 0.35 on the wrong one kept (67.2%). The yield gain in step 4 comes
+    # from the multi-demo change (P12), not from a looser limit.
+    # docs/conventions_proposals.md P2, P12.
+    max_speed: 0.15 # m/s, horizontal, at the bottom of the descent
 
   filters:
     edge_margin_s: 0.2 # grasp/release must be this far from both ends
@@ -31,7 +50,14 @@ retarget:
     # docs/conventions_proposals.md P2. Handoff values were 0.10 and 0.5.
     min_transport_xy: 0.07 # m, horizontal grasp -> release distance
     min_confidence: 0.3 # over the five joints the tcp construction uses
-    conf_tail_s: 0.5 # judge confidence over [0, release + this], not the whole episode
+
+    # Seconds of post-release tail each demo carries, and therefore the end of
+    # the window its confidence is judged over. Tracking degrades once the hand
+    # retracts and nothing past `release_idx` is used downstream
+    # (`common/mimic.retarget`), so judging the whole episode punished demos for
+    # frames we discard. With several demos per episode this also sets the
+    # boundary between one closure and the next one's lead-in.
+    conf_tail_s: 0.5
 
 # --- Scene layout in the `table` frame (sim nominal; measured on hardware) ---
 # MEASURED, not guessed. sim/reachability.py maps where the right arm can reach

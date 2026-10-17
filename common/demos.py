@@ -18,6 +18,7 @@ import numpy as np
 
 from common import config
 from common.mimic import SourceDemo
+from common.segment import descent_window_end
 from common.transforms import flatten_top_down
 
 ORIENTATION_MODES = ("top_down", "replay")
@@ -28,15 +29,20 @@ def demo_dir() -> Path:
 
 
 def demo_paths(source: str = "egodex") -> list[Path]:
-    """Every source demo of `source`, ordered by episode index rather than name.
+    """Every source demo of `source`, ordered by episode then closure index.
 
     `sorted()` on the filenames gives `egodex_10` before `egodex_2`, which would
-    make library ids depend on string order for no reason.
+    make library ids depend on string order for no reason. Stems are
+    `{source}_{episode}_{closure}` (one episode can yield several demos — see
+    `data/retarget.py`), so both trailing numbers are sorted numerically and an
+    episode's closures stay adjacent and in time order.
     """
 
-    def key(p: Path) -> tuple[int, str]:
-        m = re.search(r"_(\d+)$", p.stem)
-        return (int(m.group(1)) if m else -1, p.stem)
+    def key(p: Path) -> tuple[int, int, str]:
+        m = re.search(r"_(\d+)(?:_(\d+))?$", p.stem)
+        if m is None:
+            return (-1, -1, p.stem)
+        return (int(m.group(1)), int(m.group(2) or 0), p.stem)
 
     return sorted(demo_dir().glob(f"{source}_*.npz"), key=key)
 
@@ -147,7 +153,7 @@ def with_grasp_anchor_z(demo: SourceDemo, window_s: float | None = None) -> Sour
     if window_s is None:
         window_s = float(config.skills()["library"]["grasp_window_s"])
     rate_hz = float(config.skills()["retarget"]["fps_out"])
-    end = min(demo.grasp_idx + max(int(round(window_s * rate_hz)), 1), demo.release_idx) + 1
+    end = descent_window_end(demo.grasp_idx, demo.release_idx, window_s, rate_hz)
     z = demo.T_demo_tcp[:end, 2, 3]
     return SourceDemo(
         T_demo_tcp=demo.T_demo_tcp,
