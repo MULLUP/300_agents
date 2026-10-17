@@ -40,6 +40,20 @@ UPSTREAM_MESHDIR = "meshes"
 MESHDIR_FROM_SIM = "../third_party/openarm_mujoco/v1/meshes"
 
 # conventions.md section 5 / handoff step 5: override the upstream model defaults.
+
+# 0.002 s = 10 physics steps per 50 Hz control cycle, EXACTLY.
+#
+# 50 Hz is the one rate in this project: source demos are resampled to it
+# (`retarget.fps_out`), skills execute at it (`exec.rate_hz`), and the LeRobot
+# dataset is written at it. Keeping a single rate end to end means no resampling
+# anywhere and no rounding in `SimRobot.steps_per_cycle`.
+#
+# Do not change this without re-measuring the physics results, and if you ever
+# want a capture rate that is not 50 Hz, change it here rather than letting
+# `stream` round: at 30 Hz this timestep gives round((1/30)/0.002) = 17 steps,
+# i.e. a silent 29.41 Hz. `steps_per_cycle` now rejects that loudly. A timestep
+# dividing both 30 and 50 Hz needs a physics rate that is a multiple of 150
+# (e.g. 1/600 s), which is a non-terminating decimal and costs 20% more steps.
 TIMESTEP = 0.002
 IMPRATIO = 10.0
 

@@ -33,6 +33,7 @@ from common.transforms import (  # noqa: E402
     grasp_pose,
     interp_poses,
     spin_about_approach,
+    tilt_about_jaw,
     top_down_pose,
     yaw_of,
 )
@@ -567,27 +568,53 @@ APPROACH_YAW_OFFSETS = np.deg2rad([0.0, 90.0, 180.0, 270.0])
 TRANSPORT_YAW_OFFSETS = np.deg2rad(np.arange(0.0, 360.0, 45.0))
 
 
-def apply_yaw_offsets(plan: "DemoPlan", approach: float, transport: float) -> np.ndarray:
-    """`plan.pose_path` with a per-segment wrist spin, ramped across the bridge.
+def _tilt_offsets() -> np.ndarray:
+    """Approach elevations to try, from `config/skills.yaml` `exec.demo_tilt_deg`.
 
-    One constant offset for the approach and one for the transport, joined by a
-    linear ramp over the existing section 8 step 5 mid-bridge. Constant-per-
-    segment is what makes this **continuous by construction**, which is where the
-    per-sample free-yaw solve failed: it could pick a different null-space
-    resolution at every sample, turning 23 reachability rejects into 23 branch
-    flips.
+    "Top-down" was never a requirement of the task — see
+    :func:`common.transforms.tilt_about_jaw`. It was a convention, and an
+    expensive one: P7 measured that only **0.59%** of this arm's configurations
+    put the approach axis within 10 deg of straight down, against 5.5% within
+    30 deg, so insisting on vertical throws away most of the usable workspace and
+    is the root cause of the "~25 cm" reachable patch the scene was fitted to.
+    """
+    return np.deg2rad(np.asarray(config.skills()["exec"]["demo_tilt_deg"], dtype=np.float64))
 
-    Positions are untouched (see :func:`spin_about_approach`), so the offsets
-    cannot move the grasp off the cube or the release off the bin.
+
+def _ramped(plan: "DemoPlan", approach: float, transport: float) -> np.ndarray:
+    """Per-sample values ramping from an approach to a transport constant.
+
+    Constant-per-segment joined by a linear ramp over the existing section 8
+    step 5 mid-bridge. That is what makes these offsets **continuous by
+    construction**, which is where the per-sample free-yaw solve failed: it could
+    pick a different null-space resolution at every sample, turning 23
+    reachability rejects into 23 branch flips.
     """
     n = len(plan.pose_path)
-    delta = np.empty(n, dtype=np.float64)
+    out = np.empty(n, dtype=np.float64)
     i0, i1 = plan.segments.get("bridge_mid", (n, n))
-    delta[:i0] = approach
+    out[:i0] = approach
     if i1 > i0:
-        delta[i0:i1] = np.linspace(approach, transport, i1 - i0)
-    delta[i1:] = transport
-    return spin_about_approach(plan.pose_path, delta)
+        out[i0:i1] = np.linspace(approach, transport, i1 - i0)
+    out[i1:] = transport
+    return out
+
+
+def apply_yaw_offsets(
+    plan: "DemoPlan", approach: float, transport: float, tilt: float = 0.0
+) -> np.ndarray:
+    """`plan.pose_path` with a per-segment wrist spin and approach tilt.
+
+    Both are post-multiplications, so **positions are untouched** — neither can
+    move the grasp off the cube or the release off the bin.
+
+    `tilt` is held constant over the whole path rather than ramped. The jaw axis
+    stays horizontal at any tilt, so a constant tilt is legal everywhere, and
+    holding it constant keeps the path continuous without spending a second ramp
+    on it.
+    """
+    spun = spin_about_approach(plan.pose_path, _ramped(plan, approach, transport))
+    return spun if tilt == 0.0 else tilt_about_jaw(spun, tilt)
 
 
 def fit_yaw_offsets(
@@ -614,22 +641,26 @@ def fit_yaw_offsets(
     i_app = plan.segments["approach"][1]
     reason = "no_yaw_offset_fits"
 
-    for a in APPROACH_YAW_OFFSETS:
-        trial = apply_yaw_offsets(plan, float(a), float(a))
-        ok, why = screen_pose_path(solver, trial[:i_app], side, rate_hz)
-        if not ok:
-            reason = f"approach: {why}"
-            continue
-        for t in TRANSPORT_YAW_OFFSETS:
-            full = apply_yaw_offsets(plan, float(a), float(a + t))
-            ok, why = screen_pose_path(solver, full, side, rate_hz)
+    # Tilt is the outer loop and is tried in the order the config lists it, so a
+    # near-vertical approach is still preferred where one is reachable; the tilt
+    # is a fallback that opens up the workspace, not a free-for-all.
+    for tilt in _tilt_offsets():
+        for a in APPROACH_YAW_OFFSETS:
+            trial = apply_yaw_offsets(plan, float(a), float(a), float(tilt))
+            ok, why = screen_pose_path(solver, trial[:i_app], side, rate_hz)
             if not ok:
-                reason = why
+                reason = f"approach: {why}"
                 continue
-            ok, why = screen_pose_path(solver, full, side, rate_hz, stride=1)
-            if ok:
-                return full, ""
-            reason = f"coarse_screen_optimistic ({why})"
+            for t in TRANSPORT_YAW_OFFSETS:
+                full = apply_yaw_offsets(plan, float(a), float(a + t), float(tilt))
+                ok, why = screen_pose_path(solver, full, side, rate_hz)
+                if not ok:
+                    reason = why
+                    continue
+                ok, why = screen_pose_path(solver, full, side, rate_hz, stride=1)
+                if ok:
+                    return full, ""
+                reason = f"coarse_screen_optimistic ({why})"
     return None, reason
 
 

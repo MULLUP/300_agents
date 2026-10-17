@@ -301,6 +301,37 @@ def spin_about_approach(T: np.ndarray, delta: float | np.ndarray) -> np.ndarray:
     return out
 
 
+def tilt_about_jaw(T: np.ndarray, delta: float | np.ndarray) -> np.ndarray:
+    """Rotate poses about their **own** +y (jaw) axis by `delta` radians.
+
+    The companion to :func:`spin_about_approach`, and what lets the "top-down"
+    requirement go. For a cube resting on a table the physical constraint is only
+    that **the jaws straddle two opposite vertical faces**, which needs the jaw
+    axis horizontal and nothing more. The *elevation* of the approach is free
+    across a wide arc, bounded by the fingers reaching the table — not by any
+    property of the task.
+
+    Rotating about +y is what preserves that: +y is the rotation axis, so it is
+    itself unchanged and stays horizontal, while the approach axis swings in the
+    perpendicular vertical plane. Both fingers tilt together, so neither dips
+    toward the table. P7 verified this numerically for the hand-coded grasp; this
+    is the same operation applied to a whole retargeted path.
+
+    Post-multiplication, so **translations are untouched** — the tilt cannot move
+    the grasp off the cube, the release off the bin, or disturb the section 8
+    heading alignment or the `(dist_xy, dz)` index. `delta` may be a scalar or one
+    angle per pose, for a smooth ramp between per-segment values.
+
+    Composes with :func:`spin_about_approach` in either order provided both are
+    post-multiplied: ``T @ rot_z(spin) @ rot_y(tilt)`` tilts about the *spun* jaw
+    axis, which is still horizontal.
+    """
+    T = np.asarray(T, dtype=np.float64)
+    out = T.copy()
+    out[..., :3, :3] = T[..., :3, :3] @ rot_y(np.asarray(delta, dtype=np.float64))
+    return out
+
+
 def pose_to_dict(T: np.ndarray) -> dict:
     """Serialize a pose as ``{"pos": [...], "quat_wxyz": [...]}`` (section 3)."""
     T = np.asarray(T, dtype=np.float64)

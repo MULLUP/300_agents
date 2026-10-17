@@ -168,13 +168,46 @@ class SimRobot(RobotInterface):
 
         return max(t_speed, t_joint, 2.0 / rate_hz)
 
+    def steps_per_cycle(self, rate_hz: float) -> int:
+        """Physics steps in one control cycle at `rate_hz`, or raise if inexact.
+
+        Deliberately strict. This used to round silently, which executed at a
+        rate the caller never asked for: with the old 0.002 s timestep a
+        requested 30 Hz became 17 steps = 29.41 Hz, so logged timestamps drifted
+        from the declared rate. A recorded dataset's `fps` is a promise about
+        timing, so an inexact rate is a bug to surface rather than absorb.
+        `sim/build_models.py` picks the timestep to divide every rate we use
+        (1/600 s: 12 steps at 50 Hz, 20 at 30 Hz).
+
+        The tolerance is relative and cannot be removed: a timestep dividing both
+        30 and 50 Hz needs a physics rate that is a multiple of 150, and
+        150 = 2 * 3 * 5**2, so the factor 3 makes every candidate a
+        non-terminating decimal. MuJoCo then writes it to XML at finite
+        precision, leaving 1/600 s as 0.00166667 and 20 steps as 19.99996. That
+        rounding is ~2e-6 relative; a genuinely wrong rate is ~2e-2 (the 17-step
+        case above), so 1e-4 separates them by two orders of magnitude.
+        """
+        timestep = float(self.model.opt.timestep)
+        exact = (1.0 / float(rate_hz)) / timestep
+        steps = int(round(exact))
+        if steps < 1 or abs(exact - steps) > 1e-4 * steps:
+            achievable = 1.0 / (max(steps, 1) * timestep)
+            raise ValueError(
+                f"rate_hz={rate_hz} needs {exact:.6f} physics steps per cycle at a "
+                f"timestep of {timestep} s, which is not a whole number: the "
+                f"achievable rate would be {achievable:.4f} Hz. Pick a rate that "
+                "divides the timestep, or change PHYSICS_RATE_HZ in "
+                "sim/build_models.py and regenerate the models."
+            )
+        return steps
+
     def stream(self, q_traj: np.ndarray, rate_hz: float) -> None:
         """Execute an `(N, 16)` trajectory, holding each sample for one cycle."""
         traj = np.atleast_2d(np.asarray(q_traj, dtype=np.float64))
         if self.enforce_safety:
             self._check(traj, rate_hz)
 
-        steps = max(int(round((1.0 / float(rate_hz)) / self.model.opt.timestep)), 1)
+        steps = self.steps_per_cycle(rate_hz)
         for q in traj:
             self.index.write_ctrl(q, self.data.ctrl)
             for _ in range(steps):

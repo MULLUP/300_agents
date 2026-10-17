@@ -202,6 +202,27 @@ exec:
   # docs/conventions_proposals.md P7.
   grasp_tilt_deg: [0.0, 7.5, -7.5, 15.0, -15.0]
 
+  # Approach elevations searched for a RETARGETED DEMO's whole path
+  # (sim/execute.py `fit_yaw_offsets`, common/transforms.py `tilt_about_jaw`).
+  #
+  # "Top-down" was never a requirement of this task. A cube on a flat table only
+  # requires that the jaws straddle two opposite VERTICAL faces, which fixes the
+  # jaw axis to horizontal and leaves the approach ELEVATION free. Tilting about
+  # the gripper's own +y keeps the jaw axis horizontal exactly, so every tilt
+  # here is as legal a grasp as 0.0 is.
+  #
+  # Why it is worth searching: P7 measured that only 0.59% of this arm's
+  # configurations put the approach axis within 10 deg of straight down, against
+  # 5.5% within 30 deg. Insisting on vertical is what shrinks the reachable
+  # table patch to the ~25 cm the `scene` block above was fitted to, and it is
+  # the root cause of the step 6 geometry losses.
+  #
+  # Ordered by magnitude so a near-vertical approach is always preferred where
+  # one is reachable; the tilt is a fallback, not a free-for-all. Bounded at
+  # 45 deg because beyond that a finger reaches the table before the pads reach
+  # the cube's faces (cube 45 mm, so a pad must stay above z = 0).
+  demo_tilt_deg: [0.0, 15.0, -15.0, 30.0, -30.0, 45.0, -45.0]
+
   # Offset along the approach axis applied to the commanded grasp height, on top
   # of the cube's centre. The upstream tcp body sits 0.09 m along the hand's +z,
   # which is near the FINGERTIPS rather than the middle of the pads, so a nonzero

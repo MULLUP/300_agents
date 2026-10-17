@@ -61,9 +61,9 @@
     <mesh name="body_link0_4.obj" file="visual/body/body_link0_4.obj" scale="0.001 0.001 0.001"/>
     <mesh name="body_link0_5.obj" file="visual/body/body_link0_5.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link0_0.obj" file="visual/arm/link0_0.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link0_1.obj" file="visual/arm/link0_1.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link0_1.obj" content_type="model/obj" file="visual/arm/link0_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link0_0_left.obj" content_type="model/obj" file="visual/arm/link0_0.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link0_1_left.obj" content_type="model/obj" file="visual/arm/link0_1.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link0_1_left.obj" file="visual/arm/link0_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link1_0.obj" file="visual/arm/link1_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link1_1.obj" file="visual/arm/link1_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link1_2.obj" file="visual/arm/link1_2.obj" scale="0.001 0.001 0.001"/>
@@ -73,10 +73,10 @@
     <mesh name="link1_3_left.obj" content_type="model/obj" file="visual/arm/link1_3.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link2_0.obj" file="visual/arm/link2_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link2_1.obj" file="visual/arm/link2_1.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link2_2.obj" content_type="model/obj" file="visual/arm/link2_2.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link2_2.obj" file="visual/arm/link2_2.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link2_0_left.obj" content_type="model/obj" file="visual/arm/link2_0.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link2_1_left.obj" content_type="model/obj" file="visual/arm/link2_1.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link2_2_left.obj" file="visual/arm/link2_2.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link2_2_left.obj" content_type="model/obj" file="visual/arm/link2_2.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link3_0.obj" file="visual/arm/link3_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link3_1.obj" file="visual/arm/link3_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link3_2.obj" file="visual/arm/link3_2.obj" scale="0.001 0.001 0.001"/>
@@ -89,10 +89,10 @@
     <mesh name="link5_0_left.obj" content_type="model/obj" file="visual/arm/link5_0.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link5_1_left.obj" content_type="model/obj" file="visual/arm/link5_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link5_2_left.obj" content_type="model/obj" file="visual/arm/link5_2.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link6_0.obj" file="visual/arm/link6_0.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link6_1.obj" content_type="model/obj" file="visual/arm/link6_1.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link6_0_left.obj" content_type="model/obj" file="visual/arm/link6_0.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link6_1_left.obj" file="visual/arm/link6_1.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link6_0.obj" content_type="model/obj" file="visual/arm/link6_0.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link6_1.obj" file="visual/arm/link6_1.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link6_0_left.obj" file="visual/arm/link6_0.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link6_1_left.obj" content_type="model/obj" file="visual/arm/link6_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link7_0.obj" file="visual/arm/link7_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link7_1.obj" file="visual/arm/link7_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link7_0_left.obj" content_type="model/obj" file="visual/arm/link7_0.obj" scale="0.001 -0.001 0.001"/>
