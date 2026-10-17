@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| **Handoff version** | **H2** |
-| **Timestamp** | 2026-10-17T16:20:00Z |
-| **Supersedes** | H1 (2026-10-17T13:03:15Z) |
+| **Handoff version** | **H3** |
+| **Timestamp** | 2026-10-17T18:05:00Z |
+| **Supersedes** | H2 (2026-10-17T16:20:00Z), H1 (2026-10-17T13:03:15Z) |
 | **Plan reference** | `implementation_plan.md` **V2.1** (2026-10-17T13:01:09Z) |
 | **Conventions reference** | `conventions.md` **v2** (2026-10-17T13:09:39Z) |
 | **Mode** | **Simulation only.** No real-robot code, no hardware access. |
@@ -13,24 +13,70 @@
 
 ---
 
-## 1. Where the previous agent got to
+## 0. START HERE — three things are not what they look like
 
-Steps 1–3 of H1 are **done and committed**. Step 4 is **done but under its gate**,
-and the project **gained a second skill** on the way. Steps 5–9 are **untouched**.
+The H2 agent got steps 5 and 8 working but **stopped mid-verification**. Before
+you trust anything below, know these three:
 
-| H1 step | Status | Key numbers |
+### 0a. One test in the tree FAILS right now
+
+```
+tests/test_ik.py::test_fk_matches_the_model_at_home
+  ACTUAL:  [0.675, -3.1e-06, 0.737]
+  DESIRED: [1.0, 0.0, 0.0]
+```
+
+**The test is stale, not the code.** `config/home.yaml` was deliberately changed
+to a tucked HOME (joint4 = 2.40) because the upstream keyframe HOME put the tcp
+only 0.08 m above the table and drove the **left** hand into the bin — caught by
+the contact check in `sim/build_models.py`. The test still asserts the old
+forward-pointing approach axis. **Fix the assertion, do not revert the config.**
+Reasoning and the resulting tcp poses are in `config/home.yaml`'s own comments.
+
+### 0b. Gate G1 is at 8/10, NOT done
+
+`uv run python sim/execute.py --trials 10` last measured **8/10**. The two
+failures were cube poses `(0.311, -0.240)` and `(0.261, -0.209)`, both because no
+*strictly vertical* grasp exists there.
+
+### 0c. The fix for those two is implemented but UNVERIFIED
+
+Proposal **P7** (grasp tilt tolerance, user-approved) is fully wired in:
+`common/transforms.py` `rot_y` / `grasp_pose`, the planner search in
+`sim/execute.py`, and `exec.grasp_tilt_deg` in `config/skills.yaml`. The geometry
+is unit-tested and exact. **But the 10-trial run was interrupted, so there is no
+success count for it.** 10/10 is plausible and unproven — re-run it first:
+
+```bash
+MUJOCO_GL=egl uv run python -u sim/execute.py --trials 10   # do NOT pipe to tail
+```
+
+### 0d. Nothing since `e576d3d` is committed
+
+All of step 5 and step 8 is uncommitted working tree. Commit after you have
+confirmed 0a–0c.
+
+---
+
+## 1. Where the previous agents got to
+
+Steps 1–4 and 8 are **done**. Step 5 is **done but under gate G1** (§0b).
+Steps 6, 7, 9 are untouched.
+
+| Step | Status | Key numbers |
 |---|---|---|
-| 1 Download | ✅ done | 277 `basic_pick_place` + **800 more from `part2.zip`** (`p2_` prefix); 44 `clean_surface`; 16 `wipe_screen` |
-| 2 Loader + joint ID | ✅ done | **thumb MCP = `rightThumbIntermediateBase`** (confirmed, evidence in `data/README.md`) |
-| 3 Transforms | ✅ done | `pytest tests/test_transforms.py` → **21 passed** |
-| 4 Retarget + filters | ⚠️ **done, gate G2 missed** | ~15% keep rate; see §3 |
-| 5 Scene, IK, harness | ❌ **not started** | — |
-| 6 Feasibility | ❌ not started | — |
+| 1 Download | ✅ done, committed | 277 `basic_pick_place` + **800 from `part2.zip`** (`p2_` prefix); 44 `clean_surface`; 16 `wipe_screen` |
+| 2 Loader + joint ID | ✅ done, committed | **thumb MCP = `rightThumbIntermediateBase`** (evidence in `data/README.md`) |
+| 3 Transforms | ✅ done, committed | 21 tests pass |
+| 4 Retarget + filters | ✅ **done, gate G2 CLEARED** | **106 / 1077 kept (9.8%)**; see §5 |
+| 5 Scene, IK, harness | ⚠️ **done, gate G1 at 8/10** | uncommitted; see §0 and §10 |
+| 6 Feasibility | ❌ not started | **read §10 first** — usable workspace is ~25 cm across |
 | 7 Library candidates | ❌ not started | — |
-| 8 MimicGen core | ❌ not started | — |
+| 8 MimicGen core | ✅ **done** | `common/mimic.py`, 36 tests; uncommitted |
 | 9 Validation | ❌ not started | — |
 
-**Commits so far:** `996999b` (1.P2.2). Step 4 work is staged but see §9.
+**Commits:** `996999b` (1.P2.2), `e576d3d` (2.P2.1/2.P2.2, step 4). Everything
+else is uncommitted.
 
 ---
 
@@ -258,17 +304,107 @@ be collected at shutdown raises a harmless `EGLError`.
 | 1 Download | ☑ | 277 + 800 `p2_` pick_place; 44 + 16 wiping | `996999b` |
 | 2 Loader + joint ID | ☑ | thumb MCP = `rightThumbIntermediateBase` | `996999b` |
 | 3 Transforms | ☑ | 21 tests pass | `996999b` |
-| 4 Retarget + filters | ☑ | kept / total = **106 / 1077** (9.8%) — **G2 target of 100 cleared** | `6ac34bb` |
-| 5 Scene, IK, harness | ☐ | hand-coded pick-and-place ?/10 | |
-| 6 Feasibility | ☐ | feasible = ? | |
+| 4 Retarget + filters | ☑ | kept / total = **106 / 1077** (9.8%) — **G2 target of 100 cleared** | `e576d3d` |
+| 5 Scene, IK, harness | ⚠️ | hand-coded pick-and-place **8/10** verified; P7 tilt wired in but **unverified**; shoulder height, zones and IK seeding all **measured**, see §10 | uncommitted |
+| 6 Feasibility | ☐ | feasible = ? — **read §10 first**, the usable workspace is ~25 cm across | |
 | 7 Library candidates | ☐ | candidates = ? | |
-| 8 MimicGen core | ☐ | tests pass? | |
+| 8 MimicGen core | ☑ | `common/mimic.py`, 36 tests in `tests/test_mimic.py` | uncommitted |
 | 9 Validation | ☐ | library entries = ? | |
+| — test suite | ⚠️ | **1 failing test**, stale assertion — see §0a | |
 | P4 `wipe_surface` | ⛔ blocked | awaiting human decision on conventions v3 | |
 
 ---
 
-## 10. Next handoff (not yours)
+## 10. Step 5 findings — read before step 6
+
+Everything here was **measured**, and every number contradicts something that was
+guessed before. Full write-up of the IK items: `docs/conventions_proposals.md` P6.
+
+### 11a. The usable top-down workspace is small — this is the step 6 risk
+
+At the chosen mount height, the region where the right arm can reach the table
+top-down at the grasp height is
+
+```
+x in [0.15, 0.40]   y in [-0.50, +0.10]
+```
+
+about **25 cm across**. The handoff's guessed `scene` values were partly *outside*
+it (`pick_zone` reached x = 0.50, `spot` sat at x = 0.52); they have been replaced
+from the measured map in `sim/plots/reachability_right.{png,json}`.
+
+**Why this matters for step 6:** the 106 kept demos have `dist_xy` of 7–47 cm
+(median 18). The median fits; the long tail cannot. Expect a substantial fraction
+to be rejected on geometry alone, independently of the transform being correct.
+Budget for that before reading a low feasible-count as a bug.
+
+### 11b. Poses that solve individually often cannot be *connected*
+
+This cost most of step 5. Three successive checks were each insufficient:
+
+| Check | Why it was not enough |
+|---|---|
+| both endpoints reachable | the straight line between them left the reachable set mid-way (53–72% of samples converged) |
+| every sample converges | a converged path still contained a **branch flip**: 2.3 rad of `joint_1` between adjacent 50 Hz samples, 48x the §10 step limit |
+| each leg validated separately | each leg got its own cold start; execution solves one concatenated path, warm-started |
+
+What works is validating the plan **exactly as it will be executed** — one
+concatenated path, warm-started from the post-bridge configuration, checked for
+convergence *and* for §10 joint steps. `sim/execute.py` `_plan_ok` does this, and
+the yaw search is built on it. **Don't simplify that back to endpoint checks.**
+
+Consequences baked into the code:
+
+* **HOME → first waypoint runs in joint space**, not tcp space. HOME is tucked and
+  in a different IK branch, so interpolating the pose walks out of the reachable
+  set (24–70 mm error on every attempt).
+* **`SimRobot.move_to` stretches the requested duration** to respect the §10 tcp
+  speed limit, because a joint-space move's tcp arc length is not known up front.
+  The requested duration is a floor, not a promise.
+* **The carry turns the wrist in place, then translates** at constant yaw. Doing
+  both at once leaves the reachable set.
+* **Grasp yaw has exactly two legal choices** (`cube_yaw` mod 90°); a single fixed
+  choice is reachable for only ~80% of pick-zone poses. The release yaw is free and
+  is searched over the **full circle** — `yaw` and `yaw + 180°` are the same jaw
+  line but different arm configurations, and `joint7` (±90°) usually reaches only
+  one of them.
+
+### 11c. The bin belongs on the arm's own side
+
+Measured fraction of pick-zone cube poses whose carry solves as a constant-yaw
+Cartesian path, by bin centre:
+
+| bin centre | (0.26,−0.02) | (0.34,−0.10) | (0.22,−0.08) | (0.16,−0.12) | (0.38,−0.22) | (0.36,−0.38) | (0.18,−0.45) | (0.20,−0.46) |
+|---|---|---|---|---|---|---|---|---|
+| ok | 0/12 | 0/12 | 4/12 | 7/12 | 7/12 | 8/12 | **10/12** | **10/12** |
+
+A bin near the centreline forces a different wrist branch, so the carry has to
+rotate ~110° while travelling. The bin is now at negative y.
+
+### 11d. Gravity compensation is an assumption about the real robot
+
+`sim/build_models.py` sets `gravcomp = 1` on every `openarm*` body. Without it the
+tcp sags **21 mm** at HOME — 4x the §10 IK tolerance — so no commanded pose is ever
+reached. With it, 0.00 mm.
+
+This models a driver with gravity feedforward. **Flag for hardware phase 3:** if
+the real driver has none, the simulation is easier than reality and this must come
+out, with actuator gains revisited instead.
+
+### 11e. Regenerate derived artifacts when calibration changes
+
+`sim/robot_ik.xml`, `sim/scene.xml` and `sim/ik_seeds_right.npz` are all
+**generated**. The seed bank stores tcp positions in the `table` frame, so it is
+invalidated by any change to `T_table_robot`.
+
+```sh
+uv run python sim/build_models.py     # both models
+uv run python sim/reachability.py     # seed bank + reachability map
+```
+
+---
+
+## 11. Next handoff (not yours)
 
 MimicGen data generation with rendering → LeRobot datasets → SmolVLA LoRA (plan
 phases 6–7). The dataset schema is in `conventions.md` v2 §7.4. Still needed

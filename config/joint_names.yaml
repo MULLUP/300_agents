@@ -1,0 +1,86 @@
+# Canonical joint names -> MJCF joint and actuator names (conventions.md section 4).
+#
+# `order` IS the robot-interface 16-vector order. Never infer joint order from a
+# dataset, from dict ordering, or from the MuJoCo model — read it from here.
+#
+# Verified against third_party/openarm_mujoco/v1/openarm_bimanual.xml at the
+# commit pinned in sim/README.md: njnt 18, nu 16, nq 18.
+conventions_version: 2
+
+# The 16-vector: 7 arm joints + 1 gripper per arm, left arm first.
+order:
+  - left_joint_1
+  - left_joint_2
+  - left_joint_3
+  - left_joint_4
+  - left_joint_5
+  - left_joint_6
+  - left_joint_7
+  - left_gripper
+  - right_joint_1
+  - right_joint_2
+  - right_joint_3
+  - right_joint_4
+  - right_joint_5
+  - right_joint_6
+  - right_joint_7
+  - right_gripper
+
+# Canonical -> MJCF joint name. Each gripper is ONE value in the interface but
+# TWO MJCF joints, coupled by a joint-equality constraint in the model (neq=2,
+# finger_joint2 = finger_joint1), driven by a single actuator.
+joints:
+  left_joint_1: openarm_left_joint1
+  left_joint_2: openarm_left_joint2
+  left_joint_3: openarm_left_joint3
+  left_joint_4: openarm_left_joint4
+  left_joint_5: openarm_left_joint5
+  left_joint_6: openarm_left_joint6
+  left_joint_7: openarm_left_joint7
+  right_joint_1: openarm_right_joint1
+  right_joint_2: openarm_right_joint2
+  right_joint_3: openarm_right_joint3
+  right_joint_4: openarm_right_joint4
+  right_joint_5: openarm_right_joint5
+  right_joint_6: openarm_right_joint6
+  right_joint_7: openarm_right_joint7
+
+# The driven finger joint per gripper (the one the actuator targets).
+gripper_joints:
+  left_gripper: openarm_left_finger_joint1
+  right_gripper: openarm_right_finger_joint1
+
+# The mimic joint, held equal to the driven one by the model's equality constraint.
+gripper_mimic_joints:
+  left_gripper: openarm_left_finger_joint2
+  right_gripper: openarm_right_finger_joint2
+
+# Canonical -> MJCF position actuator name. Position actuators already exist in
+# the upstream model; we do not add any.
+actuators:
+  left_joint_1: left_joint1_ctrl
+  left_joint_2: left_joint2_ctrl
+  left_joint_3: left_joint3_ctrl
+  left_joint_4: left_joint4_ctrl
+  left_joint_5: left_joint5_ctrl
+  left_joint_6: left_joint6_ctrl
+  left_joint_7: left_joint7_ctrl
+  left_gripper: left_finger1_ctrl
+  right_joint_1: right_joint1_ctrl
+  right_joint_2: right_joint2_ctrl
+  right_joint_3: right_joint3_ctrl
+  right_joint_4: right_joint4_ctrl
+  right_joint_5: right_joint5_ctrl
+  right_joint_6: right_joint6_ctrl
+  right_joint_7: right_joint7_ctrl
+  right_gripper: right_finger1_ctrl
+
+# Gripper travel per finger, meters. conventions.md section 1 normalizes the
+# gripper command to 0.0 = fully closed, 1.0 = fully open, so
+# finger_joint_target = gripper_open_m * g.
+gripper_open_m: 0.044
+
+# TCP sites in sim/robot_ik.xml and sim/scene.xml (conventions.md section 2).
+tcp_sites:
+  left: tcp_left
+  right: tcp_right

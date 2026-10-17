@@ -1,0 +1,45 @@
+# HOME as the robot-interface 16-vector (conventions.md section 4).
+# Order is config/joint_names.yaml `order`. Arm joints in radians, grippers
+# normalized 0.0 = closed, 1.0 = open.
+#
+# Every skill starts and ends here, and the idle arm holds it for the whole run
+# (conventions.md section 4), so HOME must be high and tucked: clear of the table,
+# clear of the bin, and clear of the other arm.
+#
+# NOT the upstream keyframe. That one (joint4 = pi/2, everything else 0) leaves
+# the hands stretched forward with the tcp only 0.08 m above the table at the
+# chosen mount height, and the LEFT hand then intersects the bin — caught by the
+# contact check in sim/build_models.py.
+#
+# This pose folds the elbow (joint4) almost fully instead, which lifts the tcp to
+# z = +0.38 and pulls it back to x = +0.27. joint4 = 2.40 rather than its 2.4435
+# limit, to keep margin off the stop. Symmetric: the two arms' joint ranges are
+# mirror images, so equal values give a mirrored pose.
+#
+# Values below are what `sim/build_models.py` prints; `tests/test_ik.py`
+# asserts them, so re-run it after changing `q` or `config/calibration.yaml`.
+#
+#   tcp_right at HOME = (+0.2743, -0.1525, +0.3795)
+#   tcp_left  at HOME = (+0.2743, +0.1525, +0.3795)
+#   approach axis     = (+0.675, 0, +0.737) -- up and forward, NOT top-down
+conventions_version: 2
+
+q:
+  # left arm
+  - 0.0 # left_joint_1
+  - 0.0 # left_joint_2
+  - 0.0 # left_joint_3
+  - 2.40 # left_joint_4, elbow folded
+  - 0.0 # left_joint_5
+  - 0.0 # left_joint_6
+  - 0.0 # left_joint_7
+  - 1.0 # left_gripper, open
+  # right arm
+  - 0.0 # right_joint_1
+  - 0.0 # right_joint_2
+  - 0.0 # right_joint_3
+  - 2.40 # right_joint_4, elbow folded
+  - 0.0 # right_joint_5
+  - 0.0 # right_joint_6
+  - 0.0 # right_joint_7
+  - 1.0 # right_gripper, open

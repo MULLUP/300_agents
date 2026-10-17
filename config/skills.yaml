@@ -34,8 +34,20 @@ retarget:
     conf_tail_s: 0.5 # judge confidence over [0, release + this], not the whole episode
 
 # --- Scene layout in the `table` frame (sim nominal; measured on hardware) ---
-# Chosen inside the right arm's reachable region; see sim/reachability.py and
-# sim/plots/reachability_right.png.
+# MEASURED, not guessed. sim/reachability.py maps where the right arm can reach
+# the table top-down at the grasp height; the map is in
+# sim/plots/reachability_right.{png,json}. At shoulder height 0.30 m:
+#
+#          x=0.15  0.20  0.25  0.30  0.35  0.40  0.45  0.50
+#   y=+0.10     .     #     #     .     .     .     .     .
+#   y=+0.05     #     #     #     #     #     .     .     .
+#   y=-0.05     #     #     #     #     #     #     .     .
+#      ...   (solid through y=-0.30)
+#   y=-0.45     #     #     #     #     .     .     .     .
+#   y=-0.50     #     #     #     .     .     .     .     .
+#
+# So the usable region is x in [0.15, 0.40], y in [-0.50, +0.10]. The previous
+# values in this file (pick_zone x up to 0.50, spot at x=0.52) were OUTSIDE it.
 scene:
   table_height: 0.0 # the `table` frame origin is the table surface
 
@@ -44,41 +56,118 @@ scene:
     mass: 0.05 # kg
     friction: 1.0
 
-  # 20 x 20 cm pick zone, cube spawns uniformly inside it.
+  # 14 x 14 cm pick zone, cube spawns uniformly inside it. Spans x [0.19, 0.33]
+  # and y [-0.34, -0.20]. Pushed to the arm's own side: at y >= -0.20 some cube
+  # yaws have NO legal reachable grasp (measured 123 mm IK error at y = -0.179),
+  # while y <= -0.20 was 40/40. Lower bound set by the bin, whose outer edge is
+  # at y = -0.352.
   pick_zone:
-    center: [0.40, -0.18]
-    size: [0.20, 0.20]
+    center: [0.26, -0.27]
+    size: [0.14, 0.14]
 
+  # On the arm's own side in y, NOT toward the centreline.
+  #
+  # Measured: the fraction of pick-zone cube poses for which the carry solves as
+  # a CONSTANT-yaw Cartesian path, by bin centre —
+  #   (0.26,-0.02) 0/12   (0.34,-0.10) 0/12   (0.22,-0.08)  4/12
+  #   (0.16,-0.12) 7/12   (0.38,-0.22) 7/12   (0.36,-0.38)  8/12
+  #   (0.18,-0.45) 10/12  (0.20,-0.46) 10/12
+  # A bin near the centreline forces the wrist into a different branch, so the
+  # carry has to rotate ~110 deg while travelling and leaves the reachable set.
+  # Keeping the bin at negative y lets the whole carry run at the grasp yaw.
+  #
+  # Geometry constraints: outer half-extent is 0.08 + 0.008 = 0.088, so the span
+  # is y [-0.528, -0.352] — below the pick zone's -0.31 (no overlap, the cube can
+  # never spawn in the bin) and inside the table's y >= -0.55.
+  # Transport distance is ~0.19 m, matching the source demos' median of 0.18 m.
   bin:
-    center: [0.40, 0.10]
-    inner_size: [0.18, 0.18]
+    center: [0.20, -0.44]
+    inner_size: [0.16, 0.16]
     height: 0.08 # rim height above the table
     wall_thickness: 0.008
 
   spot:
-    center: [0.52, -0.30]
+    center: [0.34, -0.30]
     radius: 0.04
 
   # Disabled by default; enabled only for the two-arm stretch (plan phase 5S).
+  # Mirrored in y, which is the region the LEFT arm reaches (conventions.md
+  # section 2's M = diag(1, -1, 1)).
   left_zone:
     enabled: false
     pick_zone:
-      center: [0.40, 0.18]
-      size: [0.20, 0.20]
+      center: [0.26, 0.28]
+      size: [0.16, 0.16]
     bin:
-      center: [0.40, -0.10]
+      center: [0.26, 0.02]
 
 # --- Skill execution ---
 exec:
   rate_hz: 50.0 # conventions.md section 5, retrieval streaming rate
   time_scale: 1.0 # 1.0 in sim; 0.25 -> 0.5 on hardware
-  place_clearance: 0.06 # m above the bin rim where the gripper releases
-  approach_height: 0.10 # m above the cube for the hand-coded pick-and-place
-  lift_height: 0.10 # m straight up after closing
+  # m above the bin rim where the gripper releases. The tcp sits at the cube
+  # centre when grasped (`grasp_tcp_offset` 0), so the cube's underside at release
+  # is this minus the cube half-size: 0.035 - 0.0225 = 0.0125 m of clearance.
+  #
+  # Was 0.06. Lowered because the release height sets the LIFT the source demos
+  # have to supply, and that is where they mismatch. The scene's grasp -> release
+  # index (conventions.md section 7.3) against the 106 kept demos:
+  #
+  #   dist_xy  scene needs 0.180   demos median 0.182   -- matches
+  #   dz       scene needs 0.118   demos median 0.041   -- 7.7 cm short
+  #
+  # A dz mismatch moves the transport segment's start away from the cube, which
+  # the section 8 step 5 bridge then has to cover while HOLDING the cube, and the
+  # workspace is only ~25 cm across. Demos within 0.10 m of the scene index, by
+  # place_clearance: 0.060 -> 53, 0.045 -> 62, 0.035 -> 63, 0.025 -> 67. 0.025
+  # leaves the cube only 2.5 mm above the rim, so 0.035 is the knee.
+  place_clearance: 0.035
+
+  # 0.08 rather than the handoff's 0.10. With 0.10 the tcp sits at z = 0.1225
+  # for both the approach and the lift, and that height is anomalously hard for
+  # this arm to reach top-down — measured over 20 random cube poses in the pick
+  # zone, at legal grasp yaws:
+  #   z = 0.022 -> 20/20   z = 0.082 -> 20/20   z = 0.122 -> 10/20
+  #   z = 0.062 -> 20/20   z = 0.102 -> 20/20   z = 0.162 -> 17/20
+  # The dip is non-monotonic, so it is a wrist configuration boundary rather
+  # than the edge of the workspace. 0.08 puts the tcp at z = 0.1025 instead.
+  approach_height: 0.08 # m above the cube for the hand-coded pick-and-place
+  lift_height: 0.08 # m straight up after closing
   settle_s: 1.0 # s after release before judging success
+  at_rest_speed: 0.05 # m/s; "nearly at rest" in conventions.md section 11
   grip_close: 0.0 # normalized gripper command, fully closed
   grip_open: 1.0
   retries: 1
+
+  # Leg durations for the hand-coded pick-and-place (sim/execute.py). Long
+  # enough that no 50 Hz cycle exceeds the conventions.md section 10 limits of
+  # 0.05 rad per joint and 0.25 m/s at the tcp.
+  move_s: 2.0 # s per travel leg (descend, lift, carry)
+
+  # HOME -> above-the-cube is the longest move (~0.31 m straight-line) and it runs
+  # in JOINT space, so the tcp takes a curved, longer path than that. At 2.5 s the
+  # peak tcp speed measured 0.30 m/s, over the section 10 limit of 0.25; 4.0 s
+  # brings it to ~0.19 m/s.
+  bridge_s: 4.0
+  grip_settle_s: 0.5 # s held while the fingers open or close
+
+  # Allowed deviation of the approach axis from straight down, degrees, tried in
+  # this order so a strictly vertical grasp is always preferred.
+  #
+  # A strictly vertical approach is reachable in only a thin slice of this arm's
+  # configuration space, and 2 of 10 pick-and-place trials failed for that reason
+  # alone (no legal grasp yaw reachable at the cube). Tilting about the gripper's
+  # own jaw axis keeps the jaws horizontal, so they still straddle the cube's
+  # vertical faces and neither finger dips toward the table.
+  # docs/conventions_proposals.md P7.
+  grasp_tilt_deg: [0.0, 7.5, -7.5, 15.0, -15.0]
+
+  # Offset along the approach axis applied to the commanded grasp height, on top
+  # of the cube's centre. The upstream tcp body sits 0.09 m along the hand's +z,
+  # which is near the FINGERTIPS rather than the middle of the pads, so a nonzero
+  # value may be needed to seat the cube between them. Tuned empirically by
+  # `uv run python sim/execute.py --trials 10`; 0.0 until that says otherwise.
+  grasp_tcp_offset: 0.0 # m
 
 # --- IK (common/ik.py); tolerances are the conventions.md section 10 limits ---
 ik:
@@ -86,9 +175,93 @@ ik:
   rot_tol_deg: 3.0
   max_iters: 40
   dt: 0.02 # s, mink integration step per iteration
-  posture_weight: 0.05 # low, per handoff step 5
+
+  # The handoff said 0.05 ("low"). Measured: it is NOT low relative to
+  # position_cost 1.0 — the posture task reaches a force balance against the
+  # frame task and leaves a standing error of 2.6-5.7 mm, right on the
+  # conventions.md section 10 rejection limit, so 1 of 7 top-down targets failed
+  # outright. At 0.01 the same 7 converge to 0.37-1.15 mm.
+  # docs/conventions_proposals.md P6.
+  posture_weight: 0.01
   position_cost: 1.0
   orientation_cost: 1.0
+  lm_damping: 1.0e-4 # Levenberg-Marquardt damping inside the frame task
+
+  # Iterate to polish_factor * tolerance, so an accepted solution keeps margin
+  # against the section 10 check instead of landing exactly on it.
+  polish_factor: 0.3
+
+  # Cold-start seeding (common/ik.py SeedBank, built by sim/reachability.py).
+  # Differential IK is local, and this arm's top-down configurations sit near
+  # joint1 = -1.2, joint2 = +2.9 while HOME is all zeros — seeding from HOME
+  # recovers only 30% of provably reachable poses. seed_k nearest-by-tcp seeds
+  # plus n_restarts perturbations recover 7/7 on the same test set.
+  seed_k: 12
+  n_restarts: 12
+
+# --- Source-demo library (common/demos.py, data/build_library.py) ---
+library:
+  # How much of a source demo's recorded gripper ORIENTATION is replayed.
+  #
+  #   top_down — keep position and yaw, force the approach axis straight down
+  #   replay   — use the human wrist orientation verbatim
+  #
+  # `top_down` because the HumanEgo tcp +z is the palm's forward direction
+  # (conventions.md section 2: wrist -> MCP midpoint), and a human picks a cube
+  # off a table with the hand pointing forward and down. Measured over the 106
+  # kept demos, the angle between that axis and `table` -z is:
+  #
+  #                   min   p25   med   p75   max
+  #   at the grasp   51.2  63.1  70.7  83.8 143.4  degrees
+  #   at the release 50.2  72.1  81.7 100.3 150.1
+  #
+  # A 71 deg approach puts the fingers into the table and far outside the
+  # top-down reachable map the `scene` values above were measured on.
+  # `sim/feasibility.py --orientation replay` measures the alternative.
+  # docs/conventions_proposals.md P8.
+  orientation: top_down
+
+  # Clearance the retargeted path must keep above the table, metres at the tcp.
+  # A source demo's own approach start can sit anywhere the human's hand was, and
+  # after re-anchoring onto the cube that can be below the table surface.
+  min_tcp_z: 0.005
+
+  # How much of the approach's tcp PATH LENGTH to keep in front of the grasp,
+  # metres (common/demos.py trim_approach).
+  #
+  # The human's lead-in is long and arbitrary: start -> grasp distance has median
+  # 0.179 m, p90 0.444 m, max 0.628 m over the 106 kept demos, against a usable
+  # workspace ~25 cm across. Re-anchored onto the cube, those first poses are
+  # simply unreachable. conventions.md section 8 step 5 bridges from the current
+  # gripper pose to the approach start anyway, so the lead-in is the part the
+  # bridge replaces; what the library contributes is the descent and transport.
+  # 0.12 m is a little over the hand-coded approach_height of 0.08 m.
+  approach_lead_m: 0.12
+
+  # Seconds after `grasp_idx` over which the approach anchor's z is taken as the
+  # minimum (common/demos.py with_grasp_anchor_z).
+  #
+  # The aperture crosses its threshold mid-descent, so the hand keeps descending
+  # past `grasp_idx` and the object is really at the bottom of that descent. The
+  # window has to cover the descent and NOT the carry: widening it to the whole
+  # episode anchors the grasp below the cube, the fingers close on the table, and
+  # the cube is never picked up (3 of 6 physics trials). 0.3 s at 50 Hz = 15
+  # frames, against a median descent of 6.7 mm.
+  grasp_window_s: 0.3
+
+  # Nominal scene used for the task 2.P2.3 feasibility screen: the pick-zone
+  # centre, cube yaw 0. One fixed scene so the number is comparable across runs.
+  nominal_cube_yaw: 0.0
+
+  # Maximum distance in the `(dist_xy, dz)` index (conventions.md section 7.3)
+  # between a demo and what the nominal scene needs, metres.
+  #
+  # This is the cheap pre-screen for the geometry the IK screen then confirms.
+  # A demo whose index differs by `e` starts its transport segment `e` away from
+  # the cube, and the section 8 step 5 bridge has to cover that WHILE HOLDING the
+  # cube. Demos within: 0.05 -> 21, 0.08 -> 47, 0.10 -> 63, 0.12 -> 81 of 106.
+  # 0.12 keeps the screen's input broad; `sim/feasibility.py` is what rejects.
+  max_index_offset: 0.12
 
 # --- Library validation (sim/validate_library.py, handoff step 9) ---
 validation:

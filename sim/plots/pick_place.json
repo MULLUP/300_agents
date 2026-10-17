@@ -1,0 +1,145 @@
+{
+  "conventions_version": 2,
+  "seed": 20261017,
+  "n_trials": 10,
+  "n_success": 9,
+  "trials": [
+    {
+      "trial": 1,
+      "cube_xy": [
+        0.30585912283420963,
+        -0.2689554130758417
+      ],
+      "cube_yaw": 0.7182533135552949,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.004542953126532304,
+      "ik_max_rot_err_deg": 0.0926722187275266,
+      "violations": []
+    },
+    {
+      "trial": 2,
+      "cube_xy": [
+        0.2977401571927176,
+        -0.2633773166329751
+      ],
+      "cube_yaw": 0.2782236006039007,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.00454295312653276,
+      "ik_max_rot_err_deg": 0.09220382436137547,
+      "violations": []
+    },
+    {
+      "trial": 3,
+      "cube_xy": [
+        0.2409074680889969,
+        -0.28596088196260305
+      ],
+      "cube_yaw": -0.3593044867236436,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.004546142977478998,
+      "ik_max_rot_err_deg": 0.09106902850495355,
+      "violations": []
+    },
+    {
+      "trial": 4,
+      "cube_xy": [
+        0.2605716814759985,
+        -0.3010240787362799
+      ],
+      "cube_yaw": 0.09987438738120791,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.004542543913585763,
+      "ik_max_rot_err_deg": 0.0911778885907369,
+      "violations": []
+    },
+    {
+      "trial": 5,
+      "cube_xy": [
+        0.3111185137729617,
+        -0.24048470136515834
+      ],
+      "cube_yaw": -0.6906443535955825,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.004542543913589041,
+      "ik_max_rot_err_deg": 0.092488008113125,
+      "violations": []
+    },
+    {
+      "trial": 6,
+      "cube_xy": [
+        0.2614165438270809,
+        -0.2085946180276317
+      ],
+      "cube_yaw": -0.5749413618748782,
+      "success": false,
+      "reason": "unsafe_trajectory",
+      "ik_max_pos_err": 0.004983090671117016,
+      "ik_max_rot_err_deg": 0.1122118355894831,
+      "violations": [
+        "tcp_speed at sample 13556: tcp_right speed 0.251 m/s exceeds 0.25 m/s",
+        "tcp_speed at sample 13557: tcp_right speed 0.256 m/s exceeds 0.25 m/s",
+        "tcp_speed at sample 13558: tcp_right speed 0.262 m/s exceeds 0.25 m/s",
+        "tcp_speed at sample 13559: tcp_right speed 0.267 m/s exceeds 0.25 m/s",
+        "tcp_speed at sample 13560: tcp_right speed 0.271 m/s exceeds 0.25 m/s",
+        "tcp_speed at sample 13561: tcp_right speed 0.274 m/s exceeds 0.25 m/s"
+      ]
+    },
+    {
+      "trial": 7,
+      "cube_xy": [
+        0.3061736149522355,
+        -0.29158764411043536
+      ],
+      "cube_yaw": 0.2273687889458409,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.004542953126534424,
+      "ik_max_rot_err_deg": 0.09303597753706079,
+      "violations": []
+    },
+    {
+      "trial": 8,
+      "cube_xy": [
+        0.2254065695039601,
+        -0.203814845342148
+      ],
+      "cube_yaw": -0.48782248570655823,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.0027632385376293285,
+      "ik_max_rot_err_deg": 0.3260396397853909,
+      "violations": []
+    },
+    {
+      "trial": 9,
+      "cube_xy": [
+        0.24636832439016357,
+        -0.24214068727922627
+      ],
+      "cube_yaw": -0.4071799360624446,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.0014203640440122033,
+      "ik_max_rot_err_deg": 0.1066135007800889,
+      "violations": []
+    },
+    {
+      "trial": 10,
+      "cube_xy": [
+        0.19868060957228312,
+        -0.3166773414457234
+      ],
+      "cube_yaw": -0.5475760532649196,
+      "success": true,
+      "reason": "",
+      "ik_max_pos_err": 0.00010785576935414012,
+      "ik_max_rot_err_deg": 0.0033021953753596253,
+      "violations": []
+    }
+  ]
+}

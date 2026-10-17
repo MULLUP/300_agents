@@ -1,0 +1,1756 @@
+{
+  "conventions_version": 2,
+  "source": "egodex",
+  "side": "right",
+  "orientation": "top_down",
+  "nominal_cube_pose": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.26
+    ],
+    [
+      0.0,
+      -1.0,
+      0.0,
+      -0.27
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0,
+      0.0225
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "n_demos": 106,
+  "n_feasible": 13,
+  "reasons": {
+    "index_mismatch": 18,
+    "ok": 13,
+    "tcp_below_table": 18,
+    "ik_diverged": 28,
+    "start_unreachable": 23,
+    "branch_flip": 6
+  },
+  "demos": [
+    {
+      "id": "egodex_1",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/1.hdf5",
+      "index": {
+        "dist_xy": 0.4720268177540403,
+        "dz": -0.01436124563217156
+      },
+      "index_offset": 0.31070396363168024,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.311 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_6",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/6.hdf5",
+      "index": {
+        "dist_xy": 0.10997027236476689,
+        "dz": 0.001697883605957018
+      },
+      "index_offset": 0.11483962542096514,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 158,
+      "heading_delta_deg": -98.24481918477653,
+      "release_yaw_deg": 124.71943223286301,
+      "tcp_z_min": 0.023676099777221626,
+      "tcp_z_max": 0.15509790539741508
+    },
+    {
+      "id": "egodex_10",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/10.hdf5",
+      "index": {
+        "dist_xy": 0.16835257429032205,
+        "dz": 0.15640994071960468
+      },
+      "index_offset": 0.06501296714464062,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.039 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 235,
+      "heading_delta_deg": 32.73983901530519,
+      "release_yaw_deg": -68.20197135189932,
+      "tcp_z_min": -0.03930335998535184,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_58",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/58.hdf5",
+      "index": {
+        "dist_xy": 0.1833860572117213,
+        "dz": 0.06983398795127871
+      },
+      "index_offset": 0.022878173739398697,
+      "feasible": false,
+      "reason": "ik_diverged (4/28 samples, worst 19 mm)",
+      "category": "ik_diverged",
+      "n_samples": 137,
+      "heading_delta_deg": 125.20186986321104,
+      "release_yaw_deg": 20.447561150117778,
+      "tcp_z_min": 0.02782270669937137,
+      "tcp_z_max": 0.13439506411552427
+    },
+    {
+      "id": "egodex_63",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/63.hdf5",
+      "index": {
+        "dist_xy": 0.2117054765428381,
+        "dz": 0.008520348072051931
+      },
+      "index_offset": 0.08966769562665992,
+      "feasible": false,
+      "reason": "ik_diverged (7/23 samples, worst 24 mm)",
+      "category": "ik_diverged",
+      "n_samples": 114,
+      "heading_delta_deg": -173.09391353107182,
+      "release_yaw_deg": 36.06440376199478,
+      "tcp_z_min": 0.02385881423950187,
+      "tcp_z_max": 0.16357103705406195
+    },
+    {
+      "id": "egodex_66",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/66.hdf5",
+      "index": {
+        "dist_xy": 0.20752125213924116,
+        "dz": 0.02653801918029819
+      },
+      "index_offset": 0.07136666917717756,
+      "feasible": false,
+      "reason": "ik_diverged (3/26 samples, worst 133 mm)",
+      "category": "ik_diverged",
+      "n_samples": 129,
+      "heading_delta_deg": 19.237602396529063,
+      "release_yaw_deg": -102.58500676804161,
+      "tcp_z_min": 0.035576989650726754,
+      "tcp_z_max": 0.1732139611244199
+    },
+    {
+      "id": "egodex_81",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/81.hdf5",
+      "index": {
+        "dist_xy": 0.10493378172725056,
+        "dz": 0.10228618502616871
+      },
+      "index_offset": 0.07597667346201635,
+      "feasible": false,
+      "reason": "start_unreachable (19 mm)",
+      "category": "start_unreachable",
+      "n_samples": 172,
+      "heading_delta_deg": 118.72518366183152,
+      "release_yaw_deg": -3.388965676827462,
+      "tcp_z_min": 0.012713814973831283,
+      "tcp_z_max": 0.13019412040710454
+    },
+    {
+      "id": "egodex_113",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/113.hdf5",
+      "index": {
+        "dist_xy": 0.24906259497401936,
+        "dz": 0.004897999763488592
+      },
+      "index_offset": 0.11137993967827202,
+      "feasible": false,
+      "reason": "ik_diverged (9/30 samples, worst 42 mm)",
+      "category": "ik_diverged",
+      "n_samples": 146,
+      "heading_delta_deg": 164.26688637825507,
+      "release_yaw_deg": 24.89559268241243,
+      "tcp_z_min": 0.039596012830734106,
+      "tcp_z_max": 0.19519108176231392
+    },
+    {
+      "id": "egodex_124",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/124.hdf5",
+      "index": {
+        "dist_xy": 0.16995405174431624,
+        "dz": 0.0587239527702329
+      },
+      "index_offset": 0.03531849752010912,
+      "feasible": false,
+      "reason": "ik_diverged (12/45 samples, worst 38 mm)",
+      "category": "ik_diverged",
+      "n_samples": 223,
+      "heading_delta_deg": 147.67540517505742,
+      "release_yaw_deg": 5.587799900681223,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.14970100760459915
+    },
+    {
+      "id": "egodex_143",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/143.hdf5",
+      "index": {
+        "dist_xy": 0.1890349251703305,
+        "dz": 0.07633676528930655
+      },
+      "index_offset": 0.018383186202422214,
+      "feasible": false,
+      "reason": "start_unreachable (95 mm)",
+      "category": "start_unreachable",
+      "n_samples": 220,
+      "heading_delta_deg": 101.82068698392449,
+      "release_yaw_deg": -22.33116678448038,
+      "tcp_z_min": 0.02396335363388058,
+      "tcp_z_max": 0.14273732900619507
+    },
+    {
+      "id": "egodex_148",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/148.hdf5",
+      "index": {
+        "dist_xy": 0.2272763538590583,
+        "dz": 0.07947497606277443
+      },
+      "index_offset": 0.04877025238913496,
+      "feasible": false,
+      "reason": "start_unreachable (116 mm)",
+      "category": "start_unreachable",
+      "n_samples": 154,
+      "heading_delta_deg": 57.94979749987834,
+      "release_yaw_deg": -44.18236373537196,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.15994303822517408
+    },
+    {
+      "id": "egodex_150",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/150.hdf5",
+      "index": {
+        "dist_xy": 0.31091276797137185,
+        "dz": 0.02286836743354792
+      },
+      "index_offset": 0.14803418804373397,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.148 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_171",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/171.hdf5",
+      "index": {
+        "dist_xy": 0.15429591132565057,
+        "dz": 0.08768529415130621
+      },
+      "index_offset": 0.026423997735291093,
+      "feasible": false,
+      "reason": "ik_diverged (2/28 samples, worst 10 mm)",
+      "category": "ik_diverged",
+      "n_samples": 136,
+      "heading_delta_deg": 85.24141306306181,
+      "release_yaw_deg": -33.196389405782625,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.12115659236907972
+    },
+    {
+      "id": "egodex_172",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/172.hdf5",
+      "index": {
+        "dist_xy": 0.09404235283234204,
+        "dz": -0.03645709991455082
+      },
+      "index_offset": 0.1551336366633156,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.155 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_193",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/193.hdf5",
+      "index": {
+        "dist_xy": 0.1800393644338751,
+        "dz": 0.14233567714691153
+      },
+      "index_offset": 0.04983624640376174,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.048 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 230,
+      "heading_delta_deg": -104.4319493705332,
+      "release_yaw_deg": 133.99330698244555,
+      "tcp_z_min": -0.04761554360389697,
+      "tcp_z_max": 0.14015342235565187
+    },
+    {
+      "id": "egodex_201",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/201.hdf5",
+      "index": {
+        "dist_xy": 0.1673623119923904,
+        "dz": 0.07566997170448286
+      },
+      "index_offset": 0.02121446631404143,
+      "feasible": false,
+      "reason": "ik_diverged (10/41 samples, worst 24 mm)",
+      "category": "ik_diverged",
+      "n_samples": 205,
+      "heading_delta_deg": -169.39444063499437,
+      "release_yaw_deg": 31.493302238970024,
+      "tcp_z_min": 0.02250155329704273,
+      "tcp_z_max": 0.1344515335559846
+    },
+    {
+      "id": "egodex_211",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/211.hdf5",
+      "index": {
+        "dist_xy": 0.2995551651021908,
+        "dz": -0.004447824954986523
+      },
+      "index_offset": 0.15370760209664489,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.154 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_213",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/213.hdf5",
+      "index": {
+        "dist_xy": 0.09533863619823016,
+        "dz": -0.03317251920700093
+      },
+      "index_offset": 0.15168455261304592,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.152 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_224",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/224.hdf5",
+      "index": {
+        "dist_xy": 0.11143060197863236,
+        "dz": 0.15985903739929186
+      },
+      "index_offset": 0.09631793222293437,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.045 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 188,
+      "heading_delta_deg": -116.28571698426691,
+      "release_yaw_deg": 131.3412565059759,
+      "tcp_z_min": -0.04547559976577753,
+      "tcp_z_max": 0.12677630066871626
+    },
+    {
+      "id": "egodex_253",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/253.hdf5",
+      "index": {
+        "dist_xy": 0.21332660497684455,
+        "dz": -0.0024590682983400836
+      },
+      "index_offset": 0.10054582923507592,
+      "feasible": false,
+      "reason": "start_unreachable (39 mm)",
+      "category": "start_unreachable",
+      "n_samples": 239,
+      "heading_delta_deg": 36.85169760174859,
+      "release_yaw_deg": -96.7928322071666,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.19779197096824652
+    },
+    {
+      "id": "egodex_258",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/258.hdf5",
+      "index": {
+        "dist_xy": 0.2112790961570309,
+        "dz": 0.11511688828468347
+      },
+      "index_offset": 0.03837471362534973,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.000 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 211,
+      "heading_delta_deg": -53.355235263669734,
+      "release_yaw_deg": -132.49899465849012,
+      "tcp_z_min": -0.00011688828468348067,
+      "tcp_z_max": 0.1744163715839384
+    },
+    {
+      "id": "egodex_261",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/261.hdf5",
+      "index": {
+        "dist_xy": 0.20112913037467872,
+        "dz": 0.05943224787712076
+      },
+      "index_offset": 0.03909301804921322,
+      "feasible": false,
+      "reason": "start_unreachable (92 mm)",
+      "category": "start_unreachable",
+      "n_samples": 199,
+      "heading_delta_deg": 10.953544799660438,
+      "release_yaw_deg": -55.49735577480494,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.15383525133132947
+    },
+    {
+      "id": "egodex_264",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/264.hdf5",
+      "index": {
+        "dist_xy": 0.18549346573071934,
+        "dz": 0.014888054132461415
+      },
+      "index_offset": 0.07778701546258347,
+      "feasible": false,
+      "reason": "ik_diverged (7/32 samples, worst 112 mm)",
+      "category": "ik_diverged",
+      "n_samples": 157,
+      "heading_delta_deg": 71.80330480818435,
+      "release_yaw_deg": -22.047328606467488,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.23673831462860107
+    },
+    {
+      "id": "egodex_265",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/265.hdf5",
+      "index": {
+        "dist_xy": 0.09514021015338435,
+        "dz": -0.07533499956130996
+      },
+      "index_offset": 0.18819393204652046,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.188 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_274",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/274.hdf5",
+      "index": {
+        "dist_xy": 0.13973036970938754,
+        "dz": 0.11118767619132996
+      },
+      "index_offset": 0.044646435332290804,
+      "feasible": false,
+      "reason": "tcp_below_table (min z 0.004 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 131,
+      "heading_delta_deg": -161.25646941017172,
+      "release_yaw_deg": 82.10907240954121,
+      "tcp_z_min": 0.003812323808670026,
+      "tcp_z_max": 0.1341055643558503
+    },
+    {
+      "id": "egodex_276",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/276.hdf5",
+      "index": {
+        "dist_xy": 0.24156737401365902,
+        "dz": 0.12325961232185345
+      },
+      "index_offset": 0.06857546638195224,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.008 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 241,
+      "heading_delta_deg": 25.453380301051446,
+      "release_yaw_deg": -65.07058162609236,
+      "tcp_z_min": -0.00825961232185346,
+      "tcp_z_max": 0.17206974864006064
+    },
+    {
+      "id": "egodex_p2_1007",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1007.hdf5",
+      "index": {
+        "dist_xy": 0.08119360254693428,
+        "dz": 0.15837423563003572
+      },
+      "index_offset": 0.11898338662237468,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.043 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 220,
+      "heading_delta_deg": -100.31049630710957,
+      "release_yaw_deg": -177.6530983537487,
+      "tcp_z_min": -0.04334237813949615,
+      "tcp_z_max": 0.11994028091430664
+    },
+    {
+      "id": "egodex_p2_1037",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1037.hdf5",
+      "index": {
+        "dist_xy": 0.10249240751097893,
+        "dz": 0.14232308268547056
+      },
+      "index_offset": 0.09237353572869937,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.027 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 169,
+      "heading_delta_deg": 95.75643824859665,
+      "release_yaw_deg": -25.682469758008576,
+      "tcp_z_min": -0.02707144379615778,
+      "tcp_z_max": 0.13034935235977185
+    },
+    {
+      "id": "egodex_p2_1046",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1046.hdf5",
+      "index": {
+        "dist_xy": 0.19709722045357203,
+        "dz": -0.09295493006706224
+      },
+      "index_offset": 0.18621608936132383,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.186 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_1061",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1061.hdf5",
+      "index": {
+        "dist_xy": 0.45796756121216675,
+        "dz": 0.03181781888008117
+      },
+      "index_offset": 0.284242962592083,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.284 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_1067",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_1067.hdf5",
+      "index": {
+        "dist_xy": 0.1910159658416055,
+        "dz": -0.03215626478195199
+      },
+      "index_offset": 0.1251179348789408,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.125 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10002",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10002.hdf5",
+      "index": {
+        "dist_xy": 0.1997873757841113,
+        "dz": 0.06601885557174669
+      },
+      "index_offset": 0.03289200168629345,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 169,
+      "heading_delta_deg": -53.825810025024985,
+      "release_yaw_deg": -174.27304516160373,
+      "tcp_z_min": 0.02185671806335443,
+      "tcp_z_max": 0.18730786085128792
+    },
+    {
+      "id": "egodex_p2_10004",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10004.hdf5",
+      "index": {
+        "dist_xy": 0.0844222344062256,
+        "dz": 0.008822752237319875
+      },
+      "index_offset": 0.1272404258134497,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.127 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10011",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10011.hdf5",
+      "index": {
+        "dist_xy": 0.33433031392638035,
+        "dz": 0.004362189769745006
+      },
+      "index_offset": 0.17748386806113625,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.177 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10027",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10027.hdf5",
+      "index": {
+        "dist_xy": 0.12604110641045096,
+        "dz": 0.15959124565124505
+      },
+      "index_offset": 0.08627182941318065,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.044 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 256,
+      "heading_delta_deg": 79.0363557584622,
+      "release_yaw_deg": -22.180180105932337,
+      "tcp_z_min": -0.044182538986205944,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10036",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10036.hdf5",
+      "index": {
+        "dist_xy": 0.18565961125447014,
+        "dz": 0.12224460721015928
+      },
+      "index_offset": 0.030227604820384165,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.007 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 144,
+      "heading_delta_deg": 160.35735398888403,
+      "release_yaw_deg": 38.879234969599814,
+      "tcp_z_min": -0.007244607210159293,
+      "tcp_z_max": 0.15291950821876532
+    },
+    {
+      "id": "egodex_p2_10043",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10043.hdf5",
+      "index": {
+        "dist_xy": 0.16272298095332854,
+        "dz": 0.020718026161193892
+      },
+      "index_offset": 0.0738973284102663,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 139,
+      "heading_delta_deg": -41.69324721000961,
+      "release_yaw_deg": -164.37832689918795,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.17939975976943967
+    },
+    {
+      "id": "egodex_p2_10047",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10047.hdf5",
+      "index": {
+        "dist_xy": 0.23048828232425686,
+        "dz": 0.01346750020980847
+      },
+      "index_offset": 0.093633606576379,
+      "feasible": false,
+      "reason": "start_unreachable (24 mm)",
+      "category": "start_unreachable",
+      "n_samples": 194,
+      "heading_delta_deg": 9.96045763598812,
+      "release_yaw_deg": -51.63185425557038,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.19525309801101665
+    },
+    {
+      "id": "egodex_p2_10049",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10049.hdf5",
+      "index": {
+        "dist_xy": 0.14516199622291964,
+        "dz": 0.11676802635192873
+      },
+      "index_offset": 0.042685362683198225,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 121,
+      "heading_delta_deg": -58.98875528350221,
+      "release_yaw_deg": 169.5484320222629,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.12372945427894577
+    },
+    {
+      "id": "egodex_p2_10051",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10051.hdf5",
+      "index": {
+        "dist_xy": 0.08426982220219886,
+        "dz": 0.12597572684288028
+      },
+      "index_offset": 0.10167650037851995,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.011 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 123,
+      "heading_delta_deg": 41.36219416028762,
+      "release_yaw_deg": -80.75171464303122,
+      "tcp_z_min": -0.010975726842880285,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10057",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10057.hdf5",
+      "index": {
+        "dist_xy": 0.12244619618494305,
+        "dz": 0.1815270519256591
+      },
+      "index_offset": 0.10616158934238897,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.065 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 187,
+      "heading_delta_deg": 176.5899727758211,
+      "release_yaw_deg": 67.90154393408784,
+      "tcp_z_min": -0.06542109727859491,
+      "tcp_z_max": 0.12779684066772434
+    },
+    {
+      "id": "egodex_p2_10071",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10071.hdf5",
+      "index": {
+        "dist_xy": 0.22145090506163698,
+        "dz": 0.03335049986839278
+      },
+      "index_offset": 0.0720687685386198,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 221,
+      "heading_delta_deg": -63.97206214211217,
+      "release_yaw_deg": 166.90835595168812,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.29217364311218286
+    },
+    {
+      "id": "egodex_p2_10073",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10073.hdf5",
+      "index": {
+        "dist_xy": 0.2399876078930268,
+        "dz": -0.0057330441474915395
+      },
+      "index_offset": 0.11495660194732076,
+      "feasible": false,
+      "reason": "ik_diverged (6/23 samples, worst 50 mm)",
+      "category": "ik_diverged",
+      "n_samples": 111,
+      "heading_delta_deg": 152.62117011305244,
+      "release_yaw_deg": 17.32592206121753,
+      "tcp_z_min": 0.025198720693588195,
+      "tcp_z_max": 0.17616054296493533
+    },
+    {
+      "id": "egodex_p2_10082",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10082.hdf5",
+      "index": {
+        "dist_xy": 0.1410312423618629,
+        "dz": 0.08638164758682243
+      },
+      "index_offset": 0.03972037236197276,
+      "feasible": false,
+      "reason": "ik_diverged (2/36 samples, worst 34 mm)",
+      "category": "ik_diverged",
+      "n_samples": 176,
+      "heading_delta_deg": -0.1176213012874316,
+      "release_yaw_deg": -92.97732251538362,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.11695477485656736
+    },
+    {
+      "id": "egodex_p2_10087",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10087.hdf5",
+      "index": {
+        "dist_xy": 0.10308102640441592,
+        "dz": 0.10066640377044678
+      },
+      "index_offset": 0.07762728600351786,
+      "feasible": false,
+      "reason": "start_unreachable (57 mm)",
+      "category": "start_unreachable",
+      "n_samples": 140,
+      "heading_delta_deg": 89.7493681615292,
+      "release_yaw_deg": -66.25508601225246,
+      "tcp_z_min": 0.01445711374282821,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10094",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10094.hdf5",
+      "index": {
+        "dist_xy": 0.1216717620565208,
+        "dz": 0.056156387329101554
+      },
+      "index_offset": 0.06896012019150594,
+      "feasible": false,
+      "reason": "branch_flip (0.61 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 120,
+      "heading_delta_deg": -157.7664671272184,
+      "release_yaw_deg": 47.89280209985097,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.12033404111862178
+    },
+    {
+      "id": "egodex_p2_10095",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10095.hdf5",
+      "index": {
+        "dist_xy": 0.19411224660061513,
+        "dz": 0.028974319696426276
+      },
+      "index_offset": 0.06501469454644115,
+      "feasible": false,
+      "reason": "ik_diverged (23/35 samples, worst 111 mm)",
+      "category": "ik_diverged",
+      "n_samples": 171,
+      "heading_delta_deg": 20.040075960678607,
+      "release_yaw_deg": -83.07611358155883,
+      "tcp_z_min": 0.023780238628387407,
+      "tcp_z_max": 0.17290054678916922
+    },
+    {
+      "id": "egodex_p2_10098",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10098.hdf5",
+      "index": {
+        "dist_xy": 0.23272554020321146,
+        "dz": 0.015049037933349552
+      },
+      "index_offset": 0.09353845068554867,
+      "feasible": false,
+      "reason": "start_unreachable (137 mm)",
+      "category": "start_unreachable",
+      "n_samples": 145,
+      "heading_delta_deg": 45.41245982348846,
+      "release_yaw_deg": -68.50093921184248,
+      "tcp_z_min": 0.032799534797668506,
+      "tcp_z_max": 0.1498456144332888
+    },
+    {
+      "id": "egodex_p2_10121",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10121.hdf5",
+      "index": {
+        "dist_xy": 0.4173862275138025,
+        "dz": 0.040260399580001716
+      },
+      "index_offset": 0.24279516937718396,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.243 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10130",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10130.hdf5",
+      "index": {
+        "dist_xy": 0.12700928601956687,
+        "dz": 0.10678068876266478
+      },
+      "index_offset": 0.05514931990853783,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 134,
+      "heading_delta_deg": -74.68117892357792,
+      "release_yaw_deg": 160.3623373674793,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.11590825796127313
+    },
+    {
+      "id": "egodex_p2_10136",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10136.hdf5",
+      "index": {
+        "dist_xy": 0.16750330480890285,
+        "dz": 0.07108858823776232
+      },
+      "index_offset": 0.024932513827109412,
+      "feasible": false,
+      "reason": "start_unreachable (109 mm)",
+      "category": "start_unreachable",
+      "n_samples": 244,
+      "heading_delta_deg": 8.247735620323002,
+      "release_yaw_deg": -53.49728929373178,
+      "tcp_z_min": 0.02253988981246935,
+      "tcp_z_max": 0.211109962463379
+    },
+    {
+      "id": "egodex_p2_10138",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10138.hdf5",
+      "index": {
+        "dist_xy": 0.23148091831246312,
+        "dz": 0.1366864538192749
+      },
+      "index_offset": 0.06763302608338953,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.012 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 116,
+      "heading_delta_deg": 19.366698316567327,
+      "release_yaw_deg": -84.17419463305748,
+      "tcp_z_min": -0.011601079702377115,
+      "tcp_z_max": 0.1292799246311187
+    },
+    {
+      "id": "egodex_p2_10150",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10150.hdf5",
+      "index": {
+        "dist_xy": 0.1691653012789788,
+        "dz": 0.1356455254554748
+      },
+      "index_offset": 0.044553549180390645,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.021 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 204,
+      "heading_delta_deg": 29.937869985910915,
+      "release_yaw_deg": -64.1381924230424,
+      "tcp_z_min": -0.020645525455474822,
+      "tcp_z_max": 0.13033956050872797
+    },
+    {
+      "id": "egodex_p2_10173",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10173.hdf5",
+      "index": {
+        "dist_xy": 0.1410004606233297,
+        "dz": 0.05463905572891248
+      },
+      "index_offset": 0.05455402765098013,
+      "feasible": false,
+      "reason": "start_unreachable (19 mm)",
+      "category": "start_unreachable",
+      "n_samples": 166,
+      "heading_delta_deg": 131.7916908698268,
+      "release_yaw_deg": -12.843726464746194,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.14211425065994265
+    },
+    {
+      "id": "egodex_p2_10188",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10188.hdf5",
+      "index": {
+        "dist_xy": 0.1537218660060168,
+        "dz": 0.034211628437042285
+      },
+      "index_offset": 0.06405262948047774,
+      "feasible": false,
+      "reason": "ik_diverged (9/28 samples, worst 22 mm)",
+      "category": "ik_diverged",
+      "n_samples": 137,
+      "heading_delta_deg": 165.13413542473828,
+      "release_yaw_deg": 37.52354724311748,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.14703632354736318
+    },
+    {
+      "id": "egodex_p2_10203",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10203.hdf5",
+      "index": {
+        "dist_xy": 0.1484404018267665,
+        "dz": -0.05428502917289746
+      },
+      "index_offset": 0.15019803484097838,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.150 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10209",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10209.hdf5",
+      "index": {
+        "dist_xy": 0.24020137342852863,
+        "dz": 0.06362822532653811
+      },
+      "index_offset": 0.06651648168990357,
+      "feasible": false,
+      "reason": "start_unreachable (43 mm)",
+      "category": "start_unreachable",
+      "n_samples": 144,
+      "heading_delta_deg": 126.32359455909777,
+      "release_yaw_deg": -30.653754058625942,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.144983252286911
+    },
+    {
+      "id": "egodex_p2_10219",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10219.hdf5",
+      "index": {
+        "dist_xy": 0.20297919889687302,
+        "dz": 0.0721097540855411
+      },
+      "index_offset": 0.03051436326945914,
+      "feasible": false,
+      "reason": "branch_flip (0.60 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 286,
+      "heading_delta_deg": -164.030283552216,
+      "release_yaw_deg": 56.09922034236245,
+      "tcp_z_min": 0.024533531665801966,
+      "tcp_z_max": 0.1938599967956538
+    },
+    {
+      "id": "egodex_p2_10235",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10235.hdf5",
+      "index": {
+        "dist_xy": 0.20533551145342072,
+        "dz": 0.04056535601615896
+      },
+      "index_offset": 0.05766374933762999,
+      "feasible": false,
+      "reason": "start_unreachable (6 mm)",
+      "category": "start_unreachable",
+      "n_samples": 159,
+      "heading_delta_deg": 135.987430835333,
+      "release_yaw_deg": -11.429400121718354,
+      "tcp_z_min": 0.028057284355163414,
+      "tcp_z_max": 0.16948758363723748
+    },
+    {
+      "id": "egodex_p2_10240",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10240.hdf5",
+      "index": {
+        "dist_xy": 0.20057110426718552,
+        "dz": 0.07970758080482476
+      },
+      "index_offset": 0.023989034466733762,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 123,
+      "heading_delta_deg": 179.1677962464334,
+      "release_yaw_deg": 55.61076165284492,
+      "tcp_z_min": 0.03529241919517523,
+      "tcp_z_max": 0.14409339547157307
+    },
+    {
+      "id": "egodex_p2_10250",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10250.hdf5",
+      "index": {
+        "dist_xy": 0.2838895945011944,
+        "dz": 0.03890607953071601
+      },
+      "index_offset": 0.11665230911922363,
+      "feasible": false,
+      "reason": "ik_diverged (8/26 samples, worst 115 mm)",
+      "category": "ik_diverged",
+      "n_samples": 126,
+      "heading_delta_deg": 93.61026761843698,
+      "release_yaw_deg": -26.604519328159853,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.15792847990989667
+    },
+    {
+      "id": "egodex_p2_10254",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10254.hdf5",
+      "index": {
+        "dist_xy": 0.20856967720659428,
+        "dz": 0.07624756336212168
+      },
+      "index_offset": 0.032627984602122295,
+      "feasible": false,
+      "reason": "ik_diverged (8/28 samples, worst 85 mm)",
+      "category": "ik_diverged",
+      "n_samples": 139,
+      "heading_delta_deg": 68.36486772256274,
+      "release_yaw_deg": -33.16145628532363,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.12484906673431395
+    },
+    {
+      "id": "egodex_p2_10260",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10260.hdf5",
+      "index": {
+        "dist_xy": 0.07094512594104789,
+        "dz": 0.11963619112968449
+      },
+      "index_offset": 0.11264969965050085,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.005 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 159,
+      "heading_delta_deg": 4.251901283101911,
+      "release_yaw_deg": -107.68900348126847,
+      "tcp_z_min": -0.004636191129684497,
+      "tcp_z_max": 0.16179533958435044
+    },
+    {
+      "id": "egodex_p2_10266",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10266.hdf5",
+      "index": {
+        "dist_xy": 0.2393736951398965,
+        "dz": 0.0015288174152373601
+      },
+      "index_offset": 0.10848091446600244,
+      "feasible": false,
+      "reason": "start_unreachable (120 mm)",
+      "category": "start_unreachable",
+      "n_samples": 112,
+      "heading_delta_deg": 102.153848910173,
+      "release_yaw_deg": -32.87061703319565,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.19333771109580988
+    },
+    {
+      "id": "egodex_p2_10274",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10274.hdf5",
+      "index": {
+        "dist_xy": 0.3880682933762678,
+        "dz": -0.012548676729202235
+      },
+      "index_offset": 0.23283516012735683,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.233 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10282",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10282.hdf5",
+      "index": {
+        "dist_xy": 0.19724662622098477,
+        "dz": 0.04690300345420828
+      },
+      "index_offset": 0.048652185709932703,
+      "feasible": false,
+      "reason": "ik_diverged (6/27 samples, worst 25 mm)",
+      "category": "ik_diverged",
+      "n_samples": 134,
+      "heading_delta_deg": 104.6266505909491,
+      "release_yaw_deg": -20.399733059442,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.13892380356788647
+    },
+    {
+      "id": "egodex_p2_10292",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10292.hdf5",
+      "index": {
+        "dist_xy": 0.09133406421139784,
+        "dz": -0.042361572980880724
+      },
+      "index_offset": 0.16155058025639407,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.162 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10295",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10295.hdf5",
+      "index": {
+        "dist_xy": 0.21957344867201617,
+        "dz": -0.0043878793716428666
+      },
+      "index_offset": 0.10455346832656998,
+      "feasible": false,
+      "reason": "branch_flip (0.52 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 110,
+      "heading_delta_deg": -160.42752948204347,
+      "release_yaw_deg": 67.14310256821875,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.16945410609245282
+    },
+    {
+      "id": "egodex_p2_10309",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10309.hdf5",
+      "index": {
+        "dist_xy": 0.15740700433151972,
+        "dz": 0.016860872507095337
+      },
+      "index_offset": 0.07902113702714794,
+      "feasible": false,
+      "reason": "ik_diverged (12/26 samples, worst 43 mm)",
+      "category": "ik_diverged",
+      "n_samples": 127,
+      "heading_delta_deg": 78.8258731520592,
+      "release_yaw_deg": -34.737143985849016,
+      "tcp_z_min": 0.026605162620544465,
+      "tcp_z_max": 0.15888784050941474
+    },
+    {
+      "id": "egodex_p2_10314",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10314.hdf5",
+      "index": {
+        "dist_xy": 0.14416150119160065,
+        "dz": 0.06849847316741953
+      },
+      "index_offset": 0.04336407806806276,
+      "feasible": false,
+      "reason": "start_unreachable (40 mm)",
+      "category": "start_unreachable",
+      "n_samples": 119,
+      "heading_delta_deg": 106.06911441062242,
+      "release_yaw_deg": -50.63465404477267,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.13730763554573067
+    },
+    {
+      "id": "egodex_p2_10318",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10318.hdf5",
+      "index": {
+        "dist_xy": 0.09742408437197266,
+        "dz": 0.042113382816314826
+      },
+      "index_offset": 0.09697169813973947,
+      "feasible": false,
+      "reason": "ik_diverged (4/37 samples, worst 15 mm)",
+      "category": "ik_diverged",
+      "n_samples": 184,
+      "heading_delta_deg": 148.9065753559445,
+      "release_yaw_deg": 12.820256717493827,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1269378352165219
+    },
+    {
+      "id": "egodex_p2_10331",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10331.hdf5",
+      "index": {
+        "dist_xy": 0.14034404753609178,
+        "dz": 0.09561093926429765
+      },
+      "index_offset": 0.04005450863717455,
+      "feasible": false,
+      "reason": "start_unreachable (72 mm)",
+      "category": "start_unreachable",
+      "n_samples": 136,
+      "heading_delta_deg": 74.49825852884746,
+      "release_yaw_deg": -22.351183671847068,
+      "tcp_z_min": 0.019389060735702346,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10336",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10336.hdf5",
+      "index": {
+        "dist_xy": 0.1121725380210785,
+        "dz": 0.13275153756141667
+      },
+      "index_offset": 0.07911056066515516,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.018 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 118,
+      "heading_delta_deg": 41.28555226029238,
+      "release_yaw_deg": -89.52861816955583,
+      "tcp_z_min": -0.017751537561416675,
+      "tcp_z_max": 0.1582561612129213
+    },
+    {
+      "id": "egodex_p2_10362",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10362.hdf5",
+      "index": {
+        "dist_xy": 0.10834237822958806,
+        "dz": 0.009199345111846835
+      },
+      "index_offset": 0.1100621189328508,
+      "feasible": false,
+      "reason": "ik_diverged (9/24 samples, worst 26 mm)",
+      "category": "ik_diverged",
+      "n_samples": 117,
+      "heading_delta_deg": 16.23174131437901,
+      "release_yaw_deg": -94.2783473990566,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10370",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10370.hdf5",
+      "index": {
+        "dist_xy": 0.1533470308800463,
+        "dz": -0.003544648885726809
+      },
+      "index_offset": 0.09974882546422162,
+      "feasible": false,
+      "reason": "ik_diverged (8/26 samples, worst 19 mm)",
+      "category": "ik_diverged",
+      "n_samples": 129,
+      "heading_delta_deg": 118.75480238777911,
+      "release_yaw_deg": -17.600513065561692,
+      "tcp_z_min": 0.028110234737396267,
+      "tcp_z_max": 0.13326745629310588
+    },
+    {
+      "id": "egodex_p2_10376",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10376.hdf5",
+      "index": {
+        "dist_xy": 0.1882072471562203,
+        "dz": 0.1179677402973176
+      },
+      "index_offset": 0.02667368880388635,
+      "feasible": false,
+      "reason": "tcp_below_table (min z -0.003 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 162,
+      "heading_delta_deg": 178.98400777013757,
+      "release_yaw_deg": 71.47162464437997,
+      "tcp_z_min": -0.0026205909252167148,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10382",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10382.hdf5",
+      "index": {
+        "dist_xy": 0.2108041365479924,
+        "dz": 0.08085997819900514
+      },
+      "index_offset": 0.03267050279537133,
+      "feasible": false,
+      "reason": "ik_diverged (4/28 samples, worst 24 mm)",
+      "category": "ik_diverged",
+      "n_samples": 137,
+      "heading_delta_deg": 118.50202884107398,
+      "release_yaw_deg": 8.481619654538404,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.13586474895477285
+    },
+    {
+      "id": "egodex_p2_10404",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10404.hdf5",
+      "index": {
+        "dist_xy": 0.3702113775316137,
+        "dz": 0.055917171239852737
+      },
+      "index_offset": 0.19342480960029468,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.193 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10415",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10415.hdf5",
+      "index": {
+        "dist_xy": 0.2611011277410014,
+        "dz": 0.05291987061500536
+      },
+      "index_offset": 0.0899946394769727,
+      "feasible": false,
+      "reason": "start_unreachable (67 mm)",
+      "category": "start_unreachable",
+      "n_samples": 133,
+      "heading_delta_deg": 63.520652315750624,
+      "release_yaw_deg": -43.219673924788204,
+      "tcp_z_min": 0.028522086143493608,
+      "tcp_z_max": 0.15479504704475422
+    },
+    {
+      "id": "egodex_p2_10418",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10418.hdf5",
+      "index": {
+        "dist_xy": 0.26316826012021854,
+        "dz": 0.07605948328971857
+      },
+      "index_offset": 0.0845053733829676,
+      "feasible": false,
+      "reason": "branch_flip (0.69 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 172,
+      "heading_delta_deg": -149.55505668247338,
+      "release_yaw_deg": 85.82067378257493,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.14285563349723818
+    },
+    {
+      "id": "egodex_p2_10444",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10444.hdf5",
+      "index": {
+        "dist_xy": 0.297036796353377,
+        "dz": 0.0038761794567108154
+      },
+      "index_offset": 0.1465841054152909,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.147 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10447",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10447.hdf5",
+      "index": {
+        "dist_xy": 0.1704477540530628,
+        "dz": 0.06581508874893194
+      },
+      "index_offset": 0.02843782072542605,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 224,
+      "heading_delta_deg": -124.97038402711743,
+      "release_yaw_deg": 126.38480538373611,
+      "tcp_z_min": 0.023474681377410822,
+      "tcp_z_max": 0.1860859537124634
+    },
+    {
+      "id": "egodex_p2_10448",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10448.hdf5",
+      "index": {
+        "dist_xy": 0.14404202303300234,
+        "dz": 0.06448188185691828
+      },
+      "index_offset": 0.04580425042519711,
+      "feasible": false,
+      "reason": "start_unreachable (85 mm)",
+      "category": "start_unreachable",
+      "n_samples": 212,
+      "heading_delta_deg": 30.262936720477434,
+      "release_yaw_deg": -61.35122844653589,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.21775281786918643
+    },
+    {
+      "id": "egodex_p2_10450",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10450.hdf5",
+      "index": {
+        "dist_xy": 0.17432855418755375,
+        "dz": 0.01631368756294249
+      },
+      "index_offset": 0.07641822372842128,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 123,
+      "heading_delta_deg": -69.50287521892464,
+      "release_yaw_deg": 171.54295496812318,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1567969822883606
+    },
+    {
+      "id": "egodex_p2_10474",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10474.hdf5",
+      "index": {
+        "dist_xy": 0.2599046635395499,
+        "dz": 0.021125339269638
+      },
+      "index_offset": 0.10693370475006748,
+      "feasible": false,
+      "reason": "ik_diverged (5/24 samples, worst 8 mm)",
+      "category": "ik_diverged",
+      "n_samples": 118,
+      "heading_delta_deg": 168.71671056571958,
+      "release_yaw_deg": 40.88388194267841,
+      "tcp_z_min": 0.023154940605163543,
+      "tcp_z_max": 0.20787734270095848
+    },
+    {
+      "id": "egodex_p2_10488",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10488.hdf5",
+      "index": {
+        "dist_xy": 0.09966809669020453,
+        "dz": 0.11067511320114143
+      },
+      "index_offset": 0.08263304982438169,
+      "feasible": false,
+      "reason": "branch_flip (1.88 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 112,
+      "heading_delta_deg": 112.01498595795306,
+      "release_yaw_deg": 0.4410783348960825,
+      "tcp_z_min": 0.01353550672531123,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10508",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10508.hdf5",
+      "index": {
+        "dist_xy": 0.08033394986805138,
+        "dz": 0.11095842123031607
+      },
+      "index_offset": 0.10163384905993224,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 139,
+      "heading_delta_deg": -60.70080081929027,
+      "release_yaw_deg": -172.5347401670757,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1156617593765259
+    },
+    {
+      "id": "egodex_p2_10509",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10509.hdf5",
+      "index": {
+        "dist_xy": 0.29814735792757335,
+        "dz": 0.20276832938194256
+      },
+      "index_offset": 0.1614075364990094,
+      "feasible": false,
+      "reason": "index_mismatch (offset 0.161 > 0.12)",
+      "category": "index_mismatch"
+    },
+    {
+      "id": "egodex_p2_10534",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10534.hdf5",
+      "index": {
+        "dist_xy": 0.17499926725967588,
+        "dz": 0.08799009323120122
+      },
+      "index_offset": 0.006942598443517541,
+      "feasible": false,
+      "reason": "start_unreachable (101 mm)",
+      "category": "start_unreachable",
+      "n_samples": 189,
+      "heading_delta_deg": 25.676201773468314,
+      "release_yaw_deg": -75.59248644823151,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1735594451427459
+    },
+    {
+      "id": "egodex_p2_10537",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10537.hdf5",
+      "index": {
+        "dist_xy": 0.2599784635973381,
+        "dz": 0.00768976092338558
+      },
+      "index_offset": 0.11638303177443816,
+      "feasible": false,
+      "reason": "ik_diverged (14/33 samples, worst 28 mm)",
+      "category": "ik_diverged",
+      "n_samples": 165,
+      "heading_delta_deg": -176.8662396897416,
+      "release_yaw_deg": 36.41596977902856,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.22001115083694445
+    },
+    {
+      "id": "egodex_p2_10539",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10539.hdf5",
+      "index": {
+        "dist_xy": 0.13758699916343844,
+        "dz": 0.04704119086265557
+      },
+      "index_offset": 0.06236174817053871,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 235,
+      "heading_delta_deg": -177.36504462605473,
+      "release_yaw_deg": 69.48505312464683,
+      "tcp_z_min": 0.02266206979751595,
+      "tcp_z_max": 0.13896578550338767
+    },
+    {
+      "id": "egodex_p2_10540",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10540.hdf5",
+      "index": {
+        "dist_xy": 0.18550762597760886,
+        "dz": 0.042743738889694405
+      },
+      "index_offset": 0.05003038147304996,
+      "feasible": false,
+      "reason": "ik_diverged (13/48 samples, worst 101 mm)",
+      "category": "ik_diverged",
+      "n_samples": 240,
+      "heading_delta_deg": 0.39948981710419457,
+      "release_yaw_deg": -60.37201953152501,
+      "tcp_z_min": 0.022708944082260207,
+      "tcp_z_max": 0.2603245186805724
+    },
+    {
+      "id": "egodex_p2_10546",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10546.hdf5",
+      "index": {
+        "dist_xy": 0.08595926345870696,
+        "dz": 0.12382054567337053
+      },
+      "index_offset": 0.09938268639704043,
+      "feasible": false,
+      "reason": "tcp_below_table (min z 0.001 < 0.005)",
+      "category": "tcp_below_table",
+      "n_samples": 129,
+      "heading_delta_deg": -159.2336536126944,
+      "release_yaw_deg": 73.30487161451782,
+      "tcp_z_min": 0.0013834834098813698,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10554",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10554.hdf5",
+      "index": {
+        "dist_xy": 0.21569542993789526,
+        "dz": 0.04887470126152038
+      },
+      "index_offset": 0.056192454419449374,
+      "feasible": false,
+      "reason": "ik_diverged (13/45 samples, worst 92 mm)",
+      "category": "ik_diverged",
+      "n_samples": 225,
+      "heading_delta_deg": -4.947793189425439,
+      "release_yaw_deg": -66.82030376291128,
+      "tcp_z_min": 0.022628520727157597,
+      "tcp_z_max": 0.20887533664703373
+    },
+    {
+      "id": "egodex_p2_10556",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10556.hdf5",
+      "index": {
+        "dist_xy": 0.2360430666328834,
+        "dz": -0.00044005870819097126
+      },
+      "index_offset": 0.10838655738547749,
+      "feasible": false,
+      "reason": "start_unreachable (102 mm)",
+      "category": "start_unreachable",
+      "n_samples": 128,
+      "heading_delta_deg": 71.99296656481657,
+      "release_yaw_deg": -41.803799872895375,
+      "tcp_z_min": 0.027405018806457404,
+      "tcp_z_max": 0.17970442533493036
+    },
+    {
+      "id": "egodex_p2_10561",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10561.hdf5",
+      "index": {
+        "dist_xy": 0.2809299101709711,
+        "dz": 0.06484176516532902
+      },
+      "index_offset": 0.10438329746442587,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 195,
+      "heading_delta_deg": -161.71431479100104,
+      "release_yaw_deg": 48.20253252852578,
+      "tcp_z_min": 0.030761096477508465,
+      "tcp_z_max": 0.13076619148254387
+    },
+    {
+      "id": "egodex_p2_10573",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10573.hdf5",
+      "index": {
+        "dist_xy": 0.21032808224517474,
+        "dz": 0.023515163660049243
+      },
+      "index_offset": 0.07524587234715482,
+      "feasible": false,
+      "reason": "start_unreachable (115 mm)",
+      "category": "start_unreachable",
+      "n_samples": 134,
+      "heading_delta_deg": 18.249115718346758,
+      "release_yaw_deg": -107.50287823465894,
+      "tcp_z_min": 0.024014103412628218,
+      "tcp_z_max": 0.14327001214027413
+    },
+    {
+      "id": "egodex_p2_10580",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10580.hdf5",
+      "index": {
+        "dist_xy": 0.17396940931370547,
+        "dz": 0.035705788135528604
+      },
+      "index_offset": 0.057143462565645224,
+      "feasible": false,
+      "reason": "ik_diverged (18/55 samples, worst 19 mm)",
+      "category": "ik_diverged",
+      "n_samples": 272,
+      "heading_delta_deg": -95.60356637763326,
+      "release_yaw_deg": 151.20824327498235,
+      "tcp_z_min": 0.026731789112091175,
+      "tcp_z_max": 0.16904456973075854
+    },
+    {
+      "id": "egodex_p2_10612",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10612.hdf5",
+      "index": {
+        "dist_xy": 0.16403920971276761,
+        "dz": 0.05064723253250136
+      },
+      "index_offset": 0.044892519279724714,
+      "feasible": false,
+      "reason": "start_unreachable (20 mm)",
+      "category": "start_unreachable",
+      "n_samples": 129,
+      "heading_delta_deg": 168.80831908635034,
+      "release_yaw_deg": 20.86907637509231,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1588268399238586
+    },
+    {
+      "id": "egodex_p2_10627",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10627.hdf5",
+      "index": {
+        "dist_xy": 0.12336199147702956,
+        "dz": 0.023746819496154536
+      },
+      "index_offset": 0.08925459203421915,
+      "feasible": false,
+      "reason": "start_unreachable (32 mm)",
+      "category": "start_unreachable",
+      "n_samples": 153,
+      "heading_delta_deg": 55.212801087602394,
+      "release_yaw_deg": -49.72375865000856,
+      "tcp_z_min": 0.03613358974456804,
+      "tcp_z_max": 0.17918577432632454
+    },
+    {
+      "id": "egodex_p2_10640",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10640.hdf5",
+      "index": {
+        "dist_xy": 0.08403851163544279,
+        "dz": 0.04479995489120492
+      },
+      "index_offset": 0.10741158903840371,
+      "feasible": false,
+      "reason": "ik_diverged (6/21 samples, worst 20 mm)",
+      "category": "ik_diverged",
+      "n_samples": 102,
+      "heading_delta_deg": 135.6173002312,
+      "release_yaw_deg": 36.92340374374845,
+      "tcp_z_min": 0.022570399045944156,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10670",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10670.hdf5",
+      "index": {
+        "dist_xy": 0.1950273602287502,
+        "dz": 0.06836941599845892
+      },
+      "index_offset": 0.028281470607724908,
+      "feasible": false,
+      "reason": "ik_diverged (3/55 samples, worst 70 mm)",
+      "category": "ik_diverged",
+      "n_samples": 272,
+      "heading_delta_deg": -46.225773840299205,
+      "release_yaw_deg": -87.27295007338051,
+      "tcp_z_min": 0.025930497646331707,
+      "tcp_z_max": 0.2360327303409575
+    },
+    {
+      "id": "egodex_p2_10682",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10682.hdf5",
+      "index": {
+        "dist_xy": 0.1689890797111714,
+        "dz": 0.02250374794006338
+      },
+      "index_offset": 0.07090067118763294,
+      "feasible": false,
+      "reason": "start_unreachable (76 mm)",
+      "category": "start_unreachable",
+      "n_samples": 127,
+      "heading_delta_deg": 35.759483035690266,
+      "release_yaw_deg": -74.07340227388606,
+      "tcp_z_min": 0.02528814196586604,
+      "tcp_z_max": 0.16603613853454602
+    },
+    {
+      "id": "egodex_p2_10701",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10701.hdf5",
+      "index": {
+        "dist_xy": 0.11125383430786223,
+        "dz": 0.06145740747451778
+      },
+      "index_offset": 0.07568300852904294,
+      "feasible": false,
+      "reason": "branch_flip (2.64 rad over one coarse step)",
+      "category": "branch_flip",
+      "n_samples": 236,
+      "heading_delta_deg": 16.37620407896693,
+      "release_yaw_deg": -85.5797260482886,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.11499999999999999
+    },
+    {
+      "id": "egodex_p2_10702",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10702.hdf5",
+      "index": {
+        "dist_xy": 0.0899363975583557,
+        "dz": 0.1124237906932829
+      },
+      "index_offset": 0.09251207352906848,
+      "feasible": false,
+      "reason": "ik_diverged (6/26 samples, worst 16 mm)",
+      "category": "ik_diverged",
+      "n_samples": 129,
+      "heading_delta_deg": 20.823033519327275,
+      "release_yaw_deg": -140.3661422598321,
+      "tcp_z_min": 0.005222069025039855,
+      "tcp_z_max": 0.11991217136383081
+    },
+    {
+      "id": "egodex_p2_10712",
+      "source_path": "/home/uko/ERH_hackathon/data/egodex_raw/p2_10712.hdf5",
+      "index": {
+        "dist_xy": 0.1919404627416511,
+        "dz": 0.016686705350875908
+      },
+      "index_offset": 0.07670514231720856,
+      "feasible": true,
+      "reason": "",
+      "category": "ok",
+      "n_samples": 120,
+      "heading_delta_deg": -93.47971757704691,
+      "release_yaw_deg": 151.5340400118757,
+      "tcp_z_min": 0.022499999999999964,
+      "tcp_z_max": 0.1514054238796234
+    }
+  ]
+}

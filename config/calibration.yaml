@@ -1,0 +1,56 @@
+# Extrinsics and measured scene poses (conventions.md section 9).
+#
+# Poses are serialized per conventions.md section 3:
+#   {pos: [x, y, z], quat_wxyz: [w, x, y, z]}
+#
+# In SIMULATION these are the nominal values baked into sim/scene.xml.
+# On HARDWARE (plan phase 3) they are replaced by measured values and written
+# back into sim/scene.xml. Anything still nominal is marked `nominal: true`.
+conventions_version: 2
+
+# --- Robot base in the `table` frame ---
+# The model root (`openarm_body_link0`) is the bottom of the torso column; the
+# shoulder mount (`arm_origin` site) sits 0.697 m above it. So
+#   z = (shoulder height above the table) - 0.697.
+# Base is centred on the table origin cross in x and y; the cross is directly in
+# front of the torso.
+#
+# Shoulder height 0.30 m is MEASURED by sim/reachability.py, not guessed — see
+# sim/plots/reachability_right.png and .json. Top-down reachable cells at the
+# grasp height, over a 9x12 grid of the tabletop:
+#
+#   h   | 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60
+#   cells| 30   30   33   34   33   21   18   18   16    7
+#
+# The optimum is broad and flat below 0.35 and falls off sharply above it, so
+# 0.30 is a safe interior choice rather than a knife-edge one.
+T_table_robot:
+  nominal: true
+  pos: [0.0, 0.0, -0.397] # shoulder (arm_origin) lands at z = +0.300
+  quat_wxyz: [1.0, 0.0, 0.0, 0.0] # robot axes aligned with `table`
+  shoulder_height: 0.300 # derived: pos.z + 0.697. Kept for readability only.
+
+# --- Cameras in the `table` frame (OpenCV axes: +x right, +y down, +z forward) ---
+# `overhead` is required; `wrist_right` exists only if the real robot has it
+# (conventions.md section 6, plan task 1.ALL.4 — not yet answered).
+T_table_cam_overhead:
+  nominal: true
+  # 0.90 m above the table, centred over the working area, looking straight down.
+  # +x_cam = table +y, +y_cam = table +x, +z_cam = table -z.
+  pos: [0.40, 0.0, 0.90]
+  quat_wxyz: [0.0, 0.7071067811865476, 0.7071067811865476, 0.0]
+
+# Wrist camera: mounted on the right hand, so its pose is NOT a `table`-frame
+# constant — it is defined in sim/scene.xml relative to the hand body. Listed
+# here as null so the absence is explicit rather than an oversight.
+T_table_cam_wrist_right: null
+
+# --- ChArUco board (hardware calibration only, plan phase 3) ---
+# Converted once via T_table_board and never used downstream (conventions sec 2).
+T_table_board: null
+
+# --- Measured scene poses (hardware only) ---
+# In sim the bin and spot come from config/skills.yaml `scene`. On hardware these
+# are measured and override them.
+T_table_bin: null
+T_table_spot: null

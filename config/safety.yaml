@@ -1,0 +1,29 @@
+# Safety limits (conventions.md section 10), enforced IDENTICALLY in SimRobot
+# and RealRobot via common/safety.py. Never duplicate these numbers in code.
+conventions_version: 2
+
+# Gripper-centre workspace box in the `table` frame. conventions.md section 10:
+# "start with ... tighten after hardware calibration".
+workspace_box:
+  x: [0.15, 0.65]
+  y: [-0.45, 0.45]
+  z: [0.01, 0.45]
+
+# Maximum tcp speed, m/s.
+max_tcp_speed: 0.25
+
+# Maximum joint step per 50 Hz control cycle, radians. This is the LeRobot
+# `max_relative_target = 3.0` (degrees) expressed in our units. At other rates it
+# scales with the cycle time: step_limit = max_joint_step_50hz * (50 / rate_hz).
+max_joint_step_50hz: 0.05
+
+# A trajectory is rejected if IK is worse than this anywhere along it. Mirrors
+# config/skills.yaml `ik.pos_tol` / `ik.rot_tol_deg`; kept here too because
+# conventions.md section 10 states it as a safety rejection rule, and
+# common/safety.py must not depend on the skills config.
+max_ik_pos_err: 0.005 # m
+max_ik_rot_err_deg: 3.0
+
+# Two-arm runs only: any arm-to-arm contact in the combined simulation is a
+# rejection (conventions.md section 10).
+allow_arm_arm_contact: false

@@ -206,6 +206,81 @@ def pos_yaw_pose(T: np.ndarray) -> np.ndarray:
     return make_T(rot_z(yaw_of(T)), T[..., :3, 3])
 
 
+def rot_y(theta: float | np.ndarray) -> np.ndarray:
+    """Rotation about +y by `theta` radians. Supports array input like :func:`rot_z`."""
+    theta = np.asarray(theta, dtype=np.float64)
+    c, s = np.cos(theta), np.sin(theta)
+    z, o = np.zeros_like(c), np.ones_like(c)
+    return np.stack(
+        [np.stack([c, z, s], -1), np.stack([z, o, z], -1), np.stack([-s, z, c], -1)], -2
+    )
+
+
+def grasp_pose(pos: np.ndarray, yaw: float, tilt: float = 0.0) -> np.ndarray:
+    """A near-top-down gripper pose, tilted `tilt` radians off vertical.
+
+    `tilt = 0` is exactly :func:`top_down_pose`. The tilt is applied about the
+    gripper's **own +y axis**, which is the jaw-closing axis, so:
+
+    * the jaw axis stays horizontal — the jaws still straddle a cube's vertical
+      faces, and both fingers tilt together rather than one dipping toward the
+      table;
+    * the approach axis leans by exactly `tilt` from `table` -z, within the
+      vertical plane containing the gripper's x axis;
+    * `yaw_of` is unchanged for small tilts, so the section 8 anchor math still
+      sees the yaw it expects.
+
+    A strictly vertical approach is reachable in only a thin slice of this arm's
+    configuration space; allowing a few degrees of tilt widens it substantially
+    and is harmless for grasping a cube. See `docs/conventions_proposals.md` P7.
+    """
+    return make_T(
+        rot_z(yaw) @ np.diag([1.0, -1.0, -1.0]) @ rot_y(tilt),
+        np.asarray(pos, dtype=np.float64),
+    )
+
+
+def top_down_pose(pos: np.ndarray, yaw: float) -> np.ndarray:
+    """A top-down gripper pose in the `table` frame (conventions.md section 2).
+
+    "Top-down grasp: `tcp` +z points along `table` -z". `yaw` is the pose's yaw in
+    the section 3 sense, so ``yaw_of(top_down_pose(p, yaw)) == yaw`` — which is
+    what the section 8 anchor math assumes when it aligns headings with
+    :func:`yaw_of` and :func:`rot_z`.
+
+    Built as ``rot_z(yaw) @ diag(1, -1, -1)``: the flip sends `tcp` +z to `table`
+    -z while leaving `tcp` +x on `table` +x, and is right-handed (det = +1). The
+    jaw-closing axis (`tcp` +y) therefore lies along `table` -y at ``yaw = 0``;
+    the jaws are symmetric, so the sign carries no meaning.
+    """
+    R_flip = np.diag([1.0, -1.0, -1.0])
+    return make_T(rot_z(yaw) @ R_flip, np.asarray(pos, dtype=np.float64))
+
+
+def flatten_top_down(T: np.ndarray) -> np.ndarray:
+    """Replace every pose's orientation with the top-down one of the same yaw.
+
+    Keeps position and yaw, discards roll and pitch — :func:`pos_yaw_pose` for
+    the *trajectory* rather than the anchor, expressed in the gripper convention
+    of section 2 instead of the z-up one.
+
+    Needed because a human's `tcp` +z (wrist -> MCP midpoint, section 2) is the
+    palm's forward direction, which sits a median **71 deg** off `table` -z at the
+    grasp: a human picks a cube up with the hand pointing forward and down, not
+    straight down. Replaying that orientation on the robot drives the fingers into
+    the table and out of the top-down reachable map. See
+    `docs/conventions_proposals.md` P8.
+
+    Safe to compose with section 8: the retarget rigid transform is a pure
+    z-rotation plus translation, so flattening before it commutes with it, and
+    `yaw_of` is preserved.
+    """
+    T = np.asarray(T, dtype=np.float64)
+    return make_T(
+        rot_z(yaw_of(T)) @ np.diag([1.0, -1.0, -1.0]), T[..., :3, 3]
+    )
+
+
 def pose_to_dict(T: np.ndarray) -> dict:
     """Serialize a pose as ``{"pos": [...], "quat_wxyz": [...]}`` (section 3)."""
     T = np.asarray(T, dtype=np.float64)
