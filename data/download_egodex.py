@@ -21,7 +21,7 @@ from remotezip import RemoteZip
 
 # Direct URL to an EgoDex part zip, e.g. a HuggingFace .../resolve/main/part1.zip
 # link. Must be a plain HTTP(S) URL that supports range requests.
-EGODEX_ZIP_URL = ""
+EGODEX_ZIP_URL = URL = "https://ml-site.cdn-apple.com/datasets/egodex/test.zip"
 
 TASK = "basic_pick_place"
 SUFFIX = ".hdf5"
