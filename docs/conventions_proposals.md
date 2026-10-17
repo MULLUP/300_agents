@@ -388,3 +388,48 @@ from the commanded poses: a 5 mm IK error between adjacent 50 Hz samples is
 now public as `SimRobot.tcp_path` for this.
 
 No conventions change — this is code catching up with section 10.
+
+
+---
+
+## P11 — The place target's yaw is not fixed; it is searched per segment (ASK)
+
+**`conventions.md` §8 step 4** fixes the transport target's yaw: "yaw = demo
+release yaw after heading alignment". Two findings make that wrong here.
+
+**First, taking it literally is still required over the alternative that was
+tried.** An earlier version chose the release yaw by *reachability*, the way the
+hand-coded `plan_put_in_bin` legitimately does. That is correct there, because
+its waypoints are constructed at the chosen yaw — but here the target's yaw
+enters the rigid transform, so choosing it freely rotates the entire transport
+segment about the bin by up to 180 deg and discards the §8 step 3 heading
+alignment. Fixing that one bug took the feasible count from **1/106 to 10/106**.
+
+**Second, the yaw is nonetheless a free variable, and fixing it costs most of the
+yield.** A top-down cube task constrains the wrist's rotation about its own
+approach axis only where the jaws close. Measured: **120/120** sampled
+IK-failing samples are reachable once the yaw is free, median 8 deg, max 44 deg
+(45 deg being the cube's yaw symmetry half-period).
+
+**Fix applied** (`sim/execute.py fit_yaw_offsets`, `common/transforms.spin_about_approach`):
+one constant yaw offset per segment, ramped across the existing §8 step 5
+mid-bridge. **13/106 -> 62/106 feasible**, 31 of the 62 succeeding under physics.
+
+* The approach offset is restricted to multiples of 90 deg, so the jaws still
+  straddle a pair of opposite cube faces.
+* The transport offset is unrestricted: the cube is held, and §11's success test
+  reads the cube's centre and never its orientation.
+* `spin_about_approach` post-multiplies, so **every position is untouched** — the
+  offsets cannot move the grasp off the cube, the release off the bin, or disturb
+  the heading alignment or the `(dist_xy, dz)` index.
+
+**Why not per-sample.** `IKSolver.solve(free_yaw=True)` (via `mink.AxisAlignTask`,
+rank two) relaxes the constraint properly but is measured **net-neutral**:
+`ik_diverged` 29 -> 18, `start_unreachable` 23 -> 16, `branch_flip` **6 -> 23**.
+With the yaw free the solver resolves the 2-dof null space differently at
+adjacent samples. A stronger posture task does not help (0.01 -> 6 feasible,
+0.05 -> 2, 0.5 -> 0). Constant-per-segment is continuous by construction.
+
+**Proposal:** amend §8 step 4 so the place target's yaw, and the wrist spin along
+each segment, are explicitly free variables chosen for reachability, with the jaw
+constraint applying only at the grasp. Needs conventions v3.
