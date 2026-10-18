@@ -35,11 +35,15 @@ poses = 1790 trials, of which physics kept 26%.
 ```bash
 uv sync
 
+# Anything under policy/ needs lerobot >= 0.6 with PEFT, to load the LoRA
+# adapter. This repo's own .venv is lerobot 0.4.4 with no PEFT and cannot.
+export POLICY_PY=/mnt/shared_s/model_data/AdapterTraining/.venv/bin/python
+
 # watch the trained policy, live
-python policy/watch.py --loop
+$POLICY_PY policy/watch.py --loop
 
 # score it
-python policy/rollout.py --episodes 20
+$POLICY_PY policy/rollout.py --episodes 20
 
 # regenerate the dataset (~2 h on 6 workers)
 MUJOCO_GL=egl setsid nohup python data/generate_dataset.py \

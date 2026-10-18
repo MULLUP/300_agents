@@ -19,10 +19,33 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from lerobot.common.control_utils import predict_action
 from lerobot.configs.policies import PreTrainedConfig
 from lerobot.datasets.lerobot_dataset import LeRobotDatasetMetadata
-from lerobot.policies import make_policy, make_pre_post_processors
+
+# `predict_action` moved between releases: `lerobot.utils` in 0.4.x,
+# `lerobot.common` in 0.6.x.
+try:
+    from lerobot.common.control_utils import predict_action
+except ModuleNotFoundError:  # pragma: no cover - depends on the installed release
+    from lerobot.utils.control_utils import predict_action
+
+# This checkpoint is a LoRA adapter, so loading it needs lerobot >= 0.6 (for the
+# policy and processor factories) and PEFT. The repo's own .venv is lerobot
+# 0.4.4 with neither, and cannot load it at all — fail with the fix rather than
+# a traceback three imports deep.
+try:
+    import peft  # noqa: F401
+    from lerobot.policies import make_policy, make_pre_post_processors
+except ImportError as exc:
+    import lerobot
+
+    raise SystemExit(
+        f"policy/ needs lerobot >= 0.6 with PEFT; this interpreter has lerobot "
+        f"{getattr(lerobot, '__version__', '?')} ({exc}).\n"
+        f"Use the AdapterTraining environment:\n"
+        f"  /mnt/shared_s/model_data/AdapterTraining/.venv/bin/python "
+        f"policy/watch.py --loop"
+    ) from exc
 
 HERE = Path(__file__).parent
 CHECKPOINT = HERE / "pretrained_model"
