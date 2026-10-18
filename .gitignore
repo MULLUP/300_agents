@@ -14,3 +14,7 @@ data/egodex_zips/
 policy/rollouts/
 policy/__pycache__/
 docs/report_figures.zip
+
+# editor scratch
+*.swp
+.*.kate-swp

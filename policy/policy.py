@@ -42,9 +42,8 @@ except ImportError as exc:
     raise SystemExit(
         f"policy/ needs lerobot >= 0.6 with PEFT; this interpreter has lerobot "
         f"{getattr(lerobot, '__version__', '?')} ({exc}).\n"
-        f"Use the AdapterTraining environment:\n"
-        f"  /mnt/shared_s/model_data/AdapterTraining/.venv/bin/python "
-        f"policy/watch.py --loop"
+        f"Use the workspace/ environment (cd workspace && uv sync):\n"
+        f"  workspace/.venv/bin/python policy/watch.py --loop"
     ) from exc
 
 HERE = Path(__file__).parent

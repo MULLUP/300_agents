@@ -10,7 +10,12 @@ robot. No physics and no IK are run — this visualises the object-centric
 transform itself, which is what makes generating tens of trajectories take
 well under a second.
 
-    python tools/mimicgen_clip.py --trajectories 40 --out docs/mimicgen.mp4
+Each run picks a random source demo and a random scene set, and writes to
+`docs/mimicgen_<seed>.mp4`, so running it again gives a different combination
+without touching the previous clip. It refuses to overwrite an existing file.
+
+    python tools/mimicgen_clip.py                  # a new random clip
+    python tools/mimicgen_clip.py --seed 1234      # reproduce one exactly
 """
 
 from __future__ import annotations
@@ -18,6 +23,7 @@ from __future__ import annotations
 import argparse
 import colorsys
 import os
+import secrets
 import sys
 from pathlib import Path
 
@@ -106,21 +112,36 @@ def label(img: np.ndarray, text: str, sub: str = "") -> np.ndarray:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--trajectories", type=int, default=40)
-    ap.add_argument("--demo", type=Path, default=None, help="source .npz (default: the first)")
+    ap.add_argument("--demo", type=Path, default=None,
+                    help="source .npz (default: picked by --seed)")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="picks the source demo AND the cube poses; default: random each run")
     ap.add_argument("--camera", default="overhead", help="overhead / front_camera / side_camera")
     ap.add_argument("--seconds", type=float, default=5.0)
     ap.add_argument("--fps", type=int, default=30)
     ap.add_argument("--hold", type=float, default=1.0, help="seconds holding the full fan at the end")
     ap.add_argument("--subsample", type=int, default=6, help="keep every Nth TCP sample when drawing")
-    ap.add_argument("--out", type=Path, default=Path("docs/mimicgen.mp4"))
+    ap.add_argument("--out", type=Path, default=None,
+                    help="default: docs/mimicgen_<seed>.mp4, which never overwrites a previous clip")
     args = ap.parse_args()
 
-    rate_hz = float(config.skills()["exec"]["rate_hz"])
-    src = args.demo or sorted(config.path("data", "retargeted").glob("*.npz"))[0]
-    demo = demos.load_source_demo(src)
-    scenes = sample_scenes(args.trajectories, seed=7)
+    # A fresh seed per run gives a different demo and a different scene set, so
+    # repeated runs produce genuinely different clips under distinct names.
+    seed = args.seed if args.seed is not None else secrets.randbelow(100_000)
+    if args.out is None:
+        args.out = Path("docs") / f"mimicgen_{seed}.mp4"
+    if args.out.exists():
+        raise SystemExit(f"{args.out} already exists; pass --out or a different --seed")
 
-    print(f"source demo: {src.name}")
+    rate_hz = float(config.skills()["exec"]["rate_hz"])
+    sources = sorted(config.path("data", "retargeted").glob("*.npz"))
+    if not sources:
+        raise SystemExit("data/retargeted/ has no demos — run `python data/retarget.py` first")
+    src = args.demo or sources[np.random.default_rng(seed).integers(len(sources))]
+    demo = demos.load_source_demo(src)
+    scenes = sample_scenes(args.trajectories, seed=seed)
+
+    print(f"seed {seed}  source demo: {src.name}")
     paths = tcp_paths(demo, scenes, rate_hz)
     print(f"retargeted onto {len(paths)} scenes")
 
@@ -157,7 +178,7 @@ def main() -> int:
             frame = label(
                 renderer.render(),
                 f"MimicGen: 1 human demo -> {shown} robot trajectories",
-                f"{src.name}  |  object-centric retarget, no physics",
+                f"{src.name}  |  seed {seed}  |  object-centric retarget, no physics",
             )
             container.mux(stream.encode(av.VideoFrame.from_ndarray(frame, format="rgb24")))
         container.mux(stream.encode())

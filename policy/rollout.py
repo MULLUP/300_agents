@@ -32,8 +32,8 @@ import numpy as np
 
 HERE = Path(__file__).parent
 ERH = Path(os.environ.get("ERH_ROOT", HERE.parent))
-AT = Path(os.environ.get("AT_ROOT", "/mnt/shared_s/model_data/AdapterTraining"))
-for _p in (HERE, ERH, AT / "src", AT / "plugins/lerobot_robot_openarm_overlay/src"):
+AT = Path(os.environ.get("AT_ROOT", ERH / "workspace"))
+for _p in (HERE, ERH, AT / "src", AT / "plugins/lerobot_robot_openarm_overlay"):
     sys.path.insert(0, str(_p))
 
 os.environ.setdefault("MUJOCO_GL", "egl")  # offscreen; watch.py sets glx first

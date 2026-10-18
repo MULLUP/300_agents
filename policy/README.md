@@ -90,8 +90,11 @@ Failure modes, measured rather than guessed:
 
 - `torchcodec` will not load (missing `libavutil.so.56`). Use
   `video_backend="pyav"` anywhere a `LeRobotDataset` is constructed.
-- `at-eval` and `at-sim-eval` do not run here — the first hardcodes torchcodec,
-  the second needs AdapterTraining calibration assets that were never produced.
-  `offline_check.py` and `rollout.py` replace them.
-- `ERH_ROOT` and `AT_ROOT` env vars override the paths to the ERH repo and the
-  AdapterTraining venv if either moves.
+- `at-eval` and `at-sim-eval` (entry point B, in `workspace/`) do not run here —
+  the first hardcodes torchcodec, the second needs calibration assets this track
+  never produced. `offline_check.py` and `rollout.py` replace them.
+- Loading the adapter needs `workspace/`'s interpreter: lerobot 0.6.1 with PEFT,
+  against 0.4.4 at the repo root. `cd workspace && uv sync`, then run these
+  scripts with `workspace/.venv/bin/python`.
+- `ERH_ROOT` and `AT_ROOT` env vars override the paths to the repo root and to
+  `workspace/` if either moves.
