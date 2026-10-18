@@ -24,13 +24,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import sys
 import time
 from collections import Counter
-from multiprocessing import Pool, util
+from multiprocessing import Manager, Pool, util
 from pathlib import Path
 
 import numpy as np
+from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -46,11 +48,10 @@ _W: dict = {}
 
 
 def sample_scenes(n: int, seed: int) -> list[tuple[list[float], float]]:
-    """`n` (cube_xy, cube_yaw) scenes from the pick zone.
+    """`n` INDEPENDENT (cube_xy, cube_yaw) draws — one per trial, not per demo.
 
-    Every demo sees the same scenes, as in `sim/validate_library.py`, so a
-    difference between two demos is the demo and not the draw. Yaw spans only
-    +/- 45 deg because a cube is 90 deg-symmetric (`conventions.md` section 2).
+    Reusing one set across demos gave the whole dataset 20 distinct cube poses.
+    Yaw spans +/- 45 deg because a cube is 90 deg-symmetric.
     """
     scene = config.skills()["scene"]
     centre = np.asarray(scene["pick_zone"]["center"], dtype=np.float64)
@@ -96,18 +97,44 @@ def source_demo_ids(limit: int | None = None, feasible_only: bool = False) -> li
     return ids[:limit] if limit else ids
 
 
-def _init_worker(shard_prefix: str, side: str) -> None:
+def quiet_subprocess_logging() -> None:
+    """Silence the per-episode encoder and HF-datasets chatter.
+
+    `save_episode` runs a PyAV encode and a `datasets` map, each of which writes
+    its own progress to the terminal. Interleaved across workers they bury the
+    run's own progress bar.
+    """
+    try:
+        import av
+
+        av.logging.set_level(av.logging.ERROR)
+    except Exception:
+        pass
+    try:
+        import datasets
+
+        datasets.disable_progress_bars()
+    except Exception:
+        pass
+
+
+def _init_worker(shard_prefix: str, side: str, base: Path | None = None, stop=None) -> None:
     """One robot, solver and shard per process.
 
     `render=True` is required: the headless scene has its visual geometry
     stripped and cannot be photographed. It costs ~1.9 GB of RSS per worker
     against ~0.26 GB, which is what caps the worker count — see `--processes`.
     """
+    quiet_subprocess_logging()
+    # Ignore SIGINT in workers: Ctrl-C must be handled by the parent only, so it
+    # can drain and flush rather than killing mid-episode.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    _W["stop"] = stop
     _W["robot"] = SimRobot(render=True)
     _W["solver"] = IKSolver()
     _W["demos"] = {}
     _W["side"] = side
-    _W["writer"] = ShardWriter(f"{shard_prefix}_w{os.getpid()}", side=side)
+    _W["writer"] = ShardWriter(f"{shard_prefix}_w{os.getpid()}", side=side, base=base)
 
     # The shard lives and dies inside this process, so the parent has no moment
     # at which it could flush it. Without this the buffered episode metadata is
@@ -132,7 +159,7 @@ def _demo(entry_id: str):
     return cache[entry_id]
 
 
-def _trial(task: tuple[str, list[float], float]) -> dict:
+def _trial(task: tuple[str, list[float], float, int]) -> dict:
     """Run one (demo, scene) pair and, if it works, write the episode.
 
     The episode never crosses the process boundary — even JPEG-buffered it is
@@ -145,8 +172,18 @@ def _trial(task: tuple[str, list[float], float]) -> dict:
     from HOME, so if the dataset began at the approach pose it would have no data
     for how to get there.
     """
-    entry_id, xy, yaw = task
+    entry_id, xy, yaw, appearance_seed = task
+    stop = _W.get("stop")
+    if stop is not None and stop.is_set():
+        # Cancelled. Return immediately so the pool drains in seconds and every
+        # worker reaches its shard flush, instead of being SIGTERMed mid-run.
+        return {"id": entry_id, "written": False, "skipped": True, "shard": _W["writer"].name}
+
     robot, writer = _W["robot"], _W["writer"]
+
+    # Appearance only, so the trial's physics is unaffected. Before the episode
+    # opens, so frame 0 already shows this episode's colours.
+    appearance = robot.randomize_appearance(np.random.default_rng(appearance_seed))
 
     robot.start_episode(camera=writer.camera)
     t0 = time.perf_counter()
@@ -172,6 +209,7 @@ def _trial(task: tuple[str, list[float], float]) -> dict:
         "n_frames": len(episode),
         "seconds": round(elapsed, 2),
         "written": False,
+        "appearance": appearance,
         # Which shard this episode went to. Reported by the worker rather than
         # discovered by globbing `data/`: a glob for "*_w*" also matched
         # `data/egodex_raw_wipe_screen`, and the merge then tried to resolve
@@ -183,6 +221,14 @@ def _trial(task: tuple[str, list[float], float]) -> dict:
         if not rec["written"]:
             rec["reason"] = f"too_short ({len(episode)} frames)"
     return rec
+
+
+def _show(p: Path) -> str:
+    """Repo-relative if it is inside the repo, absolute otherwise (`--root`)."""
+    try:
+        return str(p.relative_to(config.REPO_ROOT))
+    except ValueError:
+        return str(p)
 
 
 def written_shards(rows: list[dict]) -> list[str]:
@@ -217,7 +263,14 @@ def classify(rec: dict, half: float) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--name", default="egodex_pick_place", help="dataset name under data/lerobot/")
+    ap.add_argument("--name", default="egodex_pick_place", help="dataset name under the output root")
+    ap.add_argument(
+        "--root",
+        type=Path,
+        default=None,
+        help="output directory (default data/lerobot/). A full run is ~12-16 GB including "
+        "the unmerged shards, which does not fit on this box's root filesystem.",
+    )
     ap.add_argument("--trials", type=int, default=None, help="scenes per demo")
     ap.add_argument("--limit", type=int, default=None, help="use only the first N demos")
     ap.add_argument("--processes", type=int, default=None)
@@ -235,6 +288,7 @@ def main() -> int:
         print("MUJOCO_GL is unset — rendering needs a GL backend. Try MUJOCO_GL=egl.")
         return 1
 
+    quiet_subprocess_logging()  # the merge runs in THIS process
     dcfg = config.skills()["dataset"]
     n_trials = int(dcfg["trials_per_demo"]) if args.trials is None else args.trials
     seed = int(dcfg["seed"]) if args.seed is None else args.seed
@@ -243,8 +297,16 @@ def main() -> int:
     n_proc = args.processes if args.processes is not None else 8
 
     ids = source_demo_ids(args.limit, args.feasible_only)
-    scenes = sample_scenes(n_trials, seed)
-    tasks = [(i, xy, yaw) for i in ids for xy, yaw in scenes]
+
+    # One INDEPENDENT scene per trial — see `sample_scenes`. Drawing `n_trials`
+    # and reusing them across demos gave the whole dataset 20 distinct cube
+    # poses.
+    scenes = iter(sample_scenes(len(ids) * n_trials, seed))
+    # The appearance seed travels WITH the task rather than being drawn in the
+    # worker, so a trial's colours depend on the trial and not on which process
+    # happened to pick it up or in what order. `imap_unordered` makes any
+    # worker-side RNG unreproducible.
+    tasks = [(i, *next(scenes), seed + k) for k, i in enumerate(i for i in ids for _ in range(n_trials))]
     half = float(config.skills()["scene"]["cube"]["size"]) / 2.0
 
     print(
@@ -253,25 +315,49 @@ def main() -> int:
     )
 
     rows, t0 = [], time.perf_counter()
-    with Pool(processes=n_proc, initializer=_init_worker, initargs=(args.name, args.side)) as pool:
-        for i, rec in enumerate(pool.imap_unordered(_trial, tasks, chunksize=1), start=1):
-            rows.append(rec)
-            if i % 10 == 0 or i == len(tasks):
-                n_ok = sum(r["written"] for r in rows)
-                rate = i / (time.perf_counter() - t0)
-                print(
-                    f"  {i:5d}/{len(tasks)}  kept {n_ok:4d}  "
-                    f"{rate * 3600:.0f} trials/h",
-                    flush=True,
-                )
+    cancelled = False
+    manager = Manager()
+    stop = manager.Event()
+    with Pool(
+        processes=n_proc, initializer=_init_worker, initargs=(args.name, args.side, args.root, stop)
+    ) as pool:
+        bar = tqdm(
+            pool.imap_unordered(_trial, tasks, chunksize=1),
+            total=len(tasks),
+            desc="trials",
+            unit="trial",
+            smoothing=0.05,
+            dynamic_ncols=True,
+            # stdout, so the caller can send the encoders' stderr to a file and
+            # keep the bar readable.
+            file=sys.stdout,
+        )
+        n_ok = 0
+        try:
+            for rec in bar:
+                rows.append(rec)
+                n_ok += bool(rec["written"])
+                bar.set_postfix(kept=n_ok, yield_=f"{n_ok / len(rows):.0%}", refresh=False)
+        except KeyboardInterrupt:
+            # Keep everything generated so far. Setting the flag turns every
+            # queued trial into an immediate no-op, so the pool drains in
+            # seconds and each worker still reaches its shard flush; killing the
+            # workers instead would leave every shard unreadable.
+            cancelled = True
+            stop.set()
+            bar.close()
+            print("\ncancelled — draining workers and flushing shards, do not kill", flush=True)
         # Shut the workers down GRACEFULLY, before the `with` block's exit calls
         # `terminate()`. Each worker flushes its shard from an `atexit` hook, and
         # `atexit` does not run on the SIGTERM that `terminate()` sends — so
         # letting the context manager clean up would discard every shard's
         # metadata and leave the merge reading half-written datasets.
-        print("  finalising shards", flush=True)
+        if not cancelled:
+            print("  finalising shards", flush=True)
         pool.close()
         pool.join()
+
+    rows = [r for r in rows if not r.get("skipped")]
 
     elapsed = time.perf_counter() - t0
     kept = [r for r in rows if r["written"]]
@@ -289,7 +375,7 @@ def main() -> int:
     for name, count in buckets.most_common():
         print(f"    {name:<40s} {count:5d}  ({count / len(rows):.1%})")
 
-    log = config.path("data", "lerobot", f"{args.name}_trials.json")
+    log = dataset_root(f"{args.name}_trials.json", args.root)
     log.parent.mkdir(parents=True, exist_ok=True)
     log.write_text(
         json.dumps(
@@ -305,13 +391,13 @@ def main() -> int:
             indent=2,
         )
     )
-    print(f"wrote {log.relative_to(config.REPO_ROOT)}")
+    print(f"wrote {_show(log)}")
 
     shards = written_shards(rows)
     if shards and not args.no_merge:
         print(f"merging {len(shards)} shards -> {args.name}")
-        out = merge_shards(shards, args.name)
-        print(f"wrote {out.relative_to(config.REPO_ROOT)}")
+        out = merge_shards(shards, args.name, base=args.root)
+        print(f"wrote {_show(out)}")
 
     return 0 if kept else 1
 

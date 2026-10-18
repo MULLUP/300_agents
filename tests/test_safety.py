@@ -39,9 +39,16 @@ def lim():
 
 
 def test_limits_match_conventions_section_10(lim):
-    """Hard-coded here on purpose: a silent config edit should fail the suite."""
-    assert lim.box_x == (0.15, 0.65)
-    assert lim.box_y == (-0.45, 0.45)
+    """Hard-coded here on purpose: a silent config edit should fail the suite.
+
+    Widened from x [0.15, 0.65] y [-0.45, 0.45] because that box CUT THROUGH THE
+    BIN: the bin's outer edge is at y = -0.528, and the release point (the bin
+    centre, y = -0.440) cleared the old limit by 10 mm, so placements were
+    rejected as `unsafe_trajectory` for entering the region the task requires.
+    See config/safety.yaml for the measurement.
+    """
+    assert lim.box_x == (0.10, 0.65)
+    assert lim.box_y == (-0.55, 0.55)
     assert lim.box_z == (0.01, 0.45)
     assert lim.max_tcp_speed == 0.25
     assert lim.max_joint_step_50hz == 0.05
@@ -61,14 +68,38 @@ def test_joint_step_limit_scales_with_rate(lim):
 def test_in_box_accepts_the_interior_and_rejects_each_face(lim):
     assert bool(lim.in_box(np.array([0.40, 0.0, 0.20])))
     for bad in (
-        [0.10, 0.0, 0.20],  # x low
+        [0.05, 0.0, 0.20],  # x low
         [0.70, 0.0, 0.20],  # x high
-        [0.40, -0.50, 0.20],  # y low
-        [0.40, 0.50, 0.20],  # y high
+        [0.40, -0.60, 0.20],  # y low
+        [0.40, 0.60, 0.20],  # y high
         [0.40, 0.0, 0.005],  # z low (below the table)
         [0.40, 0.0, 0.50],  # z high
     ):
         assert not bool(lim.in_box(np.array(bad))), bad
+
+
+def test_the_workspace_box_contains_the_whole_task(lim):
+    """The safety box must not exclude the region the task has to reach.
+
+    This is the invariant the two configs violated: `workspace_box` lives in
+    config/safety.yaml and the bin in config/skills.yaml, they were set at
+    different times, and nothing related them. The gripper was rejected for
+    entering the bin it was being told to drop a cube into, and the symptom
+    (`unsafe_trajectory`) read like a planning failure rather than a
+    contradiction between two files.
+
+    `sim/build_models.py` asserts the same thing on every build; it is here too
+    so that editing either config fails the suite without a rebuild.
+    """
+    from sim.build_models import task_roi
+
+    lo, hi = task_roi()
+    assert lim.box_x[0] <= lo[0] and hi[0] <= lim.box_x[1], (
+        f"task spans x [{lo[0]:.3f}, {hi[0]:.3f}], box is {lim.box_x}"
+    )
+    assert lim.box_y[0] <= lo[1] and hi[1] <= lim.box_y[1], (
+        f"task spans y [{lo[1]:.3f}, {hi[1]:.3f}], box is {lim.box_y}"
+    )
 
 
 def test_check_tcp_path_reports_the_offending_sample():

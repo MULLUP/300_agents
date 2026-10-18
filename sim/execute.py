@@ -456,7 +456,23 @@ def plan_from_demo(
     """
     cfg = config.skills()["exec"]
     rate_hz = float(cfg["rate_hz"])
-    T_cube = np.asarray(T_table_cube, dtype=np.float64)
+    T_cube = np.asarray(T_table_cube, dtype=np.float64).copy()
+
+    # Seat the cube between the pads rather than at the jaw entrance.
+    #
+    # `grasp_tcp_offset` used to be read ONLY by `plan_put_in_bin`, the
+    # hand-coded baseline — so the path that actually generates the dataset
+    # pinned its grasp to the cube's exact centre with no knob at all, while the
+    # config comment described it as the tunable that seats the grasp. Measured
+    # on the model: the two finger collision geoms sit 53 mm BEHIND the tcp site
+    # along the approach axis and are ~120 mm long, so the tcp is near the far
+    # end of the pads and commanding it to the cube centre leaves the cube at the
+    # entrance of the jaws.
+    #
+    # Applied to the grasp target's z, exactly as the hand-coded path applies it,
+    # so one number governs both and they cannot drift. Negative lowers the
+    # commanded grasp, seating the cube deeper between the pads.
+    T_cube[2, 3] += float(cfg["grasp_tcp_offset"])
 
     if release_yaw is None:
         # The heading alignment depends on the target's POSITION only, so the

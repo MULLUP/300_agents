@@ -28,7 +28,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from common import config  # noqa: E402
+from common import config, safety  # noqa: E402
 from common.transforms import mat_to_quat_wxyz, quat_wxyz_to_mat  # noqa: E402
 
 UPSTREAM = config.path("third_party", "openarm_mujoco", "v1", "openarm_bimanual.xml")
@@ -180,7 +180,6 @@ def build_robot_ik(out_path: Path) -> mujoco.MjModel:
 # --- scene ------------------------------------------------------------------
 
 BOX = mujoco.mjtGeom.mjGEOM_BOX
-CYL = mujoco.mjtGeom.mjGEOM_CYLINDER
 PLANE = mujoco.mjtGeom.mjGEOM_PLANE
 
 # Table top: spans the conventions.md section 10 workspace box in x and y, and
@@ -193,7 +192,6 @@ TABLE_THICK = 0.04
 CUBE_RGBA = (0.85, 0.20, 0.20, 1.0)
 CUBE_LEFT_RGBA = (0.20, 0.35, 0.85, 1.0)  # "different color", plan task 1.P1.2
 BIN_RGBA = (0.35, 0.35, 0.40, 1.0)
-SPOT_RGBA = (0.95, 0.85, 0.15, 1.0)
 
 
 def _add_table(spec: mujoco.MjSpec) -> None:
@@ -257,26 +255,36 @@ def _add_bin(spec: mujoco.MjSpec, name: str, cfg: dict) -> None:
         body.add_geom(name=f"{name}_wall_{label}", type=BOX, size=size, pos=pos, rgba=BIN_RGBA)
 
 
-def _add_spot(spec: mujoco.MjSpec, name: str, cfg: dict) -> None:
-    """The `move_to_spot` target: a visual marker only, no collision."""
-    cx, cy = float(cfg["center"][0]), float(cfg["center"][1])
-    spec.worldbody.add_geom(
-        name=name,
-        type=CYL,
-        size=[float(cfg["radius"]), 0.0005],
-        pos=[cx, cy, 0.0005],
-        rgba=SPOT_RGBA,
-        contype=0,
-        conaffinity=0,
-    )
+def _add_lights(spec: mujoco.MjSpec) -> None:
+    """Two lights plus the headlight, scaled so the table does not clip to white.
+
+    MuJoCo's defaults give 1.8 total diffuse, which saturated 45% of the frame.
+    `scene.lighting` holds the budget; `SimRobot.randomize_appearance` jitters it.
+    """
+    lit = config.skills()["scene"]["lighting"]
+    spec.visual.headlight.ambient = [float(lit["ambient"])] * 3
+    spec.visual.headlight.diffuse = [float(lit["headlight_diffuse"])] * 3
+    spec.visual.headlight.specular = [float(lit["specular"])] * 3
+
+    for name, pos, direction, key in (
+        ("key", [0.4, 0.0, 1.5], [0.0, 0.0, -1.0], "key_diffuse"),
+        ("fill", [0.0, -0.8, 1.2], [0.3, 0.6, -1.0], "fill_diffuse"),
+    ):
+        spec.worldbody.add_light(
+            name=name,
+            pos=pos,
+            dir=direction,
+            diffuse=[float(lit[key])] * 3,
+            specular=[float(lit["specular"])] * 3,
+        )
 
 
 def task_roi() -> tuple[np.ndarray, np.ndarray]:
     """`(lo, hi)` xy bounds of everything the overhead camera must see.
 
-    The union of the pick zone, the bin's OUTER footprint (walls included) and
-    the `move_to_spot` target. Derived from `scene` rather than written down, so
-    moving the bin moves the region the camera is checked against.
+    The union of the pick zone and the bin's OUTER footprint (walls included).
+    Derived from `scene`, so moving the bin moves the region the camera is
+    checked against.
     """
     scene = config.skills()["scene"]
 
@@ -288,11 +296,8 @@ def task_roi() -> tuple[np.ndarray, np.ndarray]:
         scene["bin"]["wall_thickness"]
     )
 
-    spot_c = np.asarray(scene["spot"]["center"], dtype=np.float64)
-    spot_h = np.full(2, float(scene["spot"]["radius"]))
-
-    los = [pz_c - pz_h, bin_c - bin_h, spot_c - spot_h]
-    his = [pz_c + pz_h, bin_c + bin_h, spot_c + spot_h]
+    los = [pz_c - pz_h, bin_c - bin_h]
+    his = [pz_c + pz_h, bin_c + bin_h]
     return np.minimum.reduce(los), np.maximum.reduce(his)
 
 
@@ -325,6 +330,41 @@ def _assert_overhead_covers_roi(pos: np.ndarray, fovy_deg: float) -> None:
         )
     print(
         f"  overhead camera covers the task region with "
+        f"{margin[0] * 1000:.0f}/{margin[1] * 1000:.0f} mm margin in x/y"
+    )
+
+
+def _assert_workspace_box_covers_roi() -> None:
+    """Fail the build if the section 10 safety box excludes part of the task.
+
+    The box and the scene are written in different files and were set at
+    different times. They drifted: the box stopped at y = -0.45 while the bin
+    reached y = -0.528, so the gripper was rejected for entering the bin it was
+    being asked to drop a cube into, and the release point cleared the limit by
+    10 mm. Nothing failed loudly — the trajectories just came back
+    `unsafe_trajectory`, which reads like a planning problem rather than a
+    configuration contradiction.
+
+    Checked in x and y only. `z` is a height limit, not a footprint, and the
+    task region is a tabletop area.
+    """
+    lo, hi = task_roi()
+    lim = safety.limits()
+    box_lo = np.asarray([lim.box_x[0], lim.box_y[0]], dtype=np.float64)
+    box_hi = np.asarray([lim.box_x[1], lim.box_y[1]], dtype=np.float64)
+
+    margin = np.minimum(lo - box_lo, box_hi - hi)
+    if np.any(margin < 0.0):
+        raise RuntimeError(
+            f"the section 10 workspace box x {list(lim.box_x)} y {list(lim.box_y)} does NOT contain "
+            f"the task region x [{lo[0]:.3f}, {hi[0]:.3f}] y [{lo[1]:.3f}, {hi[1]:.3f}] "
+            f"(shortfall {np.round(np.minimum(margin, 0.0) * -1000, 1).tolist()} mm in x/y). "
+            "The gripper would be rejected for entering the region the task requires. "
+            "Widen `workspace_box` in config/safety.yaml, or move the bin/pick zone "
+            "in config/skills.yaml."
+        )
+    print(
+        f"  workspace box contains the task region with "
         f"{margin[0] * 1000:.0f}/{margin[1] * 1000:.0f} mm margin in x/y"
     )
 
@@ -374,7 +414,7 @@ def build_scene(out_path: Path, headless: bool = False) -> mujoco.MjModel:
     _add_table(spec)
     _add_cube(spec, "cube", scene["pick_zone"]["center"], CUBE_RGBA)
     _add_bin(spec, "bin", scene["bin"])
-    _add_spot(spec, "spot", scene["spot"])
+    _assert_workspace_box_covers_roi()
     _add_cameras(spec)
 
     # The offscreen framebuffer defaults to 640x480, and `mujoco.Renderer`
@@ -393,8 +433,7 @@ def build_scene(out_path: Path, headless: bool = False) -> mujoco.MjModel:
         _add_cube(spec, "cube_left", left["pick_zone"]["center"], CUBE_LEFT_RGBA)
         _add_bin(spec, "bin_left", {**scene["bin"], **left["bin"]})
 
-    spec.worldbody.add_light(name="key", pos=[0.4, 0.0, 1.5], dir=[0.0, 0.0, -1.0])
-    spec.worldbody.add_light(name="fill", pos=[0.0, -0.8, 1.2], dir=[0.3, 0.6, -1.0])
+    _add_lights(spec)
 
     if headless:
         strip_visual(spec)

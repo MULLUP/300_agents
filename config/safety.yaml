@@ -4,9 +4,36 @@ conventions_version: 2
 
 # Gripper-centre workspace box in the `table` frame. conventions.md section 10:
 # "start with ... tighten after hardware calibration".
+#
+# WIDENED in y and x: the previous box CUT THROUGH THE BIN.
+#
+# It was x [0.15, 0.65], y [-0.45, 0.45], which is a placeholder -- the line
+# above says so -- while the bin's position was fitted to measured carry-success
+# data. Against the bin's outer footprint, x [0.112, 0.288] y [-0.528, -0.352]:
+#
+#   * the bin's far edge at y = -0.528 sat 78 mm OUTSIDE the box;
+#   * the release point is the bin CENTRE, y = -0.440, which left exactly 10 mm
+#     before a hard safety rejection. Every successful placement had to thread
+#     that gap, and anything that overshot was thrown out as `unsafe_trajectory`
+#     -- for entering the one region the task requires it to enter.
+#
+# The box was the wrong number of the two. The measured top-down reachability
+# map (sim/plots/reachability_right.json) solves cells out to y = -0.50 at
+# x in [0.15, 0.25], and -0.50 is the EDGE OF THE SAMPLED GRID, so the arm's
+# real reach is at least that far. The table spans x [0.10, 0.74],
+# y [-0.55, 0.55] and build_models.py already sizes it "wider than the
+# workspace box, so the bin never overhangs" -- the box is what drifted.
+#
+# Set to the table extent in y and to the table's near edge in x. Symmetric in
+# y so the mirrored left-arm zone (skills.yaml `left_zone`) behaves identically.
+# `sim/build_models.py` now fails the build if this box does not contain the
+# task region, so the two cannot silently disagree again.
+#
+# This is still a placeholder to be TIGHTENED after hardware calibration, not a
+# measured hardware limit.
 workspace_box:
-  x: [0.15, 0.65]
-  y: [-0.45, 0.45]
+  x: [0.10, 0.65]
+  y: [-0.55, 0.55]
   z: [0.01, 0.45]
 
 # Maximum tcp speed, m/s.

@@ -123,12 +123,72 @@ scene:
   bin:
     center: [0.20, -0.44]
     inner_size: [0.16, 0.16]
-    height: 0.08 # rim height above the table
+    height: 0.056 # rim height above the table (was 0.08, lowered 30% for gripper clearance)
     wall_thickness: 0.008
 
-  spot:
-    center: [0.34, -0.30]
-    radius: 0.04
+  # REMOVED: `spot`, the `move_to_spot` target marker.
+  #
+  # It was a visual-only yellow disc at (0.34, -0.30) with radius 0.04, for a
+  # task this project does not generate -- the deliverable is `put_in_bin` only.
+  # It overlapped the pick zone: the zone spans x [0.190, 0.330] y [-0.340,
+  # -0.200] and the disc spans x [0.300, 0.380] y [-0.340, -0.260], so MEASURED
+  # over 200k samples, 28.7% of pick-zone cube poses land on the disc (6 of the
+  # 20 scenes the generator was actually drawing). The dataset would have taught
+  # the policy that a bright yellow blob sometimes sits under the cube and means
+  # nothing. It also inflated `task_roi`, forcing the overhead camera wider than
+  # the task needs.
+
+  # Render lighting. MuJoCo defaults 0.7 diffuse per light and 0.4 for the
+  # headlight; with two lights that is 1.8 on a surface facing all three, and
+  # the table's 0.80 albedo then clips. MEASURED on a rendered frame before this
+  # was set: 45% of the image at exactly (255,255,255), and the (217,51,51) cube
+  # rendering as (246,174,172).
+  #
+  # Budget: key + fill + headlight = 0.90 diffuse, so the table lands near
+  # 0.90 * 0.80 = 0.72 with headroom instead of clipping. Specular is cut from
+  # the 0.3/0.5 defaults because a mirror highlight on a flat table is a
+  # saturated blob that moves with the camera and means nothing to the policy.
+  # Measured on a rendered overhead frame, sweeping the budget below:
+  #   total   table RGB        cube RGB      clipped px
+  #   0.90    (147,140,129)    (202,63,63)   0.0%
+  #   1.08    (170,162,150)    (233,71,71)   0.0%   <- here
+  #   1.22    (188,179,165)    (249,76,76)   0.0%   red channel at the ceiling
+  #   1.35    (205,196,181)    (250,82,82)   0.0%   red clipped
+  # Before this existed the defaults summed to 1.8 and 45% of the frame was
+  # exactly (255,255,255), with the cube rendering as pale pink.
+  lighting:
+    key_diffuse: 0.60
+    fill_diffuse: 0.30
+    headlight_diffuse: 0.18
+    specular: 0.10
+    ambient: 0.10 # fills shadow, so the bin interior is not pure black
+
+  # Per-EPISODE appearance jitter (sim/sim_robot.py `randomize_appearance`).
+  #
+  # Applied to the live mjModel, not at build time: a worker builds one model and
+  # runs hundreds of episodes through it, so build-time colours would be constant
+  # for the whole run.
+  #
+  # Deliberately MODERATE. Scene randomisation spends the data budget on
+  # appearance instead of behaviour, and at ~1300 episodes the budget is small.
+  # The task-relevant variable is the cube's POSITION, which `pick_zone` already
+  # covers; this exists so the policy cannot key on one exact RGB triple or one
+  # fixed shadow direction.
+  randomize:
+    enabled: true
+    # Cube hue sampled over the full circle, but saturation and value held high
+    # so it always reads as "a vivid coloured cube" rather than drifting into
+    # table-coloured beige or near-black.
+    cube_saturation: [0.65, 0.95]
+    cube_value: [0.55, 0.85]
+    # Multiplier on every light's diffuse, shared across the lights so the
+    # overall exposure moves without inverting the key/fill ratio.
+    light_scale: [0.85, 1.10] # 1.10 keeps the brightest cube just under clipping
+    # Metres the key light may wander in x and y. Moves the shadow direction.
+    light_jitter_m: 0.25
+    # Multiplier on the table's grey level. The bench and bin are left alone --
+    # the bin is the goal and its appearance should stay a stable cue.
+    table_value: [0.85, 1.05]
 
   # Disabled by default; enabled only for the two-arm stretch (plan phase 5S).
   # Mirrored in y, which is the region the LEFT arm reaches (conventions.md
@@ -370,9 +430,16 @@ dataset:
   camera: overhead
 
   # The instruction string, fixed. SmolVLA's tokenizer_max_length is 48 tokens;
-  # this is 7. Deliberately NOT EgoDex's `llm_description`, which varies per
+  # this is 6. Deliberately NOT EgoDex's `llm_description`, which varies per
   # episode and would make the instruction a source label rather than a task.
-  task: "put the red cube in the bin"
+  #
+  # Colour-free. It used to say "the RED cube", which was false twice over: the
+  # cube rendered as pale pink under the old lighting, and `scene.randomize` now
+  # varies its hue per episode. Naming the colour would also buy nothing the
+  # policy can use -- there is exactly ONE object on the table, so no colour word
+  # is disambiguating and the task is satisfiable by ignoring it. Grounding a
+  # colour word needs two cubes in frame, which is a different task.
+  task: "put the cube in the bin"
 
   # fps is `exec.rate_hz` and is not repeated here. One control step = one frame
   # = one action, so a second number could only ever disagree with the first.
@@ -385,6 +452,14 @@ dataset:
   # are also far too large to pass between processes, which is why each worker
   # writes its own shard and the shards are merged afterwards.
   use_videos: true
+
+  # The encode runs INSIDE each worker, so its memory lands on top of the ~1.8 GB
+  # the rendering model already holds. MEASURED peak RSS for one worker, and the
+  # encode time for one ~900-frame episode -- see `scripts` note in the handoff.
+  # lerobot's default is libsvtav1 with unbounded threads, which is what put 8
+  # workers over this box's 30 GB and hard-locked it.
+  vcodec: h264
+  encoder_threads: 2
 
   # Scenes sampled per source demo. This is the MimicGen multiplication factor:
   # one human motion re-anchored onto this many cube poses. Previously lived in

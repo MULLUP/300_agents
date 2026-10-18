@@ -142,6 +142,12 @@ class SimRobot(RobotInterface):
         self._renderer: mujoco.Renderer | None = None
         self._capture: dict | None = None
 
+        # Pristine baselines: `randomize_appearance` jitters relative to these,
+        # not to the current value, which would random-walk across episodes.
+        self._light0_xy = self.model.light_pos[0, :2].copy() if self.model.nlight else np.zeros(2)
+        tid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "table")
+        self._table_rgb = self.model.geom_rgba[tid, :3].copy() if tid >= 0 else np.zeros(3)
+
         self.reset()
 
     # --- recording ----------------------------------------------------------
@@ -210,6 +216,54 @@ class SimRobot(RobotInterface):
             cap["images"].append(_jpeg_encode(r.render()))
 
     # --- state --------------------------------------------------------------
+
+    def randomize_appearance(self, rng: np.random.Generator) -> dict[str, Any]:
+        """Jitter cube colour, lighting and table shade on the LIVE model.
+
+        Call once per episode, before recording. Appearance only — nothing here
+        touches a collision geom's size, mass or friction, so a trial's outcome
+        cannot depend on its colours. Returns what it chose, for logging. No-op
+        on the headless model and when `scene.randomize.enabled` is false.
+        """
+        cfg = config.skills()["scene"]["randomize"]
+        if not self._has_visuals or not bool(cfg.get("enabled", False)):
+            return {}
+
+        import colorsys
+
+        lit = config.skills()["scene"]["lighting"]
+        lo, hi = (float(v) for v in cfg["cube_saturation"])
+        sat = float(rng.uniform(lo, hi))
+        lo, hi = (float(v) for v in cfg["cube_value"])
+        val = float(rng.uniform(lo, hi))
+        hue = float(rng.uniform(0.0, 1.0))
+        rgb = colorsys.hsv_to_rgb(hue, sat, val)
+
+        gid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "cube_geom")
+        if gid < 0:  # the geom is named by `_add_cube`; fail loudly if renamed
+            raise RuntimeError("no geom named 'cube_geom' — sim/build_models.py changed")
+        self.model.geom_rgba[gid, :3] = rgb
+
+        scale = float(rng.uniform(*(float(v) for v in cfg["light_scale"])))
+        for i, key in enumerate(("key_diffuse", "fill_diffuse")):
+            self.model.light_diffuse[i] = float(lit[key]) * scale
+        self.model.vis.headlight.diffuse[:] = float(lit["headlight_diffuse"]) * scale
+
+        # Move the key light only. The fill exists to lift the shadow the key
+        # casts, so jittering both independently can leave the scene with no
+        # modelling at all.
+        j = float(cfg["light_jitter_m"])
+        self.model.light_pos[0, :2] = self._light0_xy + rng.uniform(-j, j, 2)
+
+        tid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "table")
+        if tid >= 0:
+            shade = float(rng.uniform(*(float(v) for v in cfg["table_value"])))
+            self.model.geom_rgba[tid, :3] = np.clip(self._table_rgb * shade, 0.0, 1.0)
+
+        return {
+            "cube_rgb": [round(c, 3) for c in rgb],
+            "light_scale": round(scale, 3),
+        }
 
     def reset(self, keep_objects: bool = False) -> None:
         """Reset to HOME. Object poses are reset too unless `keep_objects`."""

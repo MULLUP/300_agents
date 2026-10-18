@@ -47,8 +47,9 @@ from sim.sim_robot import Episode  # noqa: E402
 ROBOT_TYPE = "openarm_bimanual"
 
 
-def dataset_root(name: str) -> Path:
-    return config.path("data", "lerobot", name)
+def dataset_root(name: str, base: Path | None = None) -> Path:
+    """Where a dataset of this name lives. `base` overrides `data/lerobot/`."""
+    return (Path(base) / name) if base is not None else config.path("data", "lerobot", name)
 
 
 def state_slots(index: JointIndex, side: str) -> list[int]:
@@ -88,12 +89,16 @@ class ShardWriter:
     Not thread- or process-safe; that is the point of sharding.
     """
 
-    def __init__(self, name: str, root: Path | None = None, side: str = "right"):
+    def __init__(
+        self, name: str, root: Path | None = None, side: str = "right", base: Path | None = None
+    ):
         ds = config.skills()["dataset"]
         self.camera = str(ds["camera"])
         self.task = str(ds["task"])
         self.min_frames = int(ds["min_frames"])
         self.image_size = int(ds["image_size"])
+        self.vcodec = str(ds["vcodec"])
+        self.encoder_threads = int(ds["encoder_threads"])
         self.side = side
 
         # One rate end to end: `exec.rate_hz` is the control rate, one control
@@ -105,7 +110,7 @@ class ShardWriter:
         self.fps = int(rate)
 
         self.name = name
-        self.root = Path(root) if root is not None else dataset_root(name)
+        self.root = Path(root) if root is not None else dataset_root(name, base)
         self._ds = None
         self.n_written = 0
         self.n_too_short = 0
@@ -122,6 +127,8 @@ class ShardWriter:
                 root=self.root,
                 robot_type=ROBOT_TYPE,
                 use_videos=bool(config.skills()["dataset"]["use_videos"]),
+                vcodec=self.vcodec,
+                encoder_threads=self.encoder_threads,
             )
         return self._ds
 
@@ -176,7 +183,12 @@ class ShardWriter:
             self._ds = None
 
 
-def merge_shards(shard_names: list[str], out_name: str, roots: list[Path] | None = None) -> Path:
+def merge_shards(
+    shard_names: list[str],
+    out_name: str,
+    roots: list[Path] | None = None,
+    base: Path | None = None,
+) -> Path:
     """Combine per-worker shards into the single dataset we hand off.
 
     Uses LeRobot's own `aggregate_datasets`, which renumbers episode and frame
@@ -185,8 +197,8 @@ def merge_shards(shard_names: list[str], out_name: str, roots: list[Path] | None
     """
     from lerobot.datasets.aggregate import aggregate_datasets
 
-    roots = roots if roots is not None else [dataset_root(n) for n in shard_names]
-    out = dataset_root(out_name)
+    roots = roots if roots is not None else [dataset_root(n, base) for n in shard_names]
+    out = dataset_root(out_name, base)
     aggregate_datasets(
         repo_ids=[f"local/{n}" for n in shard_names],
         aggr_repo_id=f"local/{out_name}",

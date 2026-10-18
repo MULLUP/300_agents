@@ -9,3 +9,8 @@ data/generated/
 data/lerobot/
 data/retargeted/*.npz
 data/egodex_zips/
+
+# bundled policy artefacts are committed on purpose; keep stray outputs out
+policy/rollouts/
+policy/__pycache__/
+docs/report_figures.zip

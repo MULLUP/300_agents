@@ -5,6 +5,7 @@
 
   <visual>
     <global offwidth="512" offheight="512"/>
+    <headlight diffuse="0.18 0.18 0.18" specular="0.1 0.1 0.1"/>
   </visual>
 
   <default>
@@ -71,15 +72,15 @@
     <mesh name="link1_0.obj" file="visual/arm/link1_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link1_1.obj" file="visual/arm/link1_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link1_2.obj" file="visual/arm/link1_2.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link1_3.obj" file="visual/arm/link1_3.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link1_3.obj" content_type="model/obj" file="visual/arm/link1_3.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link1_0_left.obj" content_type="model/obj" file="visual/arm/link1_0.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link1_2_left.obj" content_type="model/obj" file="visual/arm/link1_2.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link1_3_left.obj" content_type="model/obj" file="visual/arm/link1_3.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link1_3_left.obj" file="visual/arm/link1_3.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link2_0.obj" file="visual/arm/link2_0.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link2_1.obj" file="visual/arm/link2_1.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link2_1.obj" content_type="model/obj" file="visual/arm/link2_1.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link2_2.obj" content_type="model/obj" file="visual/arm/link2_2.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link2_0_left.obj" content_type="model/obj" file="visual/arm/link2_0.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link2_1_left.obj" content_type="model/obj" file="visual/arm/link2_1.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link2_1_left.obj" file="visual/arm/link2_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link2_2_left.obj" file="visual/arm/link2_2.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link3_0.obj" file="visual/arm/link3_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link3_1.obj" file="visual/arm/link3_1.obj" scale="0.001 0.001 0.001"/>
@@ -93,9 +94,9 @@
     <mesh name="link5_0_left.obj" content_type="model/obj" file="visual/arm/link5_0.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link5_1_left.obj" content_type="model/obj" file="visual/arm/link5_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link5_2_left.obj" file="visual/arm/link5_2.obj" scale="0.001 -0.001 0.001"/>
-    <mesh name="link6_0.obj" file="visual/arm/link6_0.obj" scale="0.001 0.001 0.001"/>
+    <mesh name="link6_0.obj" content_type="model/obj" file="visual/arm/link6_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link6_1.obj" file="visual/arm/link6_1.obj" scale="0.001 0.001 0.001"/>
-    <mesh name="link6_0_left.obj" content_type="model/obj" file="visual/arm/link6_0.obj" scale="0.001 -0.001 0.001"/>
+    <mesh name="link6_0_left.obj" file="visual/arm/link6_0.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link6_1_left.obj" content_type="model/obj" file="visual/arm/link6_1.obj" scale="0.001 -0.001 0.001"/>
     <mesh name="link7_0.obj" file="visual/arm/link7_0.obj" scale="0.001 0.001 0.001"/>
     <mesh name="link7_1.obj" file="visual/arm/link7_1.obj" scale="0.001 0.001 0.001"/>
@@ -110,13 +111,12 @@
   <worldbody>
     <geom name="table" size="0.32 0.55 0.02" pos="0.42 0 -0.02" type="box" rgba="0.8 0.76 0.7 1"/>
     <geom name="bench" size="2 2 0.05" pos="0 0 -0.397" type="plane" rgba="0.45 0.45 0.48 1"/>
-    <geom name="spot" size="0.04 0.0005" pos="0.34 -0.3 0.0005" type="cylinder" contype="0" conaffinity="0" rgba="0.95 0.85 0.15 1"/>
     <site name="world_site"/>
     <camera name="front_camera" quat="0 0 0.707107 0.707107" pos="0 2 0.5" mode="track" fovy="90"/>
     <camera name="side_camera" quat="-0.5 -0.5 0.5 0.5" pos="-2 0 0.5" mode="track" fovy="90"/>
     <camera name="overhead" quat="0.707107 0 0 0.707107" pos="0.25 -0.36 0.9" fovy="27.5"/>
-    <light name="key" pos="0.4 0 1.5"/>
-    <light name="fill" pos="0 -0.8 1.2" dir="0.249136 0.498273 -0.830455"/>
+    <light name="key" pos="0.4 0 1.5" diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1"/>
+    <light name="fill" pos="0 -0.8 1.2" dir="0.249136 0.498273 -0.830455" diffuse="0.3 0.3 0.3" specular="0.1 0.1 0.1"/>
     <body name="openarm_body_link0" pos="0 0 -0.397" gravcomp="1">
       <inertial pos="-0.0162069 0 0.244092" mass="3.74" diaginertia="0.248947 0.253034 0.0140272"/>
       <geom name="openarm_body_link0_collision" class="collision" type="mesh" mesh="body_link0_3.obj"/>
@@ -303,10 +303,10 @@
     </body>
     <body name="bin" pos="0.2 -0.44 0">
       <geom name="bin_floor" size="0.088 0.088 0.004" pos="0 0 0.004" type="box" rgba="0.35 0.35 0.4 1"/>
-      <geom name="bin_wall_px" size="0.004 0.088 0.04" pos="0.084 0 0.04" type="box" rgba="0.35 0.35 0.4 1"/>
-      <geom name="bin_wall_nx" size="0.004 0.088 0.04" pos="-0.084 0 0.04" type="box" rgba="0.35 0.35 0.4 1"/>
-      <geom name="bin_wall_py" size="0.088 0.004 0.04" pos="0 0.084 0.04" type="box" rgba="0.35 0.35 0.4 1"/>
-      <geom name="bin_wall_ny" size="0.088 0.004 0.04" pos="0 -0.084 0.04" type="box" rgba="0.35 0.35 0.4 1"/>
+      <geom name="bin_wall_px" size="0.004 0.088 0.028" pos="0.084 0 0.028" type="box" rgba="0.35 0.35 0.4 1"/>
+      <geom name="bin_wall_nx" size="0.004 0.088 0.028" pos="-0.084 0 0.028" type="box" rgba="0.35 0.35 0.4 1"/>
+      <geom name="bin_wall_py" size="0.088 0.004 0.028" pos="0 0.084 0.028" type="box" rgba="0.35 0.35 0.4 1"/>
+      <geom name="bin_wall_ny" size="0.088 0.004 0.028" pos="0 -0.084 0.028" type="box" rgba="0.35 0.35 0.4 1"/>
     </body>
   </worldbody>
 

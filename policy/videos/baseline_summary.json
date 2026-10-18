@@ -1,0 +1,270 @@
+{
+  "checkpoint": "AdapterTraining/outputs/train/egodex_pick_place_lora_20261018_071155/checkpoints/last/pretrained_model",
+  "episodes": 20,
+  "successes": 2,
+  "success_rate": 0.1,
+  "seed": 99001,
+  "elapsed_s": 382.6,
+  "results": [
+    {
+      "episode": 0,
+      "success": false,
+      "reason": "cube at [0.303, -0.244, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9318,
+      "video": "/mnt/shared_s/model_data/rollouts/ep00_fail.mp4",
+      "cube_xy": [
+        0.3033,
+        -0.2441
+      ],
+      "cube_yaw": 0.0185
+    },
+    {
+      "episode": 1,
+      "success": false,
+      "reason": "cube at [0.278, -0.326, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9243,
+      "video": "/mnt/shared_s/model_data/rollouts/ep01_fail.mp4",
+      "cube_xy": [
+        0.2563,
+        -0.322
+      ],
+      "cube_yaw": -0.0416
+    },
+    {
+      "episode": 2,
+      "success": false,
+      "reason": "cube at [0.34, -0.315, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9758,
+      "video": "/mnt/shared_s/model_data/rollouts/ep02_fail.mp4",
+      "cube_xy": [
+        0.3172,
+        -0.2618
+      ],
+      "cube_yaw": 0.2112
+    },
+    {
+      "episode": 3,
+      "success": false,
+      "reason": "cube at [0.197, -0.284, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.8945,
+      "video": "/mnt/shared_s/model_data/rollouts/ep03_fail.mp4",
+      "cube_xy": [
+        0.1969,
+        -0.2841
+      ],
+      "cube_yaw": -0.3835
+    },
+    {
+      "episode": 4,
+      "success": false,
+      "reason": "cube at [0.319, -0.327, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9547,
+      "video": "/mnt/shared_s/model_data/rollouts/ep04_fail.mp4",
+      "cube_xy": [
+        0.319,
+        -0.327
+      ],
+      "cube_yaw": -0.6754
+    },
+    {
+      "episode": 5,
+      "success": false,
+      "reason": "cube at [0.244, -0.265, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9644,
+      "video": "/mnt/shared_s/model_data/rollouts/ep05_fail.mp4",
+      "cube_xy": [
+        0.2438,
+        -0.2653
+      ],
+      "cube_yaw": 0.388
+    },
+    {
+      "episode": 6,
+      "success": false,
+      "reason": "cube at [0.253, -0.299, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9917,
+      "video": "/mnt/shared_s/model_data/rollouts/ep06_fail.mp4",
+      "cube_xy": [
+        0.2502,
+        -0.3017
+      ],
+      "cube_yaw": -0.5292
+    },
+    {
+      "episode": 7,
+      "success": false,
+      "reason": "cube at [0.32, -0.291, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.8847,
+      "video": "/mnt/shared_s/model_data/rollouts/ep07_fail.mp4",
+      "cube_xy": [
+        0.3204,
+        -0.2905
+      ],
+      "cube_yaw": -0.7635
+    },
+    {
+      "episode": 8,
+      "success": false,
+      "reason": "cube at [0.321, -0.244, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 1.0099,
+      "video": "/mnt/shared_s/model_data/rollouts/ep08_fail.mp4",
+      "cube_xy": [
+        0.3209,
+        -0.2492
+      ],
+      "cube_yaw": -0.5781
+    },
+    {
+      "episode": 9,
+      "success": false,
+      "reason": "cube at [0.281, -0.31, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.944,
+      "video": "/mnt/shared_s/model_data/rollouts/ep09_fail.mp4",
+      "cube_xy": [
+        0.2813,
+        -0.3098
+      ],
+      "cube_yaw": -0.2319
+    },
+    {
+      "episode": 10,
+      "success": false,
+      "reason": "cube at [0.338, -0.218, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 1.0022,
+      "video": "/mnt/shared_s/model_data/rollouts/ep10_fail.mp4",
+      "cube_xy": [
+        0.3295,
+        -0.225
+      ],
+      "cube_yaw": 0.6278
+    },
+    {
+      "episode": 11,
+      "success": true,
+      "reason": "",
+      "frames": 1081,
+      "max_dq_rad": 1.0092,
+      "video": "/mnt/shared_s/model_data/rollouts/ep11_ok.mp4",
+      "cube_xy": [
+        0.2085,
+        -0.2012
+      ],
+      "cube_yaw": -0.2766
+    },
+    {
+      "episode": 12,
+      "success": false,
+      "reason": "cube at [0.282, -0.197, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 1.0185,
+      "video": "/mnt/shared_s/model_data/rollouts/ep12_fail.mp4",
+      "cube_xy": [
+        0.3006,
+        -0.2029
+      ],
+      "cube_yaw": -0.1025
+    },
+    {
+      "episode": 13,
+      "success": false,
+      "reason": "cube at [0.243, -0.199, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9931,
+      "video": "/mnt/shared_s/model_data/rollouts/ep13_fail.mp4",
+      "cube_xy": [
+        0.2376,
+        -0.2027
+      ],
+      "cube_yaw": -0.4024
+    },
+    {
+      "episode": 14,
+      "success": false,
+      "reason": "cube at [0.312, -0.246, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.914,
+      "video": "/mnt/shared_s/model_data/rollouts/ep14_fail.mp4",
+      "cube_xy": [
+        0.3227,
+        -0.2358
+      ],
+      "cube_yaw": -0.6556
+    },
+    {
+      "episode": 15,
+      "success": false,
+      "reason": "cube at [0.314, -0.207, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9336,
+      "video": "/mnt/shared_s/model_data/rollouts/ep15_fail.mp4",
+      "cube_xy": [
+        0.3154,
+        -0.2193
+      ],
+      "cube_yaw": -0.4845
+    },
+    {
+      "episode": 16,
+      "success": true,
+      "reason": "",
+      "frames": 1158,
+      "max_dq_rad": 0.9461,
+      "video": "/mnt/shared_s/model_data/rollouts/ep16_ok.mp4",
+      "cube_xy": [
+        0.3198,
+        -0.2829
+      ],
+      "cube_yaw": -0.1614
+    },
+    {
+      "episode": 17,
+      "success": false,
+      "reason": "cube at [0.231, -0.32, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9829,
+      "video": "/mnt/shared_s/model_data/rollouts/ep17_fail.mp4",
+      "cube_xy": [
+        0.2305,
+        -0.3147
+      ],
+      "cube_yaw": 0.6214
+    },
+    {
+      "episode": 18,
+      "success": false,
+      "reason": "cube at [0.256, -0.314, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9105,
+      "video": "/mnt/shared_s/model_data/rollouts/ep18_fail.mp4",
+      "cube_xy": [
+        0.2583,
+        -0.3135
+      ],
+      "cube_yaw": 0.5159
+    },
+    {
+      "episode": 19,
+      "success": false,
+      "reason": "cube at [0.242, -0.32, 0.022] is outside the bin footprint",
+      "frames": 1200,
+      "max_dq_rad": 0.9809,
+      "video": "/mnt/shared_s/model_data/rollouts/ep19_fail.mp4",
+      "cube_xy": [
+        0.2222,
+        -0.3144
+      ],
+      "cube_yaw": -0.0628
+    }
+  ]
+}
